@@ -1,11 +1,11 @@
 
-int Bpow = A0;
+int Bpow = A1;
 int Bp;
 int Lp;
 int stateP = LOW;
 int POW=13;
 
-const int Bspeed = A1;
+const int Bspeed = A0;
 const int M1 =  7;
 const int M2 =  8;
 const int M3 =  9;
@@ -44,7 +44,7 @@ void loop()
     
  if(stateP==0){i=0;}
     
- if ((Bstate != Lstate) && (Lstate == HIGH)&&(stateP==1))
+ if ((Bstate != Lstate) && (Lstate == HIGH))
     {  
     stateS=!stateS;
     i=i+1;
