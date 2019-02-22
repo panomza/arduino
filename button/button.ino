@@ -59,6 +59,7 @@ void loop()
       digitalWrite(M2,HIGH);
       digitalWrite(M3,HIGH);
       Serial.println("M1");
+      
       break;
     case 1:
       digitalWrite(M1,LOW);   
