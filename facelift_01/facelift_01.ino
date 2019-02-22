@@ -1,4 +1,4 @@
-include<string.h>
+#include<string.h>
 #include <LiquidCrystal.h> // include the library code:
 byte buff[2];
 int pin = 8;//DSM501A input D8
