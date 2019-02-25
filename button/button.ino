@@ -24,6 +24,8 @@ int Ls;
 int stateS = LOW;
 int i = 0; 
 
+int BUZ = 4; 
+
 void setup() {
   pinMode(Bplasma, INPUT);
   pinMode(POW, OUTPUT);
@@ -37,33 +39,34 @@ void setup() {
   pinMode(M4, OUTPUT);       
   pinMode(Bspeed, INPUT);  
   Serial.begin(9600);   
+
+  pinMode(BUZ,OUTPUT);
 }
 
-void loop()
-{
+void loop(){
  // Serial.println(i);
-  Bs =  digitalRead(Bspeed);
+  Bs      =  digitalRead(Bspeed);
   Bp      =  digitalRead(Bpow);
   Bpm     =  digitalRead(Bplasma);
   
  if ((Bp != Lp) && (Lp == HIGH)){  
      stateP=!stateP;
      digitalWrite(POW,stateP); 
-     i=1;delay(400);}
-     Lp=!Bp;   
+     i=1;delay(400); }
+     Lp=!Bp; 
   
  if(stateP==0){i=0;}
 
  if ((Bpm != Lpm) && (Lpm == HIGH)&&(stateP==1)){  
      statePM=!statePM;
      digitalWrite(PLASMA,statePM); 
-     delay(300);}
+     delay(350);}
      Lpm=!Bpm; 
     
  if ((Bs != Ls) && (Ls == HIGH)&&(stateP==1)){  
      stateS=!stateS;
      i=i+1;
-     delay(300);}
+     delay(350);}
      Ls=!Bs;
 
   switch (i) {
