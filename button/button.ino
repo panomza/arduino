@@ -2,9 +2,9 @@
 /// pin definition
 
 // input pins
-const int Bspeed = A1;    // speed input pin
-const int Bpow = A0;      //power button input pin
-const int Bplasma = A2;   // plasma button input pin
+const int Bspeed = 15;    // speed input pin
+const int Bpow = 14;      //power button input pin
+const int Bplasma = 16;   // plasma button input pin
 
 
 //output pins
@@ -22,87 +22,113 @@ const int BUZ = 4;        // buzzer output pin
 // state variables
 
 //power
-int Bp;               //power button state
-int Lp;               //previous power button state 
-int stateP = LOW;     //power output state
+bool Bp;               //power button state
+bool Lp;               //previous power button state 
+bool stateP = LOW;     //power output state
 
 //plasma
-int Bpm;                  // plasma button state
-int Lpm;                  // previous plasma button state
-int statePM = LOW;        // plasma output state
+bool Bpm;                  // plasma button state
+bool Lpm;                  // previous plasma button state
+bool statePM = LOW;        // plasma output state
 
 //speed
-int Bs;                   // speed input state
-int Ls;                   // previous speed input state
-int stateS = LOW;         // speed state
-int i = 0;                // case counter
+bool Bs;                   // speed input state
+bool Ls;                   // previous speed input state
+bool stateS = LOW;         // speed state
+unsigned short int i = 0;                // case counter
 
 
 void setup() {
-  String inputnames = {
-    
-    }
-  int inputpins={
-    
-    }
-  String outputnames={
-    
-  }
-  int outputpins = {
-    
-  }
-  pinMode(Bplasma, INPUT);
-  pinMode(POW, OUTPUT);
+    Serial.begin(9600); 
+  int inputpins[3]={
+    Bpow,Bspeed,Bplasma
+    };
 
-  pinMode(Bpow, INPUT);
-  pinMode(PLASMA, OUTPUT);
+  int outputpins[7] = {
+    POW,PLASMA,M1,M2,M3,M4,BUZ
+  };
+
+  for(int j=0;j< sizeof(inputpins)/sizeof(1);j++){
+    pinMode(inputpins[j],INPUT);
+    Serial.print(inputpins[j]);
+    Serial.println(" is set as input");
+  }
+  for(int j=0;j< sizeof(outputpins)/sizeof(1);j++){
+    pinMode(outputpins[j],OUTPUT);
+    Serial.print(outputpins[j]);
+    Serial.println(" is set as output");
+  }
   
-  pinMode(M1, OUTPUT);
-  pinMode(M2, OUTPUT); 
-  pinMode(M3, OUTPUT); 
-  pinMode(M4, OUTPUT);       
-  pinMode(Bspeed, INPUT);  
-  Serial.begin(9600);   
 
-  pinMode(BUZ,OUTPUT);
 }
 
 void loop(){
+
+ // read inputs
  // Serial.println(i);
   Bs      =  digitalRead(Bspeed);
   Bp      =  digitalRead(Bpow);
   Bpm     =  digitalRead(Bplasma);
-  
- if ((Bp != Lp) && (Lp == HIGH)){  
+
+ //apply read input to the output
+
+
+
+
+ //apply power
+ if ((Bp != Lp) && (Lp == 1)){  
      stateP=!stateP;
-     digitalWrite(POW,stateP); 
-     i=1;delay(400); }
-     Lp=!Bp; 
-  
+     digitalWrite(POW,stateP);
+     Serial.print("Power is set to: ");
+     Serial.println(stateP); 
+     i=1;
+     delay(400);
+
+ }
+      Lp=!Bp; 
+
+
+
+
+
+
+// turn off the machine (everything)
  if(stateP==0){i=0;}
 
- if ((Bpm != Lpm) && (Lpm == HIGH)&&(stateP==1)){  
+
+
+// apply the state of plasma
+ if ((Bpm != Lpm) && (Lpm == 1)&&(stateP==1)){  
      statePM=!statePM;
      digitalWrite(PLASMA,statePM); 
-     delay(350);}
-     Lpm=!Bpm; 
-    
+     Serial.print("plasma is set to: ");
+     Serial.println(statePM);
+     delay(350);
+     }
+ Lpm=!Bpm; 
+
+
+// apply the state of speed
+
  if ((Bs != Ls) && (Ls == HIGH)&&(stateP==1)){  
      stateS=!stateS;
      i=i+1;
+     if(i>4){i=1;}
+     Serial.print("Speed is set to: ");
+     Serial.println(i);
      delay(350);}
      Ls=!Bs;
 
   switch (i) {
     case 0:
-      digitalWrite(M4,HIGH);
-      digitalWrite(M1,HIGH);  
-      digitalWrite(M2,HIGH);
-      digitalWrite(M3,HIGH);
-      digitalWrite(PLASMA,HIGH);
+      digitalWrite(M4,1);
+      digitalWrite(M1,1);  
+      digitalWrite(M2,1);
+      digitalWrite(M3,1);
+      digitalWrite(PLASMA,1);
       break;
     case 1:
-      digitalWrite(M1,LOW);   
+      digitalWrite(M1,LOW); digitalWrite(M4,HIGH);   
      // Serial.println("M1");
       break;
     case 2:
@@ -116,10 +142,6 @@ void loop(){
     case 4:
       digitalWrite(M4,LOW);   digitalWrite(M3,HIGH);
      // Serial.println("M4");
-      break;
-    case 5:
-    digitalWrite(M4,HIGH);
-    i=1;
       break;
   }
 }
