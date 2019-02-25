@@ -1,32 +1,56 @@
 
-const int Bpow = A0;
-const int POW=13;
-int Bp;
-int Lp;
-int stateP = LOW;
+/// pin definition
+
+// input pins
+const int Bspeed = A1;    // speed input pin
+const int Bpow = A0;      //power button input pin
+const int Bplasma = A2;   // plasma button input pin
 
 
-const int Bplasma = A2;
-const int PLASMA=6;
-int Bpm;
-int Lpm;
-int statePM = LOW;
+//output pins
+
+const int POW=13;         //power output pin
+const int PLASMA=6;       // plasma button output pin
+const int M1 =  7;        // motor output pin
+const int M2 =  8;        // motor output pin
+const int M3 =  9;        // motor output pin
+const int M4 =  10;       // motor output pin
+const int BUZ = 4;        // buzzer output pin
 
 
-const int Bspeed = A1;
-const int M1 =  7;
-const int M2 =  8;
-const int M3 =  9;
-const int M4 =  10;
 
-int Bs;
-int Ls;
-int stateS = LOW;
-int i = 0; 
+// state variables
 
-int BUZ = 4; 
+//power
+int Bp;               //power button state
+int Lp;               //previous power button state 
+int stateP = LOW;     //power output state
+
+//plasma
+int Bpm;                  // plasma button state
+int Lpm;                  // previous plasma button state
+int statePM = LOW;        // plasma output state
+
+//speed
+int Bs;                   // speed input state
+int Ls;                   // previous speed input state
+int stateS = LOW;         // speed state
+int i = 0;                // case counter
+
 
 void setup() {
+  String inputnames = {
+    
+    }
+  int inputpins={
+    
+    }
+  String outputnames={
+    
+  }
+  int outputpins = {
+    
+  }
   pinMode(Bplasma, INPUT);
   pinMode(POW, OUTPUT);
 
