@@ -34,12 +34,7 @@ void loop()
   Bstate = digitalRead(Bspeed);
   Bp = digitalRead(Bpow);
   
- if ((Bp != Lp) && (Lp == HIGH))
-    {  stateP=!stateP;
-    digitalWrite(POW,stateP);
-    i=1;
-    delay(200);
-    }
+ if ((Bp != Lp) && (Lp == HIGH)){  stateP=!stateP;digitalWrite(POW,stateP); i=1;delay(400);}
     Lp=!Bp;
     
  if(stateP==0){i=0;}
@@ -53,13 +48,11 @@ void loop()
     Lstate=!Bstate;
 
   switch (i) {
-      case 0:
+    case 0:
       digitalWrite(M4,HIGH);
       digitalWrite(M1,HIGH);  
       digitalWrite(M2,HIGH);
       digitalWrite(M3,HIGH);
-      Serial.println("M1");
-      
       break;
     case 1:
       digitalWrite(M1,LOW);   
