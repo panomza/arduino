@@ -1,4 +1,3 @@
-
 //////////////////////////////////////Capasitive Sent Control\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //set time variables
 short int powert0; 
@@ -47,13 +46,13 @@ unsigned short int index = 1;                // case counter
 
 
 //delays
-short int buttondelay=500;// delay between each button press in ms
+short int buttondelay=300;// delay between each button press in ms
 
 /////////////////////////////////////////Remote\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 #include <IRremote.h>
 
-int RECV_PIN = 2;
+const int RECV_PIN = 2;
 
 IRrecv irrecv(RECV_PIN);
 decode_results results;
@@ -67,7 +66,6 @@ long remote_key[]={0xDF40BF,0xDF609F,0xDF48B7,0xDF50AF,0xDF708F};
 const byte outputPins[OUTPUT_COUNT] = {0, 1, 2, 3,4};
 
 bool status1[5] = {0,0,0,0,0};
-
 struct keypad {
   boolean state;
 };
@@ -136,7 +134,7 @@ void powerset(){
 
 
 void plasmaset(){
-    if ((Bpm != Lpm) && (Bpm == 0) && (millis()-plasmat0 > buttondelay) && (plasmacount ==0)){
+    if ((Bpm != Lpm) && (stateP == 0) && (millis()-plasmat0 > buttondelay) && (plasmacount ==0)){
     statePM=!statePM;
     digitalWrite(PLASMA,statePM);
     Serial.print("Plasma is set to: ");
@@ -158,6 +156,7 @@ void clearspeed(){
       digitalWrite(M1,1);  
       digitalWrite(M2,1);
       digitalWrite(M3,1);
+
 }
 
 
@@ -250,7 +249,7 @@ void Remote(){
 
     }
     }
-    if (millis()-last>500){
+    if (millis()-last>300){
       for (int i=0;i<OUTPUT_COUNT;i++){
         if (status1[i]){
          status1[i]=0;
