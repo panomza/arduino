@@ -1,5 +1,5 @@
 
-
+//////////////////////////////////////Capasitive Sent Control\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //set time variables
 short int powert0; 
 short int speedt0;
@@ -49,11 +49,35 @@ unsigned short int index = 1;                // case counter
 //delays
 short int buttondelay=500;// delay between each button press in ms
 
+/////////////////////////////////////////Remote\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+#include <IRremote.h>
+
+int RECV_PIN = 2;
+
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+
+#define OUTPUT_COUNT 5
+
+unsigned long last = millis();
+
+long remote_key[]={0xDF40BF,0xDF609F,0xDF48B7,0xDF50AF,0xDF708F};
+
+const byte outputPins[OUTPUT_COUNT] = {0, 1, 2, 3,4};
+
+bool status1[5] = {0,0,0,0,0};
+
+struct keypad {
+  boolean state;
+};
+
+keypad output[OUTPUT_COUNT];
 
 
 
 void setup() {
+  //////////////////////////////////////////Capasitive Sent Control\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     Serial.begin(9600); 
   int inputpins[3]={
     Bpow,Bspeed,Bplasma
@@ -78,8 +102,13 @@ void setup() {
   speedt0=millis();
   powert0=millis();
   plasmat0=millis();
+
+/////////////////////////////////////////Remote\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+  irrecv.enableIRIn(); // Start the receiver
 }
 
+/////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 void powerset(){
 //apply power
@@ -105,6 +134,7 @@ void powerset(){
   }
 }
 
+
 void plasmaset(){
     if ((Bpm != Lpm) && (Bpm == 0) && (millis()-plasmat0 > buttondelay) && (plasmacount ==0)){
     statePM=!statePM;
@@ -128,6 +158,27 @@ void clearspeed(){
       digitalWrite(M1,1);  
       digitalWrite(M2,1);
       digitalWrite(M3,1);
+}
+
+
+
+ // set up the speed
+void speedset(){
+
+ if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (millis()-speedt0 > buttondelay)){  
+     stateS=!stateS;
+     index++;
+     if(index>4){index=1;}
+     Serial.print("Speed is set to: ");
+     Serial.println(index);
+     speedt0=millis(); // get the current time
+     Ls=Bs;
+     applythespeedswitch();
+ }
+ else if ((Bs != Ls) && (Bs == 1)&& (millis()-plasmat0 > buttondelay)){
+    Ls=Bs;
+  }
+  
 }
 
 void applythespeedswitch(){
@@ -159,30 +210,73 @@ void applythespeedswitch(){
   }
 }
 
+/////////////////////////////////////////Remote\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+void Remote(){
+    unsigned long currentMillis = millis();
+    if (irrecv.decode(&results)) {
+         if (currentMillis - last > 50) {
 
-void speedset(){ // set up the speed
+           if ( (results.value != 0xFFFFFFFF) && (results.value != 0x00) ) {
+              for (int val=0;val<OUTPUT_COUNT;val++) {       
+                  if ( results.value == remote_key[val] )  {
+                    Serial.println("remote button is pressed");
+                    status1[val]=!status1[val];
+                    switch (val) {
+                      case 0: //on-off
+                        Bp=0;
+                        break;
+                      case 1: // speed
+                        Bs=0;
+                        break;
+                      case 2: // plasma
+                        Bpm=0;
+                        break;
+                      case 3: // timer
+                        break;
+                      case 4: // ionizer
+                        break;
+                    }
+                  }       
+              }
+           }
 
- if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (millis()-speedt0 > buttondelay)){  
-     stateS=!stateS;
-     index++;
-     if(index>4){index=1;}
-     Serial.print("Speed is set to: ");
-     Serial.println(index);
-     speedt0=millis(); // get the current time
-     Ls=Bs;
-     applythespeedswitch();
- } else if ((Bs != Ls) && (Bs == 1)&& (millis()-plasmat0 > buttondelay)){
-    Ls=Bs;
-  }
-  
+           for (int i=0;i<OUTPUT_COUNT;i++){
+               //digitalWrite(outputPins[i], output[i].state);
+//               digitalWrite(outputPins[i], status1[i]);  
+           }
+
+        last = currentMillis;      // record time
+        irrecv.resume(); // Receive the next value
+
+    }
+    }
+    if (millis()-last>500){
+      for (int i=0;i<OUTPUT_COUNT;i++){
+        if (status1[i]){
+         status1[i]=0;
+         Serial.println("switch back to normal");
+         switch (i) {
+                      case 0: //on-off
+                        Bp=1;
+                        break;
+                      case 1: // speed
+                        Bs=1;
+                        break;
+                      case 2: // plasma
+                        Bpm=1;
+                        break;
+                      case 3: // timer
+                        break;
+                      case 4: // ionizer
+                        break;
+           }
+        }
+      }
+    }
 }
 
-
-
-
-
-
 void loop(){
+//////////////////////////////////////////Capasitive Sent Control\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
  // read inputs
  // Serial.println(i);
@@ -191,7 +285,14 @@ void loop(){
   Bpm     =  digitalRead(Bplasma);
   //Serial.println(Bs);
 
- //apply read input to the output
+
+  
+//apply the Remote
+Remote();
+
+
+//apply read input to the output
+ 
 
 
 //apply power
@@ -210,5 +311,10 @@ plasmaset();
 // apply the state of speed
 
 speedset();
+
+
+ 
 }
+
+
 

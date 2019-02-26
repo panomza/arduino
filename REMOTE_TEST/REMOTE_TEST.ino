@@ -42,6 +42,7 @@ void loop() {
                   if ( results.value == remote_key[val] )  {
 
                     status1[val]=!status1[val];
+                    Serial.println(val);
   /*
                       if (output[val].state==0) {
                           Serial.print ("ch[");
