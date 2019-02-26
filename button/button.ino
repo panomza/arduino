@@ -30,20 +30,20 @@ const short int BUZ = 4;        // buzzer output pin
 //power
 bool Bp=1;               //power button state
 bool Lp=1;               //previous power button state 
-bool stateP = LOW;     //power output state
+bool stateP = 1;     //power output state
 bool powercount=0;        // count if the power button is pushed
 
 //plasma
-bool Bpm;                  // plasma button state
-bool Lpm;                  // previous plasma button state
-bool statePM = LOW;        // plasma output state
+bool Bpm=1;                  // plasma button state
+bool Lpm=1;                  // previous plasma button state
+bool statePM = 0;        // plasma output state
 bool plasmacount=0;       // count if plasma has been pressed
 
 //speed
-bool Bs;                   // speed input state
-bool Ls;                   // previous speed input state
-bool stateS = LOW;         // speed state
-unsigned short int i = 0;                // case counter
+bool Bs=1;                   // speed input state
+bool Ls=1;                   // previous speed input state
+bool stateS = 0;         // speed state
+unsigned short int index = 1;                // case counter
 
 
 //delays
@@ -91,10 +91,14 @@ void powerset(){
     digitalWrite(POW,stateP);
     Serial.print("Power is set to: ");
     Serial.println(stateP); 
-    i=1;
+    applythespeedswitch(); // apply the switch for speed when turning on
     Lp=Bp;
     powert0 = millis();
     powercount = 1;
+    if(stateP==1){
+      clearspeed();
+      digitalWrite(PLASMA,1);
+    }
   } else if ((Bp != Lp) && (Bp == 1)&& (millis()-powert0 > buttondelay)){
     Lp=Bp;
     powercount = 0;
@@ -119,31 +123,37 @@ void plasmaset(){
 
 
 
-
-
-void applythespeedswitch(){
-    switch (i) {
-    case 0:
+void clearspeed(){
       digitalWrite(M4,1);
       digitalWrite(M1,1);  
       digitalWrite(M2,1);
       digitalWrite(M3,1);
-      digitalWrite(PLASMA,1);
+}
+
+void applythespeedswitch(){
+    switch (index) {
+    case 0:
+      //clearspeed();
+      //digitalWrite(PLASMA,1);
       break;
     case 1:
-      digitalWrite(M1,LOW); digitalWrite(M4,HIGH);   
+      clearspeed();
+      digitalWrite(M1,LOW);   
      // Serial.println("M1");
       break;
     case 2:
-      digitalWrite(M2,LOW);   digitalWrite(M1,HIGH);
+      clearspeed();
+      digitalWrite(M2,LOW);
      // Serial.println("M2");
       break;
     case 3:
-      digitalWrite(M3,LOW);   digitalWrite(M2,HIGH);
+      clearspeed();
+      digitalWrite(M3,LOW);
      // Serial.println("M3");
       break;
     case 4:
-      digitalWrite(M4,LOW);   digitalWrite(M3,HIGH);
+      clearspeed();
+      digitalWrite(M4,LOW);
      // Serial.println("M4");
       break;
   }
@@ -152,17 +162,17 @@ void applythespeedswitch(){
 
 void speedset(){ // set up the speed
 
- if ((Bs != Ls) && (Bs == 0) && (stateP==1)&& (millis()-speedt0 > buttondelay)){  
+ if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (millis()-speedt0 > buttondelay)){  
      stateS=!stateS;
-     i=i+1;
-     if(i>4){i=1;}
+     index++;
+     if(index>4){index=1;}
      Serial.print("Speed is set to: ");
-     Serial.println(i);
+     Serial.println(index);
      speedt0=millis(); // get the current time
      Ls=Bs;
      applythespeedswitch();
- } else if ((Bs != Ls) && (Bs == 1)&& (stateP==1)&& (millis()-plasmat0 > buttondelay)){
-    Lpm=Bpm;
+ } else if ((Bs != Ls) && (Bs == 1)&& (millis()-plasmat0 > buttondelay)){
+    Ls=Bs;
   }
   
 }
@@ -179,7 +189,7 @@ void loop(){
   Bs      =  digitalRead(Bspeed);
   Bp      =  digitalRead(Bpow);
   Bpm     =  digitalRead(Bplasma);
-//  Serial.println(Bp);
+  //Serial.println(Bs);
 
  //apply read input to the output
 
@@ -189,7 +199,7 @@ void loop(){
 powerset();
 
 // turn off the machine (everything)
- if(stateP==0){i=0;}
+// if(stateP==0){index=0;}
 
 
 
