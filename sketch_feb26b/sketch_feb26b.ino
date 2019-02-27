@@ -1,19 +1,23 @@
-const int buzzer = 4; //buzzer to arduino pin 9
-
-
-void setup(){
- 
-  pinMode(buzzer, OUTPUT); // Set buzzer - pin 9 as an output
-
+ #include "pitches.h"
+int noteDurations[] = {
+  3, 6, 4, 4, 4, 4, 2, 4, 4, 2,     4, 4, 2,
+  3, 6, 4, 4, 4, 4, 2, 4, 4, 3,     3, 1 };
+void setup() {
+  // iterate over the notes of the melody:
+  for (int thisNote = 0; thisNote < 25; thisNote++) {
+    // to calculate the note duration, take one second 
+    // divided by the note type.
+    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+    int noteDuration = 1000/noteDurations[thisNote];
+    tone(8, melody[thisNote],noteDuration);
+    // to distinguish the notes, set a minimum time between them.
+    // the note's duration + 30% seems to work well:
+    int pauseBetweenNotes = noteDuration * 1.30;
+    delay(pauseBetweenNotes);
+    // stop the tone playing:
+    noTone(8);
+  }
 }
-
-void loop(){
- 
-  tone(buzzer, 100); // Send 1KHz sound signal...
-  delay(7);        // ...for 1 sec
-  noTone(buzzer);     // Stop sound...
-  delay(500);        // ...for 1sec
-         // ...for 1sec
-  
-  
+void loop() {
+  // no need to repeat the melody.
 }
