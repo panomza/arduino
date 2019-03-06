@@ -4,20 +4,17 @@ int ledPower = 13;
 unsigned int samplingTime = 280;
 unsigned int deltaTime = 40;
 unsigned int sleepTime = 9680;
-const int numaverage = 10;
+const int numaverage = 50; ///number of values for taking average
 float dust[numaverage];
+unsigned int count=0;
+float initialdust=20;
+float t0;// time of last reading
+float timer=200;// time between each reading
+
 
 float voMeasured = 0;
 float calcVoltage = 0;
 float dustDensity = 0;
-
-void setup(){
-  Serial.begin(9600);
-  pinMode(ledPower,OUTPUT);
-}
-
-
-
 
 
 float readdust(){
@@ -37,16 +34,7 @@ float readdust(){
   {
     dustDensity = 0.00;
   }
-/*
-  Serial.println("Raw Signal Value (0-1023):");
-  Serial.println(voMeasured);
 
-  Serial.println("Voltage:");
-  Serial.println(calcVoltage);
-
-  Serial.println("Dust Density:");
-  Serial.println(dustDensity);
-  */
   return dustDensity;
 }
 
@@ -62,18 +50,29 @@ float takeaverage(float input[]){
 }
 
 
+void setup(){
+  Serial.begin(9600);
+  pinMode(ledPower,OUTPUT);
+  for(int i=0;i<numaverage;i++){
+    dust[i]=initialdust;
+  }
+  t0=millis();
+}
 
 
 void loop(){
-  //readdust();
-  //delay(2000);
-  for(int i = 0; i < numaverage; i++){
-    dust[i]=readdust();
-    //Serial.println(dust[i]);
-    delay(100);
+  if(millis()-t0>timer){
+    dust[count]=readdust();
+    Serial.println(takeaverage(dust));
+    
+  
+    ///// get index for the next reading
+    if ((count>numaverage-2)){
+      count =0;
+    }else{
+      count +=1;
+    }
+    t0=millis();
   }
-
-Serial.println(takeaverage(dust));
   
 }
-

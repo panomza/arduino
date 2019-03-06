@@ -1,11 +1,11 @@
-//////////////////////////////////////////Sensor\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////////////////////Sensor/////////////////////////////////////////////////
 
 #include "DHT.h"
 #define DHTPIN 2
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
-//////////////////////////////////////Capasitive Sent Control\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////////////////Capasitive Sent Control////////////////////////////////////
 //set time variables
 short int powert0; 
 short int speedt0;
@@ -30,7 +30,6 @@ const short int M4 =  10;       // motor output pin
 const short int BUZ = 4;        // buzzer output pin
 
 
-
 // state variables
 
 //power
@@ -51,38 +50,30 @@ bool Ls=1;                   // previous speed input state
 bool stateS = 0;         // speed state
 unsigned short int index = 1;                // case counter
 
-
 //delays
 short int buttondelay=300;// delay between each button press in ms
 
-/////////////////////////////////////////Remote\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/////////////////////////////////////////Remote//////////////////////////////////////////////
 
 #include <IRremote.h>
-
-const int RECV_PIN = 2;
-
-IRrecv irrecv(RECV_PIN);
-decode_results results;
-
+  const int RECV_PIN = 2;
+  IRrecv irrecv(RECV_PIN);
+  decode_results results;
 #define OUTPUT_COUNT 5
 
-unsigned long last = millis();
-
-long remote_key[]={0xDF40BF,0xDF609F,0xDF48B7,0xDF50AF,0xDF708F};
-
-const byte outputPins[OUTPUT_COUNT] = {0, 1, 2, 3,4};
-
-bool status1[5] = {0,0,0,0,0};
-struct keypad {
-  boolean state;
+    unsigned long last = millis();
+    long remote_key[]={0xDF40BF,0xDF609F,0xDF48B7,0xDF50AF,0xDF708F};
+    const byte outputPins[OUTPUT_COUNT] = {0, 1, 2, 3,4};
+    bool status1[5] = {0,0,0,0,0};
+    struct keypad {
+    boolean state;
 };
-
 keypad output[OUTPUT_COUNT];
 
 
 
 void setup() {
-  //////////////////////////////////////////Capasitive Sent Control\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+///////////////////////////////////////Capasitive Sent Control///////////////////////////////////
   Serial.begin(9600); 
   int inputpins[3]={
     Bpow,Bspeed,Bplasma
@@ -108,17 +99,17 @@ void setup() {
   powert0=millis();
   plasmat0=millis();
 
-/////////////////////////////////////////Remote\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/////////////////////////////////////////Remote////////////////////////////////////////////////
 
   irrecv.enableIRIn(); // Start the receiver
 
-//////////////////////////////////////////Sensor\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////////////////////Sensor///////////////////////////////////////////////
    
    Serial.println("DHTxx test!");
    dht.begin();
 }
 
-/////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 void powerset(){
 //apply power
@@ -218,7 +209,7 @@ void applythespeedswitch(){
 }
 
 
-/////////////////////////////////////////Remote\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/////////////////////////////////////////Remote/////////////////////////////////////////////
 
 void Remote(){
     unsigned long currentMillis = millis();
@@ -302,8 +293,7 @@ void sensor_DHT(){
 
 
 void loop(){
-//////////////////////////////////////////Capasitive Sent Control\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
+//////////////////////////////////////////Capasitive Sent Control///////////////////////////////////////
  // read inputs
  // Serial.println(i);
   Bs      =  digitalRead(Bspeed);
@@ -312,7 +302,6 @@ void loop(){
   Serial.println(Bs);
 
 
-  
 //apply the Remote
 Remote();
 
@@ -337,9 +326,6 @@ plasmaset();
 
 
 // apply the state of speed
-
 speedset();
 
-
- 
 }
