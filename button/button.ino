@@ -1,9 +1,55 @@
 //////////////////////////////////////////Sensor/////////////////////////////////////////////////
-
+///DHT Sensor/////
 #include "DHT.h"
 #define DHTPIN 2
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
+
+////////Dust Sensor//////////
+int measurePin = A5;
+int ledPower = 12;
+
+unsigned int samplingTime = 280;
+unsigned int deltaTime = 40;
+unsigned int sleepTime = 9680;
+const int numaverage = 50; ///number of values for taking average
+float dust[numaverage];
+unsigned int count=0;
+float initialdust=20;
+float t0;// time of last reading
+float timer=500;// time between each reading
+
+float voMeasured = 0;
+float calcVoltage = 0;
+float dustDensity = 0;
+
+float readdust(){
+  digitalWrite(ledPower,LOW);
+  delayMicroseconds(samplingTime);
+  voMeasured = analogRead(measurePin);
+  delayMicroseconds(deltaTime);
+  digitalWrite(ledPower,HIGH);
+  delayMicroseconds(sleepTime);
+
+  calcVoltage = voMeasured*(5.0/1024);
+  dustDensity = 170*calcVoltage-100;
+  if ( dustDensity < 0)
+  {
+    dustDensity = 0.00;
+  }
+  return dustDensity;
+}
+
+float takeaverage(float input[]){
+  
+  float sum=0;
+  for(int i = 0; i < int(numaverage) ; i++){
+    sum+=input[i];
+    //Serial.println(i);
+    //Serial.println(input[i]);
+  }
+  return sum/numaverage;
+}
 
 //////////////////////////////////////Capasitive Sent Control////////////////////////////////////
 //set time variables
@@ -56,7 +102,7 @@ short int buttondelay=300;// delay between each button press in ms
 /////////////////////////////////////////Remote//////////////////////////////////////////////
 
 #include <IRremote.h>
-  const int RECV_PIN = 2;
+  const int RECV_PIN = 3;
   IRrecv irrecv(RECV_PIN);
   decode_results results;
 #define OUTPUT_COUNT 5
@@ -104,9 +150,15 @@ void setup() {
   irrecv.enableIRIn(); // Start the receiver
 
 //////////////////////////////////////////Sensor///////////////////////////////////////////////
-   
+   ////DHT Sensor////
    Serial.println("DHTxx test!");
    dht.begin();
+   ////Dust Sensor//////
+  pinMode(ledPower,OUTPUT);
+  for(int i=0;i<numaverage;i++){
+  dust[i]=initialdust;
+  }
+  t0=millis();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -280,15 +332,34 @@ void sensor_DHT(){
    float t = dht.readTemperature();
 
    if (isnan(h) || isnan(t)) {
-     Serial.println("Failed to read from DHT sensor!");
+   Serial.println("Failed to read from DHT sensor!");
       return;
    }
+   if(millis()-t0>timer){
    Serial.print("Humidity: "); 
    Serial.print(h);
    Serial.print(" %\t");
    Serial.print("Temperature: "); 
    Serial.print(t);
    Serial.println(" *C ");
+   }
+}
+
+
+void sensor_dust(){
+    if(millis()-t0>timer){
+    dust[count]=readdust();
+    Serial.print("Dust is :");
+    Serial.print(takeaverage(dust));
+      
+    ///// get index for the next reading
+    if ((count>numaverage-2)){
+      count =0;
+    }else{
+      count +=1;
+    }
+    t0=millis();
+  } 
 }
 
 
@@ -299,7 +370,7 @@ void loop(){
   Bs      =  digitalRead(Bspeed);
   Bp      =  digitalRead(Bpow);
   Bpm     =  digitalRead(Bplasma);
-  Serial.println(Bs);
+  //Serial.println(Bs);
 
 
 //apply the Remote
@@ -307,6 +378,7 @@ Remote();
 
 //apply the Sensor
 sensor_DHT();
+sensor_dust();
 
 //apply read input to the output
  

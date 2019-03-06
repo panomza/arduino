@@ -20,21 +20,17 @@ float dustDensity = 0;
 float readdust(){
   digitalWrite(ledPower,LOW);
   delayMicroseconds(samplingTime);
-
   voMeasured = analogRead(measurePin);
-
   delayMicroseconds(deltaTime);
   digitalWrite(ledPower,HIGH);
   delayMicroseconds(sleepTime);
 
   calcVoltage = voMeasured*(5.0/1024);
   dustDensity = 170*calcVoltage-100;
-
   if ( dustDensity < 0)
   {
     dustDensity = 0.00;
   }
-
   return dustDensity;
 }
 
