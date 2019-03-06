@@ -1,3 +1,10 @@
+//////////////////////////////////////////Sensor\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+#include "DHT.h"
+#define DHTPIN 2
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
 //////////////////////////////////////Capasitive Sent Control\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //set time variables
 short int powert0; 
@@ -76,7 +83,7 @@ keypad output[OUTPUT_COUNT];
 
 void setup() {
   //////////////////////////////////////////Capasitive Sent Control\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    Serial.begin(9600); 
+  Serial.begin(9600); 
   int inputpins[3]={
     Bpow,Bspeed,Bplasma
     };
@@ -104,6 +111,11 @@ void setup() {
 /////////////////////////////////////////Remote\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   irrecv.enableIRIn(); // Start the receiver
+
+//////////////////////////////////////////Sensor\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+   
+   Serial.println("DHTxx test!");
+   dht.begin();
 }
 
 /////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -122,10 +134,10 @@ void powerset(){
     Lp=Bp;
     powert0 = millis();
     powercount = 1;
-    if(stateP==1){
-      clearspeed();
-      digitalWrite(PLASMA,1);
+    if(stateP==1){clearspeed();
+    digitalWrite(PLASMA,1);
     }
+    // if(stateP==0){Melody();}
   } else if ((Bp != Lp) && (Bp == 1)&& (millis()-powert0 > buttondelay)){
     Lp=Bp;
     powercount = 0;
@@ -142,14 +154,12 @@ void plasmaset(){
     Lpm=Bpm;
     plasmat0 = millis();
     plasmacount =1;
-  } else if ((Bpm != Lpm) && (Bpm == 1)&& (millis()-plasmat0 > buttondelay)){
+    }
+   else if ((Bpm != Lpm) && (Bpm == 1)&& (millis()-plasmat0 > buttondelay)){
     Lpm=Bpm;
     plasmacount = 0;
   }
 }
-
-
-
 
 void clearspeed(){
       digitalWrite(M4,1);
@@ -158,8 +168,6 @@ void clearspeed(){
       digitalWrite(M3,1);
 
 }
-
-
 
  // set up the speed
 void speedset(){
@@ -174,7 +182,7 @@ void speedset(){
      Ls=Bs;
      applythespeedswitch();
  }
- else if ((Bs != Ls) && (Bs == 1)&& (millis()-plasmat0 > buttondelay)){
+ else if ((Bs != Ls) && (Bs == 1)&& (millis()-speedt0 > buttondelay)){
     Ls=Bs;
   }
   
@@ -209,7 +217,9 @@ void applythespeedswitch(){
   }
 }
 
+
 /////////////////////////////////////////Remote\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
 void Remote(){
     unsigned long currentMillis = millis();
     if (irrecv.decode(&results)) {
@@ -274,6 +284,23 @@ void Remote(){
     }
 }
 
+void sensor_DHT(){
+   float h = dht.readHumidity();
+   float t = dht.readTemperature();
+
+   if (isnan(h) || isnan(t)) {
+     Serial.println("Failed to read from DHT sensor!");
+      return;
+   }
+   Serial.print("Humidity: "); 
+   Serial.print(h);
+   Serial.print(" %\t");
+   Serial.print("Temperature: "); 
+   Serial.print(t);
+   Serial.println(" *C ");
+}
+
+
 void loop(){
 //////////////////////////////////////////Capasitive Sent Control\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -282,13 +309,15 @@ void loop(){
   Bs      =  digitalRead(Bspeed);
   Bp      =  digitalRead(Bpow);
   Bpm     =  digitalRead(Bplasma);
-  //Serial.println(Bs);
+  Serial.println(Bs);
 
 
   
 //apply the Remote
 Remote();
 
+//apply the Sensor
+sensor_DHT();
 
 //apply read input to the output
  
@@ -314,6 +343,3 @@ speedset();
 
  
 }
-
-
-

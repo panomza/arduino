@@ -1,4 +1,5 @@
- #include "pitches.h"
+#include "pitches.h"
+
 //////////////////////////////////////Capasitive Sent Control\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //set time variables
 short int powert0; 
@@ -50,8 +51,8 @@ unsigned short int index = 1;                // case counter
 short int buttondelay=300;// delay between each button press in ms
 
 /////////////////////////////////////////Remote\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/*#include <IRremote.h>
 
-#include <IRremote.h>
 
 const int RECV_PIN = 2;
 
@@ -72,16 +73,7 @@ struct keypad {
 };
 
 keypad output[OUTPUT_COUNT];
-
-
-//////////////////////// notes in the melody:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-int melody[] = {
-  NOTE_G6, NOTE_GS6, NOTE_A6, NOTE_AS6, NOTE_B6, 
-};
-
-int noteDurations[] = {
-  6, 8, 8, 8, 4,};
-
+*/
 
 
 void setup() {
@@ -113,7 +105,7 @@ void setup() {
 
 /////////////////////////////////////////Remote\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-  irrecv.enableIRIn(); // Start the receiver
+//  irrecv.enableIRIn(); // Start the receiver
 }
 
 /////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -132,10 +124,10 @@ void powerset(){
     Lp=Bp;
     powert0 = millis();
     powercount = 1;
-    if(stateP==1){
-      clearspeed();
-      digitalWrite(PLASMA,1);
+    if(stateP==1){clearspeed();
+    digitalWrite(PLASMA,1);
     }
+    // if(stateP==0){Melody();}
   } else if ((Bp != Lp) && (Bp == 1)&& (millis()-powert0 > buttondelay)){
     Lp=Bp;
     powercount = 0;
@@ -152,14 +144,12 @@ void plasmaset(){
     Lpm=Bpm;
     plasmat0 = millis();
     plasmacount =1;
-  } else if ((Bpm != Lpm) && (Bpm == 1)&& (millis()-plasmat0 > buttondelay)){
+    }
+   else if ((Bpm != Lpm) && (Bpm == 1)&& (millis()-plasmat0 > buttondelay)){
     Lpm=Bpm;
     plasmacount = 0;
   }
 }
-
-
-
 
 void clearspeed(){
       digitalWrite(M4,1);
@@ -168,8 +158,6 @@ void clearspeed(){
       digitalWrite(M3,1);
 
 }
-
-
 
  // set up the speed
 void speedset(){
@@ -181,11 +169,10 @@ void speedset(){
      Serial.print("Speed is set to: ");
      Serial.println(index);
      speedt0=millis(); // get the current time
-     delay(1000);
      Ls=Bs;
      applythespeedswitch();
  }
- else if ((Bs != Ls) && (Bs == 1)&& (millis()-plasmat0 > buttondelay)){
+ else if ((Bs != Ls) && (Bs == 1)&& (millis()-speedt0 > buttondelay)){
     Ls=Bs;
   }
   
@@ -221,7 +208,7 @@ void applythespeedswitch(){
 }
 
 /////////////////////////////////////////Remote\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-void Remote(){
+/*void Remote(){
     unsigned long currentMillis = millis();
     if (irrecv.decode(&results)) {
          if (currentMillis - last > 50) {
@@ -284,19 +271,8 @@ void Remote(){
       }
     }
 }
-    void Melody() {
-  
-  for (int thisNote = 0; thisNote < 25; thisNote++) {
 
-    int noteDuration = 1000/noteDurations[thisNote];
-    tone(4, melody[thisNote],noteDuration);
-
-    int pauseBetweenNotes = noteDuration * 1.10;
-    delay(pauseBetweenNotes);
-    noTone(4);
-  }
-}
-
+*/
 void loop(){
 //////////////////////////////////////////Capasitive Sent Control\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -310,7 +286,7 @@ void loop(){
 
   
 //apply the Remote
-Remote();
+//Remote();
 
 
 //apply read input to the output
@@ -334,15 +310,9 @@ plasmaset();
 
 speedset();
 
-
+  if(statePM==0){tone(4,100);};
  
 }
-
-
-
-
-
-
 
 
 
