@@ -3,6 +3,8 @@
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 
+
+float takeaverage(float input[])
 //////////////////////////Sent data\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 #include <SoftwareSerial.h>
@@ -156,7 +158,7 @@ void setup()
 void loop()
 {
   Blynk.run();
-  
+
   NanoSerial.print(autobutton);     NanoSerial.print(" ");
   NanoSerial.print(plasma);         NanoSerial.print(" ");
   NanoSerial.print(speed1);         NanoSerial.print(" ");
@@ -164,5 +166,12 @@ void loop()
   NanoSerial.print(speed3);         NanoSerial.print(" ");
   NanoSerial.print(speed4);         NanoSerial.print("\n");
 
+if (NanoSerial.available() > 0){
+    int dust =  NanoSerial.parseFloat();
+    
+     if (NanoSerial.read() == '\n') {
+       Serial.print("Dust1");      Serial.print(" : "); Serial.print(dust);
+     }
+}
 delay(100);
 }

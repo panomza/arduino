@@ -1,3 +1,7 @@
+////////////////////////////////////////DATA////////////////////////////////////////////////
+//recive data
+#include <SoftwareSerial.h>
+SoftwareSerial NodeSerial(1,0); // RX | TX
 //////////////////////////////////////////Sensor/////////////////////////////////////////////////
 ///DHT Sensor/////
 #include "DHT.h"
@@ -32,7 +36,7 @@ float readdust(){
   delayMicroseconds(sleepTime);
 
   calcVoltage = voMeasured*(5.0/1024);
-  dustDensity = 170*calcVoltage-100;
+  dustDensity = (40*calcVoltage-10);
   if ( dustDensity < 0)
   {
     dustDensity = 0.00;
@@ -87,7 +91,7 @@ bool powercount=0;        // count if the power button is pushed
 //plasma
 bool Bpm=1;                  // plasma button state
 bool Lpm=1;                  // previous plasma button state
-bool statePM = 0;        // plasma output state
+bool statePM = 1;        // plasma output state
 bool plasmacount=0;       // count if plasma has been pressed
 
 //speed
@@ -116,11 +120,23 @@ short int buttondelay=300;// delay between each button press in ms
 };
 keypad output[OUTPUT_COUNT];
 
-
+///////////////////////////////////////Display///////////////////////////////////////////////
+#include <Arduino.h>
+#include <TM1637Display.h>
+#define CLK 5
+#define DIO 4
+TM1637Display display(CLK, DIO);
+unsigned short int timedisplay=1000;
+unsigned short int TD=0;
 
 void setup() {
+///////////////////////////////////////DATA//////////////////////////////////////////////////
+//recive data
+  pinMode(1, INPUT); 
+  pinMode(0, OUTPUT); 
+  NodeSerial.begin(57600);
+  
 ///////////////////////////////////////Capasitive Sent Control///////////////////////////////////
-  Serial.begin(9600); 
   int inputpins[3]={
     Bpow,Bspeed,Bplasma
     };
@@ -162,12 +178,10 @@ void setup() {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-
+//////////////////////////////////////////////////////////////////////////////////////////////
+ 
+ /////////////////////////////////// assign power on and off//////////////////////////////////
 void powerset(){
-//apply power
-
- // assign power on and off
-
   if ((Bp != Lp) && (Bp == 0) && (millis()-powert0 > buttondelay) && (powercount==0)){
     stateP=!stateP;
     digitalWrite(POW,stateP);
@@ -187,7 +201,7 @@ void powerset(){
   }
 }
 
-
+//////////////////////////////////////// Button plasma///////////////////////////////////////
 void plasmaset(){
     if ((Bpm != Lpm) && (stateP == 0) && (millis()-plasmat0 > buttondelay) && (plasmacount ==0)){
     statePM=!statePM;
@@ -203,16 +217,15 @@ void plasmaset(){
     plasmacount = 0;
   }
 }
-
+/////////////////////////////////////speed clear///////////////////////////////////////
 void clearspeed(){
       digitalWrite(M4,1);
       digitalWrite(M1,1);  
       digitalWrite(M2,1);
       digitalWrite(M3,1);
-
 }
 
- // set up the speed
+ //////////////////////////////////// set up the speed///////////////////////////////
 void speedset(){
 
  if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (millis()-speedt0 > buttondelay)){  
@@ -234,8 +247,8 @@ void speedset(){
 void applythespeedswitch(){
     switch (index) {
     case 0:
-      //clearspeed();
-      //digitalWrite(PLASMA,1);
+      clearspeed();
+      digitalWrite(PLASMA,1);
       break;
     case 1:
       clearspeed();
@@ -326,7 +339,7 @@ void Remote(){
       }
     }
 }
-
+//////////////////////////////////////////Sensor///////////////////////////////////////////////
 void sensor_DHT(){
    float h = dht.readHumidity();
    float t = dht.readTemperature();
@@ -345,12 +358,12 @@ void sensor_DHT(){
    }
 }
 
-
 void sensor_dust(){
     if(millis()-t0>timer){
     dust[count]=readdust();
     Serial.print("Dust is :");
     Serial.print(takeaverage(dust));
+    NodeSerial.print(takeaverage(dust));
       
     ///// get index for the next reading
     if ((count>numaverage-2)){
@@ -362,42 +375,73 @@ void sensor_dust(){
   } 
 }
 
+//////////////////////////////////////////Display//////////////////////////////////////////
+
+void Display(){
+  unsigned short int td = millis();
+  if(td-TD>timedisplay)
+  {
+    TD=td;
+     display.setBrightness(0x0f);
+     display.showNumberDec(takeaverage(dust), false);
+  }
+}
+
+///////////////////////////////////////Data recive//////////////////////////////////////////
+void data_recive(){
+
+ if (NodeSerial.available() > 0){
+    bool autobutton = NodeSerial.parseInt(); 
+    bool plasma     = NodeSerial.parseInt();
+    bool speed1     = NodeSerial.parseInt();
+    bool speed2     = NodeSerial.parseInt();
+    bool speed3     = NodeSerial.parseInt();
+    bool speed4     = NodeSerial.parseInt(); 
+    
+    if (NodeSerial.read() == '\n') {
+          Serial.print("speed1");      Serial.print(" : "); Serial.print(speed1);
+          Serial.print("\tspeed2");      Serial.print(" : "); Serial.print(speed2);
+          Serial.print("\tspeed3");      Serial.print(" : "); Serial.print(speed3);
+          Serial.print("\tspeed4");      Serial.print(" : "); Serial.print(speed4);
+          Serial.print("\tplasma");    Serial.print(" : "); Serial.print(plasma);
+          Serial.print("\tauto");      Serial.print(" : "); Serial.println(autobutton);       
+    } 
+ }
+}
+
+////////////////////////////////////////VIOD////////////////////////////////////////////////
+////////////////////////////////////////LOOP/////////////////////////////////////////
 
 void loop(){
 //////////////////////////////////////////Capasitive Sent Control///////////////////////////////////////
- // read inputs
- // Serial.println(i);
+
   Bs      =  digitalRead(Bspeed);
   Bp      =  digitalRead(Bpow);
   Bpm     =  digitalRead(Bplasma);
-  //Serial.println(Bs);
 
-
-//apply the Remote
-Remote();
-
-//apply the Sensor
+Remote();  
+powerset();
+speedset();
+plasmaset();
 sensor_DHT();
 sensor_dust();
-
-//apply read input to the output
- 
-
-
-//apply power
-
-powerset();
-
-// turn off the machine (everything)
-// if(stateP==0){index=0;}
+Display();
+//data_recive();
 
 
 
-// apply the state of plasma
-plasmaset();
 
 
-// apply the state of speed
-speedset();
+
+
+
+
+
+
+
+
+
+
+
 
 }

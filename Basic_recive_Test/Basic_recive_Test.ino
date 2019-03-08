@@ -1,23 +1,22 @@
 
 #include <SoftwareSerial.h>
-
-SoftwareSerial NodeSerial(2,3); // RX | TX
+bool countplasmad=0;
+SoftwareSerial NodeSerial(1,0); // RX | TX
 
 void setup() {
 
-  pinMode(2, INPUT); 
+  pinMode(1, INPUT); 
+  pinMode(6,OUTPUT);
+  pinMode(0, OUTPUT); 
 
-  pinMode(3, OUTPUT); 
-
-  Serial.begin(9600);
+  //Serial.begin(9600);
 
   NodeSerial.begin(57600);
 
  }
 
 void loop() {
-
-  while (NodeSerial.available() > 0) {
+ 
     bool autobutton = NodeSerial.parseInt(); 
     bool plasma     = NodeSerial.parseInt();
     bool speed1     = NodeSerial.parseInt();
@@ -34,16 +33,14 @@ void loop() {
           Serial.print("\tauto");      Serial.print(" : "); Serial.println(autobutton); 
           
     }
-    if(plasma==1){digitalWrite(12,1);}
-  else{digitalWrite(12,0);}
-    if(speed2==1){digitalWrite(7,1);}
-  else{digitalWrite(7,0);}
-    if(speed3==1){digitalWrite(8,1);}
-  else{digitalWrite(8,0);}
-    if(speed4==1){digitalWrite(9,1);}
-  else{digitalWrite(9,0);}
-   if(autobutton==1){digitalWrite(11,1);}
-  else{digitalWrite(11,0);}
+    if((plasma==1)){
+    digitalWrite(13,1);
+ 
+  }
+  else {
+    
+    digitalWrite(13,0);
+
   }
 
 } 
