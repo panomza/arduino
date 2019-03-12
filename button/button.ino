@@ -1,16 +1,15 @@
-////////////////////////////////////////DATA////////////////////////////////////////////////
-//recive data
-#include <SoftwareSerial.h>
-SoftwareSerial NodeSerial(1,0); // RX | TX
+
 //////////////////////////////////////////Sensor/////////////////////////////////////////////////
 ///DHT Sensor/////
 #include "DHT.h"
 #define DHTPIN 2
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
+float Temp ;
+float Humi ;
 
 ////////Dust Sensor//////////
-int measurePin = A5;
+int measurePin = 19;
 int ledPower = 12;
 
 unsigned int samplingTime = 280;
@@ -60,14 +59,16 @@ float takeaverage(float input[]){
 short int powert0; 
 short int speedt0;
 short int plasmat0;
+short int auto0;
 
 /// pin definition
 
 // input pins
-const short int Bspeed = 15;    // speed input pin
 const short int Bpow = 14;      //power button input pin
+const short int Bspeed = 15;    // speed input pin
 const short int Bplasma = 16;   // plasma button input pin
-
+const short int Btimer = 17;
+const short int Bauto = 18;
 
 //output pins
 
@@ -78,6 +79,7 @@ const short int M2 =  8;        // motor output pin
 const short int M3 =  9;        // motor output pin
 const short int M4 =  10;       // motor output pin
 const short int BUZ = 4;        // buzzer output pin
+const short int AUTO = 11; 
 
 
 // state variables
@@ -99,6 +101,15 @@ bool Bs=1;                   // speed input state
 bool Ls=1;                   // previous speed input state
 bool stateS = 0;         // speed state
 unsigned short int index = 1;                // case counter
+
+//timer
+
+//Auto
+bool Ba=1;
+bool La=1;
+bool stateA = 1;
+bool autocount=0;
+unsigned short int Sauto;
 
 //delays
 short int buttondelay=300;// delay between each button press in ms
@@ -130,19 +141,14 @@ unsigned short int timedisplay=1000;
 unsigned short int TD=0;
 
 void setup() {
-///////////////////////////////////////DATA//////////////////////////////////////////////////
-//recive data
-  pinMode(1, INPUT); 
-  pinMode(0, OUTPUT); 
-  NodeSerial.begin(57600);
-  
+Serial.begin(9600);
 ///////////////////////////////////////Capasitive Sent Control///////////////////////////////////
-  int inputpins[3]={
-    Bpow,Bspeed,Bplasma
+  int inputpins[5]={
+    Bpow,Bspeed,Bplasma,Btimer,Bauto
     };
 
-  int outputpins[7] = {
-    POW,PLASMA,M1,M2,M3,M4,BUZ
+  int outputpins[8] = {
+    POW,PLASMA,M1,M2,M3,M4,BUZ,AUTO
   };
 
   for(int j=0;j< sizeof(inputpins)/sizeof(1);j++){
@@ -189,13 +195,13 @@ void powerset(){
     Serial.println(stateP); 
     applythespeedswitch(); // apply the switch for speed when turning on
     Lp=Bp;
+    index=1;
     powert0 = millis();
+    clearspeed();
+    poweroff();
     powercount = 1;
-    if(stateP==1){clearspeed();
-    digitalWrite(PLASMA,1);
-    }
-    // if(stateP==0){Melody();}
-  } else if ((Bp != Lp) && (Bp == 1)&& (millis()-powert0 > buttondelay)){
+} 
+  else if ((Bp != Lp) && (Bp == 1)&& (millis()-powert0 > buttondelay)){
     Lp=Bp;
     powercount = 0;
   }
@@ -217,6 +223,14 @@ void plasmaset(){
     plasmacount = 0;
   }
 }
+
+void poweroff(){
+
+     if(stateP==1){statePM=1;}
+      digitalWrite(PLASMA,1);
+     if(stateP==1){stateA=1;}
+      digitalWrite(AUTO,1);
+}
 /////////////////////////////////////speed clear///////////////////////////////////////
 void clearspeed(){
       digitalWrite(M4,1);
@@ -228,7 +242,7 @@ void clearspeed(){
  //////////////////////////////////// set up the speed///////////////////////////////
 void speedset(){
 
- if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (millis()-speedt0 > buttondelay)){  
+ if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (millis()-speedt0 > buttondelay)&&(stateA==1)){  
      stateS=!stateS;
      index++;
      if(index>4){index=1;}
@@ -236,7 +250,7 @@ void speedset(){
      Serial.println(index);
      speedt0=millis(); // get the current time
      Ls=Bs;
-     applythespeedswitch();
+
  }
  else if ((Bs != Ls) && (Bs == 1)&& (millis()-speedt0 > buttondelay)){
     Ls=Bs;
@@ -245,6 +259,7 @@ void speedset(){
 }
 
 void applythespeedswitch(){
+  if(stateP==0){
     switch (index) {
     case 0:
       clearspeed();
@@ -252,26 +267,50 @@ void applythespeedswitch(){
       break;
     case 1:
       clearspeed();
-      digitalWrite(M1,LOW);   
+      digitalWrite(M1,0);   
      // Serial.println("M1");
       break;
     case 2:
       clearspeed();
-      digitalWrite(M2,LOW);
+      digitalWrite(M2,0);
      // Serial.println("M2");
       break;
     case 3:
       clearspeed();
-      digitalWrite(M3,LOW);
+      digitalWrite(M3,0);
      // Serial.println("M3");
       break;
     case 4:
       clearspeed();
-      digitalWrite(M4,LOW);
+      digitalWrite(M4,0);
      // Serial.println("M4");
       break;
   }
+  }
 }
+
+void Auto(){
+   if(stateA==0){
+    if(takeaverage(dust)>=40){index=4;}
+    else if(takeaverage(dust)>=30){index=3;}
+    else if(takeaverage(dust)>=20){index=2;}
+    else if(takeaverage(dust)>=15){index=1;}
+   }
+    if ((Ba != La) && (stateP == 0) && (millis()-auto0 > buttondelay) && (autocount ==0)){
+    stateA=!stateA;
+    digitalWrite(AUTO,stateA);
+    Serial.print("Auto is set to: ");
+    Serial.println(stateA); 
+    La=Ba;
+    auto0 = millis();
+    autocount =1;
+    }
+   else if ((Ba != La) && (Ba == 1)&& (millis()-auto0 > buttondelay)){
+    La=Ba;
+    autocount = 0;
+  }
+}
+
 
 
 /////////////////////////////////////////Remote/////////////////////////////////////////////
@@ -343,7 +382,8 @@ void Remote(){
 void sensor_DHT(){
    float h = dht.readHumidity();
    float t = dht.readTemperature();
-
+   Temp = t;
+   Humi = h;
    if (isnan(h) || isnan(t)) {
    Serial.println("Failed to read from DHT sensor!");
       return;
@@ -363,10 +403,9 @@ void sensor_dust(){
     dust[count]=readdust();
     Serial.print("Dust is :");
     Serial.print(takeaverage(dust));
-    NodeSerial.print(takeaverage(dust));
       
     ///// get index for the next reading
-    if ((count>numaverage-2)){
+    if ((count>numaverage)){
       count =0;
     }else{
       count +=1;
@@ -387,27 +426,7 @@ void Display(){
   }
 }
 
-///////////////////////////////////////Data recive//////////////////////////////////////////
-void data_recive(){
 
- if (NodeSerial.available() > 0){
-    bool autobutton = NodeSerial.parseInt(); 
-    bool plasma     = NodeSerial.parseInt();
-    bool speed1     = NodeSerial.parseInt();
-    bool speed2     = NodeSerial.parseInt();
-    bool speed3     = NodeSerial.parseInt();
-    bool speed4     = NodeSerial.parseInt(); 
-    
-    if (NodeSerial.read() == '\n') {
-          Serial.print("speed1");      Serial.print(" : "); Serial.print(speed1);
-          Serial.print("\tspeed2");      Serial.print(" : "); Serial.print(speed2);
-          Serial.print("\tspeed3");      Serial.print(" : "); Serial.print(speed3);
-          Serial.print("\tspeed4");      Serial.print(" : "); Serial.print(speed4);
-          Serial.print("\tplasma");    Serial.print(" : "); Serial.print(plasma);
-          Serial.print("\tauto");      Serial.print(" : "); Serial.println(autobutton);       
-    } 
- }
-}
 
 ////////////////////////////////////////VIOD////////////////////////////////////////////////
 ////////////////////////////////////////LOOP/////////////////////////////////////////
@@ -418,15 +437,18 @@ void loop(){
   Bs      =  digitalRead(Bspeed);
   Bp      =  digitalRead(Bpow);
   Bpm     =  digitalRead(Bplasma);
+  Ba      =  digitalRead(Bauto);
+// Serial.println(statePM);
 
 Remote();  
 powerset();
 speedset();
 plasmaset();
+Auto();
 sensor_DHT();
 sensor_dust();
 Display();
-//data_recive();
+applythespeedswitch();
 
 
 
