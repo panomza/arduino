@@ -8,22 +8,23 @@ short int timer0;
 /// pin definition
 
 // input pins
-const short int Bpow = 14;      //power button input pin
-const short int Bspeed = 15;    // speed input pin
-const short int Bplasma = 16;   // plasma button input pin
-const short int Btimer = 17;
-const short int Bauto = 18;
-
+/*
+const short int Bpow = 13;      //power button input pin
+const short int Bspeed = 12;    // speed input pin
+const short int Bplasma = 14;   // plasma button input pin
+const short int Btimer = 27;
+const short int Bauto = 33;
+*/
 //output pins
 
-const short int POW=13;         //power output pin
-const short int PLASMA=6;       // plasma button output pin
-const short int M1 =  7;        // motor output pin
-const short int M2 =  8;        // motor output pin
-const short int M3 =  9;        // motor output pin
-const short int M4 =  10;       // motor output pin
-const short int BUZ = 4;        // buzzer output pin
-const short int AUTO = 11; 
+const short int POW=36;         //power output pin
+const short int PLASMA=33;       // plasma button output pin
+const short int M1 = 39;        // motor output pin
+const short int M2 =  34;        // motor output pin
+const short int M3 =  35;        // motor output pin
+const short int M4 =  32;       // motor output pin
+//const short int BUZ;        // buzzer output pin
+const short int AUTO = 25; 
 
 
 // state variables
@@ -73,12 +74,12 @@ Serial.begin(9600);
   int outputpins[8] = {
     POW,PLASMA,M1,M2,M3,M4,BUZ,AUTO
   };
-
+/*
   for(int j=0;j< sizeof(inputpins)/sizeof(1);j++){
     pinMode(inputpins[j],INPUT);
     Serial.print(inputpins[j]);
     Serial.println(" is set as input");
-  }
+  }*/
   for(int j=0;j< sizeof(outputpins)/sizeof(1);j++){
     pinMode(outputpins[j],OUTPUT);
     Serial.print(outputpins[j]);
@@ -243,11 +244,10 @@ void Auto(){
   }
 }
 void loop() {
-
-  Bs      =  digitalRead(Bspeed);
-  Bp      =  digitalRead(Bpow);
-  Bpm     =  digitalRead(Bplasma);
-  Ba      =  digitalRead(Bauto);
+  Bp      =  touchRead(T4);
+  Bs      =  touchRead(T5);
+  Bpm     =  touchRead(T6);
+  Ba      =  touchRead(T7);
   
 powerset();
 speedset();
