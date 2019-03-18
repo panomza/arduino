@@ -12,13 +12,11 @@ float Humi ;
 int measurePin = 19;
 int ledPower = 12;
 
-unsigned int samplingTime = 280;
-unsigned int deltaTime = 40;
-unsigned int sleepTime = 9680;
-const int numaverage = 50; ///number of values for taking average
+const int numaverage = 20;//number of values for taking average
 float dust[numaverage];
-unsigned int count=0;
+unsigned short int count=0;
 float initialdust=20;
+
 float t0;// time of last reading
 float timer=500;// time between each reading
 
@@ -27,12 +25,12 @@ float calcVoltage = 0;
 float dustDensity = 0;
 
 float readdust(){
-  digitalWrite(ledPower,LOW);
-  delayMicroseconds(samplingTime);
+  digitalWrite(ledPower,0);
+  delayMicroseconds(280);
   voMeasured = analogRead(measurePin);
-  delayMicroseconds(deltaTime);
-  digitalWrite(ledPower,HIGH);
-  delayMicroseconds(sleepTime);
+  delayMicroseconds(40);
+  digitalWrite(ledPower,1);
+  delayMicroseconds(9680);
 
   calcVoltage = voMeasured*(5.0/1024);
   dustDensity = (40*calcVoltage-10);
@@ -60,6 +58,7 @@ short int powert0;
 short int speedt0;
 short int plasmat0;
 short int auto0;
+short int timer0;
 
 /// pin definition
 
@@ -102,7 +101,12 @@ bool Ls=1;                   // previous speed input state
 bool stateS = 0;         // speed state
 unsigned short int index = 1;                // case counter
 
-//timer
+//Timer
+bool Bt=1;
+bool Lt=1;
+bool stateT = 1;
+bool timercount=0;
+unsigned short int selectime = 0;
 
 //Auto
 bool Ba=1;
@@ -140,6 +144,8 @@ TM1637Display display(CLK, DIO);
 unsigned short int timedisplay=1000;
 unsigned short int TD=0;
 
+///////////////////////////////////////////Void//////////////////////////////////////
+//////////////////////////////////////////Setup//////////////////////////////////////
 void setup() {
 Serial.begin(9600);
 ///////////////////////////////////////Capasitive Sent Control///////////////////////////////////
@@ -173,14 +179,12 @@ Serial.begin(9600);
 
 //////////////////////////////////////////Sensor///////////////////////////////////////////////
    ////DHT Sensor////
-   Serial.println("DHTxx test!");
    dht.begin();
    ////Dust Sensor//////
   pinMode(ledPower,OUTPUT);
   for(int i=0;i<numaverage;i++){
   dust[i]=initialdust;
   }
-  t0=millis();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -289,12 +293,37 @@ void applythespeedswitch(){
   }
 }
 
+
+void TIMER(){
+ if ((Bt != Lt) && (stateP==0) && (Bt == 0)&& (millis()-timer0 > buttondelay)){  
+     stateT=!stateT;
+     selectime++;
+     if(selectime>4){selectime=1;}
+     timer0=millis(); // get the current time
+     Lt=Bt;
+ }
+ else if ((Bt != Lt) && (Bt == 1)&& (millis()-timer0 > buttondelay)){
+    Lt=Bt;
+  }
+  
+  switch (index) {
+      case 1:
+       unsigned int tr = millis();
+     if(tr>10000){stateP=1;}      
+//      digitalWrite(,1);
+      break;
+  }
+
+
+  }
+
+
 void Auto(){
    if(stateA==0){
-    if(takeaverage(dust)>=40){index=4;}
-    else if(takeaverage(dust)>=30){index=3;}
-    else if(takeaverage(dust)>=20){index=2;}
-    else if(takeaverage(dust)>=15){index=1;}
+      if(takeaverage(dust)>=40){index=4;}
+      else if(takeaverage(dust)>=30){index=3;}
+      else if(takeaverage(dust)>=20){index=2;}
+      else if(takeaverage(dust)>=15){index=1;}
    }
     if ((Ba != La) && (stateP == 0) && (millis()-auto0 > buttondelay) && (autocount ==0)){
     stateA=!stateA;
@@ -378,17 +407,16 @@ void Remote(){
       }
     }
 }
+
 //////////////////////////////////////////Sensor///////////////////////////////////////////////
 void sensor_DHT(){
    float h = dht.readHumidity();
    float t = dht.readTemperature();
    Temp = t;
    Humi = h;
-   if (isnan(h) || isnan(t)) {
-   Serial.println("Failed to read from DHT sensor!");
-      return;
-   }
+  
    if(millis()-t0>timer){
+
    Serial.print("Humidity: "); 
    Serial.print(h);
    Serial.print(" %\t");
@@ -400,17 +428,16 @@ void sensor_DHT(){
 
 void sensor_dust(){
     if(millis()-t0>timer){
+      count++;
     dust[count]=readdust();
     Serial.print("Dust is :");
     Serial.print(takeaverage(dust));
-      
+          
     ///// get index for the next reading
     if ((count>numaverage)){
       count =0;
-    }else{
-      count +=1;
     }
-    t0=millis();
+    t0=millis(); 
   } 
 }
 
@@ -445,7 +472,7 @@ powerset();
 speedset();
 plasmaset();
 Auto();
-sensor_DHT();
+//nsor_DHT();
 sensor_dust();
 Display();
 applythespeedswitch();
