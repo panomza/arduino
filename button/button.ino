@@ -12,7 +12,7 @@ float Humi ;
 int measurePin = 19;
 int ledPower = 12;
 
-const int numaverage = 20;//number of values for taking average
+const int numaverage = 50;//number of values for taking average
 float dust[numaverage];
 unsigned short int count=0;
 float initialdust=20;
@@ -219,11 +219,15 @@ void plasmaset(){
     Serial.print("Plasma is set to: ");
     Serial.println(statePM); 
     Lpm=Bpm;
+    tone(10,1000);
+    delay(50);
+   noTone(10);
     plasmat0 = millis();
     plasmacount =1;
     }
    else if ((Bpm != Lpm) && (Bpm == 1)&& (millis()-plasmat0 > buttondelay)){
     Lpm=Bpm;
+        noTone(10);
     plasmacount = 0;
   }
 }
