@@ -1,4 +1,6 @@
 
+
+float currenttime=0;
 //////////////////////////////////////////Sensor/////////////////////////////////////////////////
 ///DHT Sensor/////
 #include "DHT.h"
@@ -14,8 +16,10 @@ int ledPower = 12;
 
 const int numaverage = 20;//number of values for taking average
 float dust[numaverage];
+
 unsigned short int count=0;
 float initialdust=20;
+float averagedust=initialdust;
 
 float t0;// time of last reading
 float timer=500;// time between each reading
@@ -114,6 +118,8 @@ bool La=1;
 bool stateA = 1;
 bool autocount=0;
 unsigned short int Sauto;
+float autotime=0;
+float autotimer=2000;
 
 //delays
 short int buttondelay=300;// delay between each button press in ms
@@ -319,25 +325,30 @@ void TIMER(){
 
 
 void Auto(){
-   if(stateA==0){
-      if(takeaverage(dust)>=40){index=4;}
-      else if(takeaverage(dust)>=30){index=3;}
-      else if(takeaverage(dust)>=20){index=2;}
-      else if(takeaverage(dust)>=15){index=1;}
-   }
-    if ((Ba != La) && (stateP == 0) && (millis()-auto0 > buttondelay) && (autocount ==0)){
-    stateA=!stateA;
-    digitalWrite(AUTO,stateA);
-    Serial.print("Auto is set to: ");
-    Serial.println(stateA); 
-    La=Ba;
-    auto0 = millis();
-    autocount =1;
+  // set speed according to dust
+    if(currenttime-autotime>autotimer && stateA==0){
+        Serial.print("average dust is :");
+        Serial.println(averagedust);
+        if(averagedust>=40){index=4;Serial.println("speed is set to 4");}
+        else if(averagedust>=30){index=3;Serial.println("speed is set to 3");}
+        else if(averagedust>=20){index=2;Serial.println("speed is set to 2");}
+        else{index=1;Serial.println("speed is set to 1");}
+        autotime=currenttime;
+        Serial.println("speed is set by the auto function");
     }
-   else if ((Ba != La) && (Ba == 1)&& (millis()-auto0 > buttondelay)){
-    La=Ba;
-    autocount = 0;
-  }
+    // activate or deactivate auto function
+    if ((Ba != La) && (stateP == 0) && (currenttime-auto0 > buttondelay) && (autocount ==0)){
+        stateA=!stateA;
+        digitalWrite(AUTO,stateA);
+        Serial.print("Auto is set to: ");
+        Serial.println(stateA); 
+        La=Ba;
+        auto0 = currenttime;
+        autocount =1;
+    } else if ((Ba != La) && (Ba == 1)&& (currenttime-auto0 > buttondelay)){
+      La=Ba;
+      autocount = 0;
+    }
 }
 
 
@@ -431,7 +442,8 @@ void sensor_dust(){
       count++;
     dust[count]=readdust();
     Serial.print("Dust is :");
-    Serial.print(takeaverage(dust));
+    averagedust=takeaverage(dust);
+    Serial.println(averagedust);
           
     ///// get index for the next reading
     if ((count>numaverage)){
@@ -444,13 +456,17 @@ void sensor_dust(){
 //////////////////////////////////////////Display//////////////////////////////////////////
 
 void Display(){
+//  Serial.println("display started");
   unsigned short int td = millis();
+//  Serial.println("display started 1");
   if(td-TD>timedisplay)
   {
     TD=td;
      display.setBrightness(0x0f);
-     display.showNumberDec(takeaverage(dust), false);
+     display.showNumberDec(averagedust, false);
+     Serial.println("display started 2");
   }
+//  Serial.println("display started 2");
 }
 
 
@@ -466,13 +482,13 @@ void loop(){
   Bpm     =  digitalRead(Bplasma);
   Ba      =  digitalRead(Bauto);
 // Serial.println(statePM);
-
+currenttime=millis();
 Remote();  
 powerset();
 speedset();
 plasmaset();
 Auto();
-//nsor_DHT();
+//sensor_DHT();
 sensor_dust();
 Display();
 applythespeedswitch();
