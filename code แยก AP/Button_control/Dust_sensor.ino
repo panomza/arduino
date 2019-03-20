@@ -1,12 +1,4 @@
-int measurePin = 19;
-int ledPower = 12;
 
-const int numaverage = 20; ///number of values for taking average
-float dust[numaverage];
-
-unsigned short int count;
-float initialdust=20;
-float averagedust=initialdust;
 
 float t0;// time of last reading
 float timer=500;// time between each reading
@@ -42,15 +34,11 @@ float takeaverage(float input[]){
   }
   return sum/numaverage;
 }
-void setup() {
-  Serial.begin(9600);
-  pinMode(ledPower,OUTPUT);
-  for(int i=0;i<numaverage;i++){
-  dust[i]=initialdust;
-  }
-}
 
-void loopsensor_dust() {
+
+
+
+void sensor_dust() {
     if(millis()-t0>timer){
       count++;
     dust[count]=readdust();
