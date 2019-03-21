@@ -6,20 +6,13 @@ TM1637Display display(CLK, DIO);
 unsigned short int timedisplay=1000;
 unsigned short int TD=0;
 
-void setup() {
-  // put your setup code here, to run once:
 
-}
 void Display(){
   unsigned short int td = millis();
   if(td-TD>timedisplay)
   {
     TD=td;
      display.setBrightness(0x0f);
-     display.showNumberDec(465, false);
+     display.showNumberDec(averagedust, false);
   }
-}
-
-void loop() {
-  Display();
 }
