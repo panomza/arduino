@@ -1,8 +1,15 @@
-#include <TonePlayer.h> 
-TonePlayer tone1 (TCCR1A, TCCR1B, OCR1AH, OCR1AL, TCNT1H, TCNT1L);
 
+#include "pitches.h"
 
+// notes in the melody:
+int melody[] = {
+  NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4
+};
 
+// note durations: 4 = quarter note, 8 = eighth note, etc.:
+int noteDurations[] = {
+  4, 8, 8, 4, 4, 4, 4, 4
+};
 float currenttime=0;
 //////////////////////////////////////////Sensor/////////////////////////////////////////////////
 ///DHT Sensor/////
@@ -84,7 +91,7 @@ const short int M1 =  7;        // motor output pin
 const short int M2 =  8;        // motor output pin
 const short int M3 =  9;        // motor output pin
 const short int M4 =  10;       // motor output pin
-const short int BUZ = 5;        // buzzer output pin
+const short int BUZ = 4;        // buzzer output pin
 const short int AUTO = 11; 
 
 
@@ -156,16 +163,7 @@ unsigned short int TD=0;
 ///////////////////////////////////////////Void//////////////////////////////////////
 //////////////////////////////////////////Setup//////////////////////////////////////
 void setup() {
-pinMode (17, OUTPUT); // output pin is fixed (OC1A) 
-tone1.tone (220); // 220 Hz 
-delay (500); 
-tone1.noTone (); 
-tone1.tone (440);
-delay (500); 
-tone1.noTone (); 
-tone1.tone (880); 
-delay (500); 
-tone1.noTone ();
+
 
 
 Serial.begin(9600);
@@ -221,6 +219,7 @@ void powerset(){
     Serial.println(stateP); 
     applythespeedswitch(); // apply the switch for speed when turning on
     Lp=Bp;
+    toneon();
     index=1;
     powert0 = millis();
     clearspeed();
@@ -233,7 +232,22 @@ void powerset(){
   }
 }
 
+void toneon(){
+    for (int thisNote = 0; thisNote < 8; thisNote++) {
 
+    // to calculate the note duration, take one second divided by the note type.
+    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+    int noteDuration = 1000 / noteDurations[thisNote];
+    tone(10, melody[thisNote], noteDuration);
+
+    // to distinguish the notes, set a minimum time between them.
+    // the note's duration + 30% seems to work well:
+    int pauseBetweenNotes = noteDuration * 1.30;
+    delay(pauseBetweenNotes);
+    // stop the tone playing:
+    noTone(10);
+  }
+}
 //////////////////////////////////////// Button plasma///////////////////////////////////////
 void plasmaset(){
     if ((Bpm != Lpm) && (stateP == 0) && (millis()-plasmat0 > buttondelay) && (plasmacount ==0)){
@@ -242,13 +256,15 @@ void plasmaset(){
     Serial.print("Plasma is set to: ");
     Serial.println(statePM); 
     Lpm=Bpm;
-
+    tone(10,1000);
+    delay(50);
+   noTone(10);
     plasmat0 = millis();
     plasmacount =1;
     }
    else if ((Bpm != Lpm) && (Bpm == 1)&& (millis()-plasmat0 > buttondelay)){
     Lpm=Bpm;
-
+        noTone(10);
     plasmacount = 0;
   }
 }
@@ -279,6 +295,7 @@ void speedset(){
      Serial.println(index);
      speedt0=millis(); // get the current time
      Ls=Bs;
+
  }
  else if ((Bs != Ls) && (Bs == 1)&& (millis()-speedt0 > buttondelay)){
     Ls=Bs;
