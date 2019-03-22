@@ -1,97 +1,104 @@
 
+#include <IRremote.h>
+  const int RECV_PIN = 3;
+  IRrecv irrecv(RECV_PIN);
+  decode_results results;
+#define OUTPUT_COUNT 5
+
+    unsigned long last = millis();
+    long remote_key[]={0xDF40BF,0xDF609F,0xDF48B7,0xDF50AF,0xDF708F};
+    const byte outputPins[OUTPUT_COUNT] = {0, 1, 2, 3,4};
+    bool status1[5] = {0,0,0,0,0};
+    struct keypad {
+    boolean state;
+};
+keypad output[OUTPUT_COUNT];
+
 short int powert0; 
 short int speedt0;
 short int plasmat0;
 short int auto0;
 short int timer0;
 
-
-/// pin definition
-
 // input pins
 
-const short int Bpow = 14;      //power button input pin
-const short int Bspeed = 15;    // speed input pin
-const short int Bplasma = 16;   // plasma button input pin
-<<<<<<< HEAD
-const short int Btimer = 18;
-const short int Bauto = 17;
-=======
-const short int Btimer = 17;
-const short int Bauto = 18;
->>>>>>> 45305bd0dd51906c88fe5434b51470c5851d3124
+const short int Bpow    = 14;    // power button input pin
+const short int Bspeed  = 15;    // speed input pin
+const short int Bplasma = 16;    // plasma button input pin
+const short int Bauto   = 18;    // Auto button input pin
+const short int Btimer ;    // Timer button input pin
 
 //output pins
 
-const short int POW=13;         //power output pin
-<<<<<<< HEAD
-const short int PLASMA=11;       // plasma button output pin
-=======
-const short int PLASMA=6;       // plasma button output pin
->>>>>>> 45305bd0dd51906c88fe5434b51470c5851d3124
-const short int M1 = 7;        // motor output pin
-const short int M2 =  8;        // motor output pin
-const short int M3 =  9;        // motor output pin
-const short int M4 =  10;       // motor output pin
-const short int BUZ;        // buzzer output pin
-<<<<<<< HEAD
-const short int AUTO = 12; 
-=======
-const short int AUTO = 11; 
->>>>>>> 45305bd0dd51906c88fe5434b51470c5851d3124
-
+const short int POW    = 13;      //power output pin
+const short int PLASMA = 6;       // plasma button output pin
+const short int M1     = 7;       // motor output pin
+const short int M2     = 8;       // motor output pin
+const short int M3     = 17;       // motor output pin
+const short int M4     = 10;      // motor output pin
+const short int BUZ    = 9;         // buzzer output pin
+const short int AUTO   = 11; 
 
 // state variables
 
 //power
-bool Bp=1;               //power button state
-bool Lp=1;               //previous power button state 
-bool stateP = 1;     //power output state
-bool powercount=0;        // count if the power button is pushed
+bool Bp         = 1;         //power button state
+bool Lp         = 1;         //previous power button state 
+bool stateP     = 1;         //power output state
+bool powercount = 0;         // count if the power button is pushed
 
 //plasma
-bool Bpm=1;                  // plasma button state
-bool Lpm=1;                  // previous plasma button state
-bool statePM = 1;        // plasma output state
-bool plasmacount=0;       // count if plasma has been pressed
+bool Bpm        = 1;                  // plasma button state
+bool Lpm        = 1;                  // previous plasma button state
+bool statePM    = 1;        // plasma output state
+bool plasmacount= 0;       // count if plasma has been pressed
 
 //speed
-bool Bs=1;                   // speed input state
-bool Ls=1;                   // previous speed input state
-bool stateS = 0;         // speed state
+bool Bs         = 1;                   // speed input state
+bool Ls         = 1;                   // previous speed input state
+bool stateS     = 0;         // speed state
 unsigned short int index = 1;                // case counter
 
 //Timer
-bool Bt=1;
-bool Lt=1;
-bool stateT = 1;
-bool timercount=0;
+bool Bt         = 1;
+bool Lt         = 1;
+bool stateT     = 1;
+bool timercount = 0;
 unsigned short int selectime = 0;
 
 //Auto
-bool Ba=1;
-bool La=1;
-bool stateA = 1;
-bool autocount=0;
+bool Ba         = 1;
+bool La         = 1;
+bool stateA     = 1;
+bool autocount  = 0;
 unsigned short int Sauto;
-float autotime=0;
-float autotimer=2000;
+float autotime  = 0;
+float autotimer = 2000;
 
 //delays
 short int buttondelay=300;// delay between each button press in ms
 float currenttime=0;
+unsigned short int songindex=0;
+
 int measurePin = 19;
 int ledPower = 12;
-
 const int numaverage = 20; ///number of values for taking average
 float dust[numaverage];
-
 unsigned short int count;
 float initialdust=20;
 float averagedust=initialdust;
 
+//beep
+bool beepvar=0;
+bool beepstarted=0;
+float beeptime=0;
+bool beeppowervar=0;
+
+
 void setup() {
 Serial.begin(9600);
+
+  irrecv.enableIRIn(); // Start the receiver
   
    int inputpins[5]={
     Bpow,Bspeed,Bplasma,Btimer,Bauto
@@ -112,68 +119,29 @@ Serial.begin(9600);
     Serial.println(" is set as output");
     digitalWrite(outputpins[j],1);
   }
-  ////set up the time
-  speedt0=millis();
-  powert0=millis();
-  plasmat0=millis();
 
     pinMode(ledPower,OUTPUT);
   for(int i=0;i<numaverage;i++){
   dust[i]=initialdust;
   }
+  beepvar=1;
 
 }
-
-
-
-
-
-void TIMER(){
-  Serial.println(selectime);
- if ((Bt != Lt) && (stateP==0) && (Bt == 0)&& (millis()-timer0 > buttondelay)){  
-     stateT=!stateT;
-     selectime++;
-     if(selectime>4){selectime=1;}
-     timer0=millis(); // get the current time
-     Lt=Bt;
- }
- else if ((Bt != Lt) && (Bt == 1)&& (millis()-timer0 > buttondelay)){
-    Lt=Bt;
-  }
-  
-  switch (selectime) {
-      case 0:
-       unsigned int tr = millis();
-     if(tr>10000){stateP=1;}      
-//      digitalWrite(,1);
-      break;
-  }
-}
-
-
-
 
 void loop() {
-<<<<<<< HEAD
-  Bp      =  digitalRead(Bpow);
-  Bs      =  digitalRead(Bspeed);
-  Bpm     =  digitalRead(Bplasma);
-  Ba      =  digitalRead(Bauto);
-  
-=======
-
-
-
-
- 
 currenttime=millis();
- 
->>>>>>> 45305bd0dd51906c88fe5434b51470c5851d3124
+
+beep();//beep version 1
+beeppower();//beep version2 for power on-off
+
+checkbuttons();
+Remote();
+applythespeedswitch();
+Display();
+sensor_dust();
 powerset();
 speedset();
 plasmaset();
 Auto();
-applythespeedswitch();
-Display();
-sensor_dust();
+
 }

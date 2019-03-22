@@ -1,15 +1,7 @@
 
-#include "pitches.h"
 
-// notes in the melody:
-int melody[] = {
-  NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4
-};
-
-// note durations: 4 = quarter note, 8 = eighth note, etc.:
-int noteDurations[] = {
-  4, 8, 8, 4, 4, 4, 4, 4
-};
+#include <TonePlayer.h> 
+TonePlayer tone1 (TCCR1A, TCCR1B, OCR1AH, OCR1AL, TCNT1H, TCNT1L);  
 float currenttime=0;
 //////////////////////////////////////////Sensor/////////////////////////////////////////////////
 ///DHT Sensor/////
@@ -89,9 +81,9 @@ const short int POW=13;         //power output pin
 const short int PLASMA=6;       // plasma button output pin
 const short int M1 =  7;        // motor output pin
 const short int M2 =  8;        // motor output pin
-const short int M3 =  9;        // motor output pin
+const short int M3 =  17;        // motor output pin
 const short int M4 =  10;       // motor output pin
-const short int BUZ = 4;        // buzzer output pin
+const short int BUZ = 9;        // buzzer output pin
 const short int AUTO = 11; 
 
 
@@ -219,7 +211,9 @@ void powerset(){
     Serial.println(stateP); 
     applythespeedswitch(); // apply the switch for speed when turning on
     Lp=Bp;
-    toneon();
+tone1.tone (1000);
+delay (100); 
+tone1.noTone ();
     index=1;
     powert0 = millis();
     clearspeed();
@@ -232,22 +226,7 @@ void powerset(){
   }
 }
 
-void toneon(){
-    for (int thisNote = 0; thisNote < 8; thisNote++) {
 
-    // to calculate the note duration, take one second divided by the note type.
-    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
-    int noteDuration = 1000 / noteDurations[thisNote];
-    tone(10, melody[thisNote], noteDuration);
-
-    // to distinguish the notes, set a minimum time between them.
-    // the note's duration + 30% seems to work well:
-    int pauseBetweenNotes = noteDuration * 1.30;
-    delay(pauseBetweenNotes);
-    // stop the tone playing:
-    noTone(10);
-  }
-}
 //////////////////////////////////////// Button plasma///////////////////////////////////////
 void plasmaset(){
     if ((Bpm != Lpm) && (stateP == 0) && (millis()-plasmat0 > buttondelay) && (plasmacount ==0)){
@@ -256,15 +235,14 @@ void plasmaset(){
     Serial.print("Plasma is set to: ");
     Serial.println(statePM); 
     Lpm=Bpm;
-    tone(10,1000);
-    delay(50);
-   noTone(10);
     plasmat0 = millis();
     plasmacount =1;
+            tone1.tone (1000);
+delay (100); 
+tone1.noTone ();
     }
    else if ((Bpm != Lpm) && (Bpm == 1)&& (millis()-plasmat0 > buttondelay)){
     Lpm=Bpm;
-        noTone(10);
     plasmacount = 0;
   }
 }
@@ -295,6 +273,9 @@ void speedset(){
      Serial.println(index);
      speedt0=millis(); // get the current time
      Ls=Bs;
+     tone1.tone (1000);
+delay (100); 
+tone1.noTone ();
 
  }
  else if ((Bs != Ls) && (Bs == 1)&& (millis()-speedt0 > buttondelay)){
@@ -370,6 +351,7 @@ void Auto(){
         else{index=1;Serial.println("speed is set to 1");}
         autotime=currenttime;
         Serial.println("speed is set by the auto function");
+
     }
     // activate or deactivate auto function
     if ((Ba != La) && (stateP == 0) && (currenttime-auto0 > buttondelay) && (autocount ==0)){
@@ -378,6 +360,9 @@ void Auto(){
         Serial.print("Auto is set to: ");
         Serial.println(stateA); 
         La=Ba;
+                tone1.tone (1000);
+delay (100); 
+tone1.noTone ();
         auto0 = currenttime;
         autocount =1;
     } else if ((Ba != La) && (Ba == 1)&& (currenttime-auto0 > buttondelay)){

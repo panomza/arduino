@@ -2,18 +2,17 @@
 #define BLYNK_PRINT Serial
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
-
-
-float takeaverage(float input[])
+  int select_speed=0;
+  int on_off = 0;
 //////////////////////////Sent data\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 #include <SoftwareSerial.h>
-SoftwareSerial NanoSerial(D3, D2); // RX | TX
+SoftwareSerial NodeSerial(D3, D2); // RX | TX
 
 //wifi variables
 //const char auth[] = "a7a249ec5f2c41edabf98479ba690559";
-const char auth[] = "45a91916638847d59d36bcd1a09480f5";
-const char ssid[] = "HATARILED Wi-Fi";
+const char auth[] = "d7c89935fa6449caabdb6753b6d80b11";
+const char ssid[] = "HTR-MK";
 const char pass[] = "hatariled1";
 
 
@@ -35,6 +34,7 @@ void turnoff() // turn off all speed
   Blynk.virtualWrite(V4, 0);
   Blynk.virtualWrite(V5, 0);
   Blynk.virtualWrite(V9, 0);
+  
   offbutton = 0;
   plasma    = 0;
   autobutton= 0;
@@ -55,90 +55,66 @@ void clearspeed()
 
 // Blynk read and write functions
 // user push speed buttons
-BLYNK_WRITE(V0) // number 1
+
+BLYNK_WRITE(V1) // number 1
 {
   int pinValue = param.asInt(); 
-  if (pinValue==1){
-    clearspeed();
-    Serial.println("speed 1 is pressed");
-    speed1=pinValue;
-  Blynk.virtualWrite(V0, 1);
-  Blynk.virtualWrite(V1, 0);
-  Blynk.virtualWrite(V2, 0);
-  Blynk.virtualWrite(V3, 0);
+  if (pinValue==1 && on_off==1){
+    select_speed++;
   }
-    else { speed1=0;}
+    switch (select_speed){
+      case 1:
+      Serial.println("speed 1 ");
+      Blynk.virtualWrite(V5,1);
+        break;
+      case 2:
+      Serial.println("speed 2 ");
+      Blynk.virtualWrite(V5,2);
+        break;
+      case 3:
+      Serial.println("speed 3 ");
+      Blynk.virtualWrite(V5,3);
+        break;
+      case 4:
+      Serial.println("speed 4 ");
+      Blynk.virtualWrite(V5,4);
+        break;
+      case 5:
+      select_speed=1;
+      Blynk.virtualWrite(V5,1);
+        break;
+    }
 }
-BLYNK_WRITE(V1) // number 2
+
+BLYNK_WRITE(V0) // ON
 {
   int pinValue = param.asInt(); 
+
+
   if (pinValue==1){
-    clearspeed();
-    Serial.println("speed 2 is pressed");
-    speed2=pinValue;
-  Blynk.virtualWrite(V0, 0);
-  Blynk.virtualWrite(V1, 1);
-  Blynk.virtualWrite(V2, 0);
-  Blynk.virtualWrite(V3, 0);
-  }
-    else { speed2=0;}
-}
-BLYNK_WRITE(V2) // number 3
-{
-  int pinValue = param.asInt(); 
-  if (pinValue==1){
-    clearspeed();
-    Serial.println("speed 3 is pressed");
-    speed3=pinValue;
-  Blynk.virtualWrite(V0, 0);
-  Blynk.virtualWrite(V1, 0);
-  Blynk.virtualWrite(V2, 1);
-  Blynk.virtualWrite(V3, 0);
-  }
-    else { speed3=0;}
-}
-BLYNK_WRITE(V3) // number 4
-{
-  int pinValue = param.asInt(); 
-  if (pinValue==1){
-    clearspeed();
-    Serial.println("speed 4 is pressed");
-    speed4=pinValue;
-  Blynk.virtualWrite(V0, 0);
-  Blynk.virtualWrite(V1, 0);
-  Blynk.virtualWrite(V2, 0);
-  Blynk.virtualWrite(V3, 1);
-  }
-    else { speed4=0;}
-}
-BLYNK_WRITE(V4) // off
-{
-  int pinValue = param.asInt(); 
-  if (pinValue==1){
-    Serial.println("off is pressed");
-    turnoff();
+
+    on_off++;
+
+    switch(on_off){
+      case 1:
+      Blynk.virtualWrite(V0, 1);
+      Serial.println("ON is pressed");
+      Blynk.virtualWrite(V5, 1);
+      select_speed=1;
+        break;
+        
+      case 2:
+      Blynk.virtualWrite(V0, 0);
+      Serial.println("OFF is pressed");
+      Blynk.virtualWrite(V1, 0);
+      Blynk.virtualWrite(V5, 0);
+      on_off=0;
+        break;
+    }
   }
 }
 
-BLYNK_WRITE(V9) // plasma
-{
-  int pinValue = param.asInt();
-  if (pinValue==1){
-    Serial.println("plasma is pressed");
-    plasma=pinValue;
-  } 
-  else { plasma=0;}
-}
 
-BLYNK_WRITE(V5) // auto button
-{
-  int pinValue = param.asInt(); 
-  if (pinValue==1){
-    Serial.println("auto is pressed");
-    autobutton=pinValue;
-  }
-  else{autobutton = 0 ; }
-}
 
 void setup()
 {
@@ -151,27 +127,22 @@ void setup()
   pinMode(D2,OUTPUT);
 
   Serial.begin(9600);
-  NanoSerial.begin(57600);           
+  NodeSerial.begin(57600);           
 }
 
 
 void loop()
 {
+   // Serial.println(select_speed); 
   Blynk.run();
 
-  NanoSerial.print(autobutton);     NanoSerial.print(" ");
-  NanoSerial.print(plasma);         NanoSerial.print(" ");
-  NanoSerial.print(speed1);         NanoSerial.print(" ");
-  NanoSerial.print(speed2);         NanoSerial.print(" ");
-  NanoSerial.print(speed3);         NanoSerial.print(" ");
-  NanoSerial.print(speed4);         NanoSerial.print("\n");
+  NodeSerial.print(autobutton);     NodeSerial.print(" ");
+  NodeSerial.print(plasma);         NodeSerial.print(" ");
+  NodeSerial.print(speed1);        NodeSerial.print(" ");
+  NodeSerial.print(speed2);        NodeSerial.print(" ");
+  NodeSerial.print(speed3);         NodeSerial.print(" ");
+  NodeSerial.print(speed4);         NodeSerial.print("\n");
 
-if (NanoSerial.available() > 0){
-    int dust =  NanoSerial.parseFloat();
-    
-     if (NanoSerial.read() == '\n') {
-       Serial.print("Dust1");      Serial.print(" : "); Serial.print(dust);
-     }
-}
+
 delay(100);
 }

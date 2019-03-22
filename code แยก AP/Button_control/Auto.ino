@@ -1,5 +1,5 @@
 void Auto(){
-    Ba      =  digitalRead(Bauto);
+
   // set speed according to dust
     if(currenttime-autotime>autotimer && stateA==0){
         Serial.print("average dust is :");
@@ -20,6 +20,7 @@ void Auto(){
         La=Ba;
         auto0 = currenttime;
         autocount =1;
+        beepvar=1;
     } else if ((Ba != La) && (Ba == 1)&& (currenttime-auto0 > buttondelay)){
       La=Ba;
       autocount = 0;
