@@ -1,5 +1,4 @@
 void plasmaset(){
-    Bpm     =  digitalRead(Bplasma);
     if ((Bpm != Lpm) && (stateP == 0) && (millis()-plasmat0 > buttondelay) && (plasmacount ==0)){
     statePM=!statePM;
     digitalWrite(PLASMA,statePM);
@@ -8,6 +7,7 @@ void plasmaset(){
     Lpm=Bpm;
     plasmat0 = millis();
     plasmacount =1;
+    beepvar=1;
     }
    else if ((Bpm != Lpm) && (Bpm == 1)&& (millis()-plasmat0 > buttondelay)){
     Lpm=Bpm;

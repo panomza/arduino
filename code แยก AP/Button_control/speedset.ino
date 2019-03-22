@@ -1,5 +1,5 @@
 void speedset(){
-  Bs      =  digitalRead(Bspeed);
+
  if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (millis()-speedt0 > buttondelay)&&(stateA==1)){  
      stateS=!stateS;
      index++;
@@ -8,6 +8,7 @@ void speedset(){
      Serial.println(index);
      speedt0=millis(); // get the current time
      Ls=Bs;
+     beepvar=1;
 
  }
  else if ((Bs != Ls) && (Bs == 1)&& (millis()-speedt0 > buttondelay)){

@@ -1,6 +1,8 @@
 
 void powerset(){
-    Bp      =  digitalRead(Bpow);
+  // check if previous state is different from current state, current state is 0 and powercount=0
+
+
   if ((Bp != Lp) && (Bp == 0) && (millis()-powert0 > buttondelay) && (powercount==0)){
     stateP=!stateP;
     digitalWrite(POW,stateP);
@@ -13,7 +15,14 @@ void powerset(){
     clearspeed();
     poweroff();
     powercount = 1;
-} 
+    if(stateP==1){
+      beeppowervar=1;
+      songindex=2;
+    }else {
+      beeppowervar=1;
+      songindex=1;
+    }
+} // else if Bp is back to 1, reset the powercount
   else if ((Bp != Lp) && (Bp == 1)&& (millis()-powert0 > buttondelay)){
     Lp=Bp;
     powercount = 0;
