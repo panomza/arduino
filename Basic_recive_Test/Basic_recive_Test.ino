@@ -25,6 +25,7 @@ void setup() {
  }
 
 void send_smart(){
+  NodeSerial.print("<");
   NodeSerial.print(Auto);          NodeSerial.print("  ");
   NodeSerial.print(plasma);        NodeSerial.print("  ");
   NodeSerial.print(speed1);        NodeSerial.print("  ");
@@ -38,7 +39,7 @@ void loop() {
     float current_time=millis();
 
      
-    if (NodeSerial.read()=='<'&& current_time-lastread>1000) {
+    if (NodeSerial.read()=='<'&& current_time-lastread>50) {
           Auto       = NodeSerial.parseInt(); 
           plasma     = NodeSerial.parseInt();
           speed1     = NodeSerial.parseInt();
@@ -52,9 +53,10 @@ void loop() {
           Serial.print("\tplasma");    Serial.print(" : "); Serial.print(plasma);
           Serial.print("\tAuto");      Serial.print(" : "); Serial.println(Auto); 
           lastread=current_time;
+          send_smart();
           
     }
-    if (current_time-lastsent>1000){
+    if (current_time-lastsent>10000){
       send_smart();
       lastsent=current_time;
     }
