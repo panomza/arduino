@@ -29,6 +29,7 @@ bool speed1=0;
 bool speed2=0;
 bool speed3=0;
 bool speed4=0;
+float lastSpeed=0;
 
 
 void turnoff() // turn off all speed
@@ -111,9 +112,9 @@ BLYNK_WRITE(V0) // ON-OFF
 BLYNK_WRITE(V1) // Speed
 {
   int pinValue = param.asInt(); 
-  if (pinValue==1 && on_off==1){
+  if (pinValue==1 && on_off==1&& millis()-lastSpeed>50){
     select_speed++;
-  }
+  
     switch (select_speed){
       case 1:
       clearspeed();
@@ -146,6 +147,7 @@ BLYNK_WRITE(V1) // Speed
       Blynk.virtualWrite(V5,1);
         break;
     }
+  }
     send_stupid();
 }
 
@@ -164,11 +166,11 @@ BLYNK_WRITE(V2) //Plasma
     Serial.println("Plasma ON");
     Blynk.virtualWrite(V2,statePM);
     Serial.println(statePM);
-    plasma =1;
+    plasma =statePM;
   }
   else { 
     Lpm=pinValue;
-    plasma =0;
+    
   }
   send_stupid();
 }
@@ -217,13 +219,11 @@ BLYNK_WRITE(V4) //Auto
     Serial.println("AutoON");
     Blynk.virtualWrite(V4,stateA);
     Serial.println(stateA);
-    Auto = 1;
+    Auto = stateA;
     
   }
   else { 
-    La=pinValue;
-    Auto = 0;
-    
+    La=pinValue;   
   }
   send_stupid();
 
