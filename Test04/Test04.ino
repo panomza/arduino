@@ -6,7 +6,7 @@
   int select_timer=0;
   int select_speed=0;
   int on_off = 0;
-  
+  float lastread=0;
   int Lpm = 0;
   int statePM=0;
   int La= 0;
@@ -23,7 +23,7 @@ const char pass[] = "hatariled1";
 
 
 bool plasma = 0;
-bool autobutton = 0;
+bool Auto   = 0;
 bool offbutton = 0;
 bool speed1=0;
 bool speed2=0;
@@ -43,7 +43,7 @@ void turnoff() // turn off all speed
   
   offbutton = 0;
   plasma    = 0;
-  autobutton= 0;
+  Auto      = 0;
   speed1    = 0;
   speed2    = 0;
   speed3    = 0;
@@ -57,6 +57,22 @@ void clearspeed()
   speed3    = 0;
   speed4    = 0;
 }
+
+
+/// send to stupid board
+
+void send_stupid(){
+  NanoSerial.print("<");
+  NanoSerial.print(Auto);          NanoSerial.print("  ");
+  NanoSerial.print(plasma);        NanoSerial.print("  ");
+  NanoSerial.print(speed1);        NanoSerial.print("  ");
+  NanoSerial.print(speed2);        NanoSerial.print("  ");
+  NanoSerial.print(speed3);        NanoSerial.print("  ");
+  NanoSerial.print(speed4);        NanoSerial.print(">");
+
+}
+
+
 
 
 // Blynk read and write functions
@@ -77,6 +93,7 @@ BLYNK_WRITE(V0) // ON-OFF
       Serial.println("ON is pressed");
       Blynk.virtualWrite(V5, 1);
       select_speed=1;
+      speed1=1;
         break;
         
       case 2:
@@ -88,6 +105,7 @@ BLYNK_WRITE(V0) // ON-OFF
         break;
     }
   }
+  send_stupid();
 }
 
 BLYNK_WRITE(V1) // Speed
@@ -98,30 +116,37 @@ BLYNK_WRITE(V1) // Speed
   }
     switch (select_speed){
       case 1:
+      clearspeed();
       Serial.println("speed 1 ");
       Blynk.virtualWrite(V5,1);
       speed1=1;
         break;
       case 2:
+      clearspeed();
       Serial.println("speed 2 ");
       Blynk.virtualWrite(V5,2);
       speed2=1;
         break;
       case 3:
+      clearspeed();
       Serial.println("speed 3 ");
       Blynk.virtualWrite(V5,3);
       speed3=1;
         break;
       case 4:
+      clearspeed();
       Serial.println("speed 4 ");
       Blynk.virtualWrite(V5,4);
       speed4=1;
         break;
       case 5:
+      clearspeed();
       select_speed=1;
+      speed1=1;
       Blynk.virtualWrite(V5,1);
         break;
     }
+    send_stupid();
 }
 
 
@@ -139,11 +164,13 @@ BLYNK_WRITE(V2) //Plasma
     Serial.println("Plasma ON");
     Blynk.virtualWrite(V2,statePM);
     Serial.println(statePM);
-    
+    plasma =1;
   }
   else { 
     Lpm=pinValue;
+    plasma =0;
   }
+  send_stupid();
 }
 
 BLYNK_WRITE(V3) // Timer
@@ -174,6 +201,7 @@ BLYNK_WRITE(V3) // Timer
       Blynk.virtualWrite(V6,0);
         break;
     }
+    send_stupid();
 }
 
 BLYNK_WRITE(V4) //Auto
@@ -189,18 +217,43 @@ BLYNK_WRITE(V4) //Auto
     Serial.println("AutoON");
     Blynk.virtualWrite(V4,stateA);
     Serial.println(stateA);
+    Auto = 1;
     
   }
   else { 
     La=pinValue;
+    Auto = 0;
+    
   }
+  send_stupid();
+
 }
 
+
+
+void readReturnSignal(float current_time){
+   if (NanoSerial.read()=='<') {
+          Auto       = NanoSerial.parseInt(); 
+          plasma     = NanoSerial.parseInt();
+          speed1     = NanoSerial.parseInt();
+          speed2     = NanoSerial.parseInt();
+          speed3     = NanoSerial.parseInt();
+          speed4     = NanoSerial.parseInt();
+          Serial.print("speed1");      Serial.print(" : "); Serial.print(speed1);
+          Serial.print("\tspeed2");      Serial.print(" : "); Serial.print(speed2);
+          Serial.print("\tspeed3");      Serial.print(" : "); Serial.print(speed3);
+          Serial.print("\tspeed4");      Serial.print(" : "); Serial.print(speed4);
+          Serial.print("\tplasma");    Serial.print(" : "); Serial.print(plasma);
+          Serial.print("\tAuto");      Serial.print(" : "); Serial.println(Auto); 
+          lastread=current_time;
+          
+    }
+}
 
 void setup()
 {
   // Debug console
-  Serial.begin(115200);
+  Serial.begin(9600);
   Blynk.begin(auth, ssid, pass);
 
 /////////////////////////////////Sent data////////////////////////////////////
@@ -215,8 +268,7 @@ void setup()
 void loop()
 {
   Blynk.run();
-  NanoSerial.print(speed1);        NanoSerial.print("  ");
-  NanoSerial.print(speed2);        NanoSerial.print("\n");
+  float current_time=millis();
+  readReturnSignal(current_time);
 
-delay(100);
 }
