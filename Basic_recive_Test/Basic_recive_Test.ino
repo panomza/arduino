@@ -1,15 +1,14 @@
 
 #include <SoftwareSerial.h>
-bool countplasmad=0;
-SoftwareSerial NodeSerial(1,0); // RX | TX
+
+SoftwareSerial NodeSerial(2,3); // RX | TX
 
 void setup() {
 
-  pinMode(1, INPUT); 
-  pinMode(6,OUTPUT);
-  pinMode(0, OUTPUT); 
+  pinMode(2, INPUT); 
+  pinMode(3,OUTPUT);
 
-  //Serial.begin(9600);
+  Serial.begin(9600);
 
   NodeSerial.begin(57600);
 
@@ -18,7 +17,7 @@ void setup() {
 void loop() {
  
     bool autobutton = NodeSerial.parseInt(); 
-    bool plasma     = NodeSerial.parseInt();
+    int plasma     = NodeSerial.parseInt();
     bool speed1     = NodeSerial.parseInt();
     bool speed2     = NodeSerial.parseInt();
     bool speed3     = NodeSerial.parseInt();
@@ -33,14 +32,6 @@ void loop() {
           Serial.print("\tauto");      Serial.print(" : "); Serial.println(autobutton); 
           
     }
-    if((plasma==1)){
-    digitalWrite(13,1);
- 
-  }
-  else {
-    
-    digitalWrite(13,0);
-
-  }
+ delay(50);
 
 } 

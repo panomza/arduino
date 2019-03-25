@@ -23,15 +23,7 @@ void setup()
 
 void loop() {
 
-  Serial.print(i_data); Serial.print("\t");
-
-  Serial.println(f_data);
-  
-
- // NanoSerial.print(i_data); NanoSerial.print(" ");
-  NanoSerial.print(plasma); NanoSerial.print(" ");
-
-  //NanoSerial.print(f_data); NanoSerial.print("\n");
+  NanoSerial.print(f_data); NanoSerial.print("\n");
 
   delay(100);
 
