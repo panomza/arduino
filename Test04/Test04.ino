@@ -3,6 +3,12 @@
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 
+
+// wifimanager
+#include <DNSServer.h>
+#include <ESP8266WebServer.h>
+#include <WiFiManager.h>         //https://github.com/tzapu/WiFiManager
+
   int select_timer=0;
   int select_speed=0;
   int on_off = 0;
@@ -11,6 +17,7 @@
   int statePM=0;
   int La= 0;
   int stateA=0;
+  //char var_to_push[32];// on_off s1 s2 s3 s4 plasma auto 
   
 #include <SoftwareSerial.h>
 SoftwareSerial NanoSerial(D3, D2); // RX | TX
@@ -18,8 +25,7 @@ SoftwareSerial NanoSerial(D3, D2); // RX | TX
 //wifi variables
 //const char auth[] = "a7a249ec5f2c41edabf98479ba690559";
 const char auth[] = "d7c89935fa6449caabdb6753b6d80b11";
-const char ssid[] = "HTR-MK";
-const char pass[] = "hatariled1";
+
 
 
 bool plasma = 0;
@@ -31,6 +37,14 @@ bool speed3=0;
 bool speed4=0;
 float lastSpeed=0;
 
+
+
+void configModeCallback (WiFiManager *myWiFiManager) {
+  Serial.println("Entered config mode");
+  Serial.println(WiFi.softAPIP());
+
+  Serial.println(myWiFiManager->getConfigPortalSSID());
+}
 
 void turnoff() // turn off all speed
 {
@@ -61,15 +75,15 @@ void clearspeed()
 
 
 /// send to stupid board
-
-void send_stupid(){
-  NanoSerial.print("<");
-  NanoSerial.print(Auto);          NanoSerial.print("  ");
-  NanoSerial.print(plasma);        NanoSerial.print("  ");
-  NanoSerial.print(speed1);        NanoSerial.print("  ");
-  NanoSerial.print(speed2);        NanoSerial.print("  ");
-  NanoSerial.print(speed3);        NanoSerial.print("  ");
-  NanoSerial.print(speed4);        NanoSerial.print(">");
+int datasent=0;
+void send_stupid(char* var_to_push,bool value_to_push){
+ 
+  NanoSerial.print("< ");
+//  NanoSerial.print(datasent); 
+  NanoSerial.print(var_to_push);
+  NanoSerial.print("\n");
+  NanoSerial.print(value_to_push);
+  NanoSerial.print(" >");
 
 }
 
@@ -85,7 +99,7 @@ BLYNK_WRITE(V0) // ON-OFF
 
 
   if (pinValue==1){
-
+    datasent=1;
     on_off++;
 
     switch(on_off){
@@ -95,6 +109,7 @@ BLYNK_WRITE(V0) // ON-OFF
       Blynk.virtualWrite(V5, 1);
       select_speed=1;
       speed1=1;
+      
         break;
         
       case 2:
@@ -105,8 +120,9 @@ BLYNK_WRITE(V0) // ON-OFF
       select_timer=0;
         break;
     }
+      send_stupid("on_off",1);
   }
-  send_stupid();
+
 }
 
 BLYNK_WRITE(V1) // Speed
@@ -114,13 +130,14 @@ BLYNK_WRITE(V1) // Speed
   int pinValue = param.asInt(); 
   if (pinValue==1 && on_off==1&& millis()-lastSpeed>50){
     select_speed++;
-  
+    datasent=2;
     switch (select_speed){
       case 1:
       clearspeed();
       Serial.println("speed 1 ");
       Blynk.virtualWrite(V5,1);
       speed1=1;
+      
         break;
       case 2:
       clearspeed();
@@ -141,14 +158,16 @@ BLYNK_WRITE(V1) // Speed
       speed4=1;
         break;
       case 5:
+      Serial.println("speed 1 ");
       clearspeed();
       select_speed=1;
       speed1=1;
       Blynk.virtualWrite(V5,1);
         break;
     }
+    send_stupid("speed",1);
   }
-    send_stupid();
+
 }
 
 
@@ -167,12 +186,14 @@ BLYNK_WRITE(V2) //Plasma
     Blynk.virtualWrite(V2,statePM);
     Serial.println(statePM);
     plasma =statePM;
+    datasent=3;
+    
   }
   else { 
     Lpm=pinValue;
     
   }
-  send_stupid();
+//  send_stupid();
 }
 
 BLYNK_WRITE(V3) // Timer
@@ -203,7 +224,6 @@ BLYNK_WRITE(V3) // Timer
       Blynk.virtualWrite(V6,0);
         break;
     }
-    send_stupid();
 }
 
 BLYNK_WRITE(V4) //Auto
@@ -220,13 +240,12 @@ BLYNK_WRITE(V4) //Auto
     Blynk.virtualWrite(V4,stateA);
     Serial.println(stateA);
     Auto = stateA;
-    
+    datasent=5;
   }
   else { 
     La=pinValue;   
   }
-  send_stupid();
-
+//send_stupid();
 }
 
 
@@ -254,9 +273,16 @@ void setup()
 {
   // Debug console
   Serial.begin(9600);
-  Blynk.begin(auth, ssid, pass);
 
-/////////////////////////////////Sent data////////////////////////////////////
+  /////////////// wifimanager//////////////////
+  WiFiManager wifiManager;
+  wifiManager.setAPCallback(configModeCallback);
+  wifiManager.setConfigPortalTimeout(180);
+  wifiManager.autoConnect("nodemcu");
+  Serial.println("connected...yeey :)");
+  Blynk.config(auth);
+
+/////////////////////////////////Send data////////////////////////////////////
   pinMode(D3,INPUT);
   pinMode(D2,OUTPUT);
 
