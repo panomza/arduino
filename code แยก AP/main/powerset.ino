@@ -16,15 +16,15 @@ void powerset(){
     powercount = 1;
     datasent = (1);
      
-    if(stateP==1){
-      beeppowervar=1;
-      songindex=2;
-      NodeSerial.print("p");
-    }else 
     if(stateP==0){
       beeppowervar=1;
       songindex=1;
-      NodeSerial.print("P");
+      NodeSerial.print("O");
+    }else 
+    if(stateP==1){
+      beeppowervar=1;
+      songindex=2;
+      NodeSerial.print("F");
     }
 } // else if Bp is back to 1, reset the powercount
   else if ((Bp != Lp) && (Bp == 1)&& (millis()-powert0 > buttondelay)){

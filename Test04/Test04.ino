@@ -48,13 +48,6 @@ void configModeCallback (WiFiManager *myWiFiManager) {
  
 
 
-void clearspeed()
-{
-  speed1    = 0;
-  speed2    = 0;
-  speed3    = 0;
-  speed4    = 0;
-}
 
 
 /// send to stupid board
@@ -64,7 +57,7 @@ void readReturnSignal(float current_time) {
   
   char datar = NanoSerial.read();
 
-  if (datar=='P')
+  if (datar=='O')
       {
        Serial.print(datar);
        Serial.println("ON");
@@ -72,7 +65,7 @@ void readReturnSignal(float current_time) {
        Serial.println("ON is pressed");
        select_speed=1; 
       } else
-  if (datar=='p')
+  if (datar=='F')
       {
        Serial.println("OFF is pressed");
        Blynk.virtualWrite(V5, 0);
@@ -82,45 +75,72 @@ void readReturnSignal(float current_time) {
        select_timer = 0;
        statePM=0;
        stateA=0;
-      }
-  if (datar=='s')
-  {
-    select_speed++;
-  }
-}
+      }else
 
+//////////////////////////////SPEED////////////////////
+  if (datar=='l')
+      {
+       select_speed=1;
+       Serial.println("Spedd1");
+      }else
+  if (datar=='m')
+      {
+       select_speed=2;
+       Serial.println("Spedd2");
+      }else
+  if (datar=='h')
+      {
+       select_speed=3;
+       Serial.println("Spedd3");
+      }else
+  if (datar=='t')
+      {
+       select_speed=4;
+       Serial.println("Spedd4");
+      } 
+
+////////////////////////plasma////////////////////////
+  else if (datar=='P')
+      {
+      Serial.print("Plasma On");
+      WidgetLED led1(V7);
+      led1.setValue(255);
+      }
+      
+  else if (datar=='p')
+      {
+      Serial.print("Plasma Off");
+      WidgetLED led1(V7);
+      led1.setValue(0);
+      }
+    
+  else if (datar=='d')
+      {
+        Blynk.virtualWrite(V9, 1);
+      }
+
+}
 void selectspeed()
 {
 //  Serial.println(select_speed);
   switch (select_speed) {
       case 1:
-        clearspeed();
         Serial.println("speed 1 ");
         Blynk.virtualWrite(V5, 1);
-   
-
         break;
       case 2:
-        clearspeed();
         Serial.println("speed 2 ");
         Blynk.virtualWrite(V5, 2);
    
         break;
       case 3:
-        clearspeed();
         Serial.println("speed 3 ");
         Blynk.virtualWrite(V5, 3);
 
         break;
       case 4:
-        clearspeed();
         Serial.println("speed 4 ");
         Blynk.virtualWrite(V5, 4);
-        break;
-      case 5:
-        clearspeed();
-        Serial.println("speed 1 ");
-        Blynk.virtualWrite(V5, 1);
         break;
     }
 }
@@ -133,7 +153,7 @@ BLYNK_WRITE(V0) // ON-OFF
   int pinValue = param.asInt();
 
     if (pinValue == 1) {
-        NanoSerial.print("P");
+        NanoSerial.print("O");
         on_off++;
     if(on_off>2){on_off=1;}
     
@@ -158,15 +178,12 @@ BLYNK_WRITE(V2) //Plasma
 
   int pinValue = param.asInt();
 
-  if ((pinValue != Lpm) && pinValue == 1 && on_off == 1)
+  if ((pinValue == 1) &&  on_off == 1)
   {
     NanoSerial.print("p");
-    statePM = !statePM;
-    pinValue = Lpm;
-    Serial.println("Plasma ON");
-  }
-  else {
-    Lpm = pinValue;
+
+    Serial.print("Plasma =");
+    Serial.print(statePM);
   }
 
 }
@@ -224,8 +241,7 @@ BLYNK_WRITE(V4) //Auto
 
 void led_app()
 {
-  WidgetLED led1(V7);
-  if(statePM==1){led1.setValue(255);}else{led1.setValue(0);}
+  
   WidgetLED led2(V8);
   if(stateA==1){led2.setValue(255);}else{led2.setValue(0);}
 }

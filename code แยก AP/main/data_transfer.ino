@@ -6,9 +6,9 @@ short int count_data =0;
 
 void send_smart(){
   
-  NodeSerial.print("<");
-  NodeSerial.print(datasent);          
-  NodeSerial.print(">");
+  NodeSerial.print("d");
+  NodeSerial.print(averagedust);          
+
 
 
 }
@@ -16,7 +16,7 @@ void send_smart(){
 void read_smart() {
 datar = NodeSerial.read();
 
-    if (datar=='P') {
+    if (datar=='O') {
        Serial.print(datar);
        Serial.println("ON OFF");
        Bp=0; 
@@ -32,14 +32,6 @@ datar = NodeSerial.read();
        Bpm=0;
     }else{Bpm=1;}
 
-//void rundata()
-//{
-//  if (data==1){Bp=0;Serial.println("Bp trig");}else{Bp=1;}
-//  if (data==2){Bs=0;Serial.println("Bs trig");}else{Bs=1;}
-//  if (data==3){Bpm=0;Serial.println("Bpm trig");}else{Bs=1;}
-//  if (data==4){Bt=0;Serial.println("Bp trig");}else{Bs=1;} 
-//  if (data==5){Ba=0;Serial.println("Bp trig");}else{Bs=1;}
-//
 }
 
  

@@ -9,7 +9,7 @@ void speedset(){
      speedt0=millis(); // get the current time
      Ls=Bs;
      beepvar=1;
-     NodeSerial.print("s");
+     applythespeedswitch();
  }
  else if ((Bs != Ls) && (Bs == 1)&& (millis()-speedt0 > buttondelay)){
     Ls=Bs;
@@ -27,22 +27,22 @@ void applythespeedswitch(){
     case 1:
       clearspeed();
       digitalWrite(M1,0);   
-     // Serial.println("M1");
+      NodeSerial.print("l");
       break;
     case 2:
       clearspeed();
       digitalWrite(M2,0);
-     // Serial.println("M2");
+      NodeSerial.print("m");
       break;
     case 3:
       clearspeed();
       digitalWrite(M3,0);
-     // Serial.println("M3");
+      NodeSerial.print("h");
       break;
     case 4:
       clearspeed();
       digitalWrite(M4,0);
-     // Serial.println("M4");
+      NodeSerial.print("t");
       break;
   }
   }

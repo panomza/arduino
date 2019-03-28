@@ -8,6 +8,8 @@ void plasmaset(){
     plasmat0 = millis();
     plasmacount =1;
     beepvar=1;
+    if(statePM==0){NodeSerial.print("P");}
+    else if (statePM==1){NodeSerial.print("p");}
     }
    else if ((Bpm != Lpm) && (Bpm == 1)&& (millis()-plasmat0 > buttondelay)){
     Lpm=Bpm;

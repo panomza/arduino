@@ -156,7 +156,7 @@ currenttime=millis();
 //checkbuttons();
 statebutton();
 Remote();
-//applythespeedswitch();
+
 //Display();
 //sensor_dust();
 powerset();
