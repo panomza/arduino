@@ -1,6 +1,8 @@
 #include <SoftwareSerial.h>
 
 SoftwareSerial NodeSerial(7,8); // RX | TX
+char datar;
+int datasent=0;
 ///////////////////////////////////////////////////////////////////////////
 
 #include <IRremote.h>
@@ -147,11 +149,13 @@ Serial.begin(9600);
 void loop() {
 currenttime=millis();
 
+
 //beep();//beep version 1
 //beeppower();//beep version2 for power on-off
 
 //checkbuttons();
-//Remote();
+statebutton();
+Remote();
 //applythespeedswitch();
 //Display();
 //sensor_dust();
@@ -160,5 +164,5 @@ speedset();
 plasmaset();
 Auto();
 read_smart();//read from the smart board
-//read_stupid();
+//rundata();
 }

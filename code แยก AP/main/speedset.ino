@@ -9,7 +9,7 @@ void speedset(){
      speedt0=millis(); // get the current time
      Ls=Bs;
      beepvar=1;
-
+     NodeSerial.print("s");
  }
  else if ((Bs != Ls) && (Bs == 1)&& (millis()-speedt0 > buttondelay)){
     Ls=Bs;

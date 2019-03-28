@@ -1,3 +1,7 @@
+#include <SoftwareSerial.h>
+
+SoftwareSerial NodeSerial(7,8); // RX | TX
+
 const byte numChars = 32;
 char receivedChars[numChars];
 
@@ -6,6 +10,9 @@ boolean newData = false;
 void setup() {
     Serial.begin(9600);
     Serial.println("<Arduino is ready>");
+    NodeSerial.begin(57600);
+  pinMode(7, INPUT); 
+  pinMode(8,OUTPUT);
 }
 
 void loop() {
@@ -21,8 +28,8 @@ void recvWithStartEndMarkers() {
     char rc;
  
  // if (Serial.available() > 0) {
-    while (Serial.available() > 0 && newData == false) {
-        rc = Serial.read();
+    while (NodeSerial.available() > 0 && newData == false) {
+        rc = NodeSerial.read();
 
         if (recvInProgress == true) {
             if (rc != endMarker) {

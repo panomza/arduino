@@ -9,16 +9,15 @@
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>         //https://github.com/tzapu/WiFiManager
 
-  int select_timer=0;
-  int select_speed=0;
-  int on_off = 0;
-  float lastread=0;
-  int Lpm = 0;
-  int statePM=0;
-  int La= 0;
-  int stateA=0;
-  //char var_to_push[32];// on_off s1 s2 s3 s4 plasma auto 
-  
+int select_timer = 0;
+int select_speed = 0;
+int on_off = 2;
+float lastread = 0;
+int Lpm = 0;
+int statePM = 0;
+int La = 0;
+int stateA = 0;
+
 #include <SoftwareSerial.h>
 SoftwareSerial NanoSerial(D3, D2); // RX | TX
 
@@ -31,12 +30,11 @@ const char auth[] = "d7c89935fa6449caabdb6753b6d80b11";
 bool plasma = 0;
 bool Auto   = 0;
 bool offbutton = 0;
-bool speed1=0;
-bool speed2=0;
-bool speed3=0;
-bool speed4=0;
-float lastSpeed=0;
-
+bool speed1 = 0;
+bool speed2 = 0;
+bool speed3 = 0;
+bool speed4 = 0;
+float lastSpeed = 0;
 
 
 void configModeCallback (WiFiManager *myWiFiManager) {
@@ -46,24 +44,9 @@ void configModeCallback (WiFiManager *myWiFiManager) {
   Serial.println(myWiFiManager->getConfigPortalSSID());
 }
 
-void turnoff() // turn off all speed
-{
-  Blynk.virtualWrite(V0, 0);
-  Blynk.virtualWrite(V1, 0);
-  Blynk.virtualWrite(V2, 0);
-  Blynk.virtualWrite(V3, 0);
-  Blynk.virtualWrite(V4, 0);
-  Blynk.virtualWrite(V5, 0);
-  Blynk.virtualWrite(V6, 0);
-  
-  offbutton = 0;
-  plasma    = 0;
-  Auto      = 0;
-  speed1    = 0;
-  speed2    = 0;
-  speed3    = 0;
-  speed4    = 0;
-}
+
+ 
+
 
 void clearspeed()
 {
@@ -75,155 +58,147 @@ void clearspeed()
 
 
 /// send to stupid board
-int datasent=0;
-void send_stupid(char* var_to_push,bool value_to_push){
- 
-  NanoSerial.print("< ");
-//  NanoSerial.print(datasent); 
-  NanoSerial.print(var_to_push);
-  NanoSerial.print("\n");
-  NanoSerial.print(value_to_push);
-  NanoSerial.print(" >");
 
+
+void readReturnSignal(float current_time) { 
+  
+  char datar = NanoSerial.read();
+
+  if (datar=='P')
+      {
+       Serial.print(datar);
+       Serial.println("ON");
+       Blynk.virtualWrite(V0, 1);
+       Serial.println("ON is pressed");
+       select_speed=1; 
+      } else
+  if (datar=='p')
+      {
+       Serial.println("OFF is pressed");
+       Blynk.virtualWrite(V5, 0);
+       Blynk.virtualWrite(V0, 0);
+       on_off = 0;
+       select_speed = 0;
+       select_timer = 0;
+       statePM=0;
+       stateA=0;
+      }
+  if (datar=='s')
+  {
+    select_speed++;
+  }
 }
 
+void selectspeed()
+{
+//  Serial.println(select_speed);
+  switch (select_speed) {
+      case 1:
+        clearspeed();
+        Serial.println("speed 1 ");
+        Blynk.virtualWrite(V5, 1);
+   
 
+        break;
+      case 2:
+        clearspeed();
+        Serial.println("speed 2 ");
+        Blynk.virtualWrite(V5, 2);
+   
+        break;
+      case 3:
+        clearspeed();
+        Serial.println("speed 3 ");
+        Blynk.virtualWrite(V5, 3);
 
+        break;
+      case 4:
+        clearspeed();
+        Serial.println("speed 4 ");
+        Blynk.virtualWrite(V5, 4);
+        break;
+      case 5:
+        clearspeed();
+        Serial.println("speed 1 ");
+        Blynk.virtualWrite(V5, 1);
+        break;
+    }
+}
 
 // Blynk read and write functions
 // user push speed buttons
 
 BLYNK_WRITE(V0) // ON-OFF
 {
-  int pinValue = param.asInt(); 
+  int pinValue = param.asInt();
 
-
-  if (pinValue==1){
-    datasent=1;
-    on_off++;
-
-    switch(on_off){
-      case 1:
-      Blynk.virtualWrite(V0, 1);
-      Serial.println("ON is pressed");
-      Blynk.virtualWrite(V5, 1);
-      select_speed=1;
-      speed1=1;
-      
-        break;
-        
-      case 2:
-      Serial.println("OFF is pressed");
-      turnoff();
-      on_off=0;
-      select_speed=0;
-      select_timer=0;
-        break;
+    if (pinValue == 1) {
+        NanoSerial.print("P");
+        on_off++;
+    if(on_off>2){on_off=1;}
+    
     }
-      send_stupid("on_off",1);
-  }
-
 }
 
 BLYNK_WRITE(V1) // Speed
 {
-  int pinValue = param.asInt(); 
-  if (pinValue==1 && on_off==1&& millis()-lastSpeed>50){
-    select_speed++;
-    datasent=2;
-    switch (select_speed){
-      case 1:
-      clearspeed();
-      Serial.println("speed 1 ");
-      Blynk.virtualWrite(V5,1);
-      speed1=1;
-      
-        break;
-      case 2:
-      clearspeed();
-      Serial.println("speed 2 ");
-      Blynk.virtualWrite(V5,2);
-      speed2=1;
-        break;
-      case 3:
-      clearspeed();
-      Serial.println("speed 3 ");
-      Blynk.virtualWrite(V5,3);
-      speed3=1;
-        break;
-      case 4:
-      clearspeed();
-      Serial.println("speed 4 ");
-      Blynk.virtualWrite(V5,4);
-      speed4=1;
-        break;
-      case 5:
-      Serial.println("speed 1 ");
-      clearspeed();
-      select_speed=1;
-      speed1=1;
-      Blynk.virtualWrite(V5,1);
-        break;
-    }
-    send_stupid("speed",1);
+  int pinValue = param.asInt();
+  if (pinValue == 1 && on_off == 1 && millis() - lastSpeed > 50) {
+    
+      NanoSerial.print("s");
+    
+      if(select_speed>4){select_speed=1;}
   }
-
 }
 
 
 
 BLYNK_WRITE(V2) //Plasma
-{
-
+{  
 
   int pinValue = param.asInt();
-  
-  if ((pinValue != Lpm) && pinValue == 1 && on_off==1)
+
+  if ((pinValue != Lpm) && pinValue == 1 && on_off == 1)
   {
-    statePM=!statePM;
+    NanoSerial.print("p");
+    statePM = !statePM;
     pinValue = Lpm;
     Serial.println("Plasma ON");
-    Blynk.virtualWrite(V2,statePM);
-    Serial.println(statePM);
-    plasma =statePM;
-    datasent=3;
-    
   }
-  else { 
-    Lpm=pinValue;
-    
+  else {
+    Lpm = pinValue;
   }
-//  send_stupid();
+
 }
 
 BLYNK_WRITE(V3) // Timer
 {
-  int pinValue = param.asInt(); 
-  if (pinValue==1 && on_off==1){
+  int pinValue = param.asInt();
+  if (pinValue == 1 && on_off == 1) {
     select_timer++;
   }
-    switch (select_timer){
-      case 1:
+  switch (select_timer) {
+    case 1:
       Serial.println("Timer 1 ");
-      Blynk.virtualWrite(V6,1);
-        break;
-      case 2:
+      Blynk.virtualWrite(V6, 1);
+      break;
+    case 2:
       Serial.println("Timer 2 ");
-      Blynk.virtualWrite(V6,2);
-        break;
-      case 3:
+      Blynk.virtualWrite(V6, 2);
+      break;
+    case 3:
       Serial.println("Timer 3 ");
-      Blynk.virtualWrite(V6,3);
-        break;
-      case 4:
+      Blynk.virtualWrite(V6, 3);
+      break;
+    case 4:
       Serial.println("Timer 4 ");
-      Blynk.virtualWrite(V6,4);
-        break;
-      case 5:
-      select_timer=0;
-      Blynk.virtualWrite(V6,0);
-        break;
-    }
+      Blynk.virtualWrite(V6, 4);
+      break;
+    case 5:
+      select_timer = 0;
+      Blynk.virtualWrite(V6, 0);
+      break;
+  }
 }
 
 BLYNK_WRITE(V4) //Auto
@@ -231,42 +206,28 @@ BLYNK_WRITE(V4) //Auto
 
 
   int pinValue = param.asInt();
-  
-  if ((pinValue != La) && pinValue == 1 && on_off==1)
+
+  if ((pinValue != La) && pinValue == 1 && on_off == 1)
   {
-    stateA=!stateA;
+    stateA = !stateA;
     pinValue = La;
     Serial.println("AutoON");
-    Blynk.virtualWrite(V4,stateA);
     Serial.println(stateA);
-    Auto = stateA;
-    datasent=5;
+
   }
-  else { 
-    La=pinValue;   
+  else {
+    La = pinValue;
   }
-//send_stupid();
+
 }
 
 
-
-void readReturnSignal(float current_time){
-   if (NanoSerial.read()=='<') {
-          Auto       = NanoSerial.parseInt(); 
-          plasma     = NanoSerial.parseInt();
-          speed1     = NanoSerial.parseInt();
-          speed2     = NanoSerial.parseInt();
-          speed3     = NanoSerial.parseInt();
-          speed4     = NanoSerial.parseInt();
-          Serial.print("speed1");      Serial.print(" : "); Serial.print(speed1);
-          Serial.print("\tspeed2");      Serial.print(" : "); Serial.print(speed2);
-          Serial.print("\tspeed3");      Serial.print(" : "); Serial.print(speed3);
-          Serial.print("\tspeed4");      Serial.print(" : "); Serial.print(speed4);
-          Serial.print("\tplasma");    Serial.print(" : "); Serial.print(plasma);
-          Serial.print("\tAuto");      Serial.print(" : "); Serial.println(Auto); 
-          lastread=current_time;
-          
-    }
+void led_app()
+{
+  WidgetLED led1(V7);
+  if(statePM==1){led1.setValue(255);}else{led1.setValue(0);}
+  WidgetLED led2(V8);
+  if(stateA==1){led2.setValue(255);}else{led2.setValue(0);}
 }
 
 void setup()
@@ -282,19 +243,20 @@ void setup()
   Serial.println("connected...yeey :)");
   Blynk.config(auth);
 
-/////////////////////////////////Send data////////////////////////////////////
-  pinMode(D3,INPUT);
-  pinMode(D2,OUTPUT);
+  /////////////////////////////////Send data////////////////////////////////////
+  pinMode(D3, INPUT);
+  pinMode(D2, OUTPUT);
 
 
-  NanoSerial.begin(57600);           
+  NanoSerial.begin(57600);
 }
 
 
 void loop()
 {
   Blynk.run();
-  float current_time=millis();
+  float current_time = millis();
   readReturnSignal(current_time);
-
+  selectspeed();
+  led_app();
 }
