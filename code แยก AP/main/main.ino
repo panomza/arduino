@@ -1,7 +1,7 @@
 #include <SoftwareSerial.h>
 
 SoftwareSerial NodeSerial(7,8); // RX | TX
-char datar;
+
 int datasent=0;
 ///////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +34,7 @@ const short int Bpow    = 14;    // power button input pin
 const short int Bspeed  = 15;    // speed input pin
 const short int Bplasma = 16;    // plasma button input pin
 const short int Bauto   = 18;    // Auto button input pin
-const short int Btimer ;    // Timer button input pin
+const short int Btimer=99 ;    // Timer button input pin
 
 //output pins
 
@@ -136,8 +136,8 @@ Serial.begin(9600);
   }
   beepvar=1;
 
-  pinMode(7, INPUT); 
-  pinMode(8,OUTPUT);
+  pinMode(7, INPUT); //nanoserial in
+  pinMode(8,OUTPUT); //nanoserial out
 
   NodeSerial.begin(57600);
 }
