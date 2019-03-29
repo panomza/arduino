@@ -31,6 +31,11 @@ datar = NodeSerial.read();
        Serial.println("Plasma"); 
        Bpm=0;
     }else{Bpm=1;}
+    if (datar=='a') {
+       Serial.print(datar);
+       Serial.println("Auto"); 
+       Ba=0;
+    }else{Ba=1;}
 
 }
 

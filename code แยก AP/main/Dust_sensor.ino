@@ -16,7 +16,7 @@ float readdust(){
   delayMicroseconds(9680);
 
   calcVoltage = voMeasured*(5.0/1024);
-  dustDensity = (40*calcVoltage-10);
+  dustDensity = (125*calcVoltage-50);
   if ( dustDensity < 0)
   {
     dustDensity = 0.00;

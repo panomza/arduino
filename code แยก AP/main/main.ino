@@ -22,28 +22,27 @@ keypad output[OUTPUT_COUNT];
 
 ///////////////////////////////////////////////////////////////////////////
 
-short int powert0; 
-short int speedt0;
-short int plasmat0;
-short int auto0;
-short int timer0;
+ 
+
+
+
 
 // input pins
 
 const short int Bpow    = 14;    // power button input pin
 const short int Bspeed  = 15;    // speed input pin
 const short int Bplasma = 16;    // plasma button input pin
-const short int Bauto   = 18;    // Auto button input pin
+const short int Bauto   = 17;    // Auto button input pin
 const short int Btimer ;    // Timer button input pin
 
 //output pins
 
 const short int POW    = 13;      //power output pin
 const short int PLASMA = 6;       // plasma button output pin
-const short int M1     = 19;       // motor output pin
+const short int M1     = 20;       // motor output pin
 const short int M2     = 20;       // motor output pin
-const short int M3     = 17;       // motor output pin
-const short int M4     = 10;      // motor output pin
+const short int M3     = 20;       // motor output pin
+const short int M4     = 20;      // motor output pin
 const short int BUZ    = 9;         // buzzer output pin
 const short int AUTO   = 11; 
 
@@ -54,18 +53,21 @@ bool Bp         = 1;         //power button state
 bool Lp         = 1;         //previous power button state 
 bool stateP     = 1;         //power output state
 bool powercount = 0;         // count if the power button is pushed
+short int powert0;
 
 //plasma
 bool Bpm        = 1;                  // plasma button state
 bool Lpm        = 1;                  // previous plasma button state
 bool statePM    = 1;        // plasma output state
 bool plasmacount= 0;       // count if plasma has been pressed
+short int plasmat0;
 
 //speed
 bool Bs         = 1;                   // speed input state
 bool Ls         = 1;                   // previous speed input state
 bool stateS     = 0;         // speed state
 unsigned short int index = 1;                // case counter
+short int speedt0;
 
 //Timer
 bool Bt         = 1;
@@ -73,12 +75,14 @@ bool Lt         = 1;
 bool stateT     = 1;
 bool timercount = 0;
 unsigned short int selectime = 0;
+short int timer0;
 
 //Auto
 bool Ba         = 1;
 bool La         = 1;
 bool stateA     = 1;
 bool autocount  = 0;
+short int auto0;
 unsigned short int Sauto;
 float autotime  = 0;
 float autotimer = 2000;
@@ -150,19 +154,26 @@ void loop() {
 currenttime=millis();
 
 
-//beep();//beep version 1
-//beeppower();//beep version2 for power on-off
+beep();//beep version 1
 
-//checkbuttons();
+beeppower();//beep version2 for power on-off
+
 statebutton();
+
 Remote();
 
-//Display();
-//sensor_dust();
+Display();
+
+sensor_dust();
+
 powerset();
+
 speedset();
+
 plasmaset();
+
 Auto();
+
 read_smart();//read from the smart board
-//rundata();
+
 }

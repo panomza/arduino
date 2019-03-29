@@ -1,17 +1,17 @@
 void speedset(){
 
- if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (millis()-speedt0 > buttondelay)&&(stateA==1)){  
+ if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (currenttime-speedt0 > buttondelay)&&(stateA==1)){  
      stateS=!stateS;
      index++;
      if(index>4){index=1;}
      Serial.print("Speed is set to: ");
      Serial.println(index);
-     speedt0=millis(); // get the current time
+     speedt0=currenttime; // get the current time
      Ls=Bs;
      beepvar=1;
      applythespeedswitch();
  }
- else if ((Bs != Ls) && (Bs == 1)&& (millis()-speedt0 > buttondelay)){
+ else if ((Bs != Ls) && (Bs == 1)&& (currenttime-speedt0 > buttondelay)){
     Ls=Bs;
   }
   
@@ -22,7 +22,6 @@ void applythespeedswitch(){
     switch (index) {
     case 0:
       clearspeed();
-      digitalWrite(PLASMA,1);
       break;
     case 1:
       clearspeed();
