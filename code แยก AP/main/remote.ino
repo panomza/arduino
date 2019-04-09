@@ -19,6 +19,7 @@ void Remote(){
                         Bpm=0;
                         break;
                       case 3: // timer
+                        Bt=0;
                         break;
                       case 4: // ionizer
                       Ba=0;
@@ -42,7 +43,7 @@ void Remote(){
       for (int i=0;i<OUTPUT_COUNT;i++){
         if (status1[i]){
          status1[i]=0;
-         Serial.println("switch back to normal");
+//         Serial.println("switch back to normal");
          switch (i) {
                       case 0: //on-off
                         Bp=1;
@@ -54,9 +55,10 @@ void Remote(){
                         Bpm=1;
                         break;
                       case 3: // timer
+                        Bt=1;
                         break;
                       case 4: // ionizer
-                      Ba=1;
+                        Ba=1;
                         break;
            }
         }

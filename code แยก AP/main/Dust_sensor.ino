@@ -1,7 +1,7 @@
 
 
-float t0;// time of last reading
-float timer=500;// time between each reading
+short int t0;         // time of last reading
+short int timer=500;  // time between each reading
 
 float voMeasured = 0;
 float calcVoltage = 0;
@@ -29,8 +29,6 @@ float takeaverage(float input[]){
   float sum=0;
   for(int i = 0; i < int(numaverage) ; i++){
     sum+=input[i];
-    //Serial.println(i);
-    //Serial.println(input[i]);
   }
   return sum/numaverage;
 }
@@ -39,7 +37,7 @@ float takeaverage(float input[]){
 
 
 void sensor_dust() {
-    if(millis()-t0>timer){
+    if(currenttime-t0>timer){
       count++;
     dust[count]=readdust();
     Serial.print("Dust is :");
@@ -50,7 +48,7 @@ void sensor_dust() {
     if ((count>numaverage)){
       count =0;
     }
-    t0=millis();
+    t0=currenttime;
   } 
 
 }

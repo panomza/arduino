@@ -22,11 +22,6 @@ keypad output[OUTPUT_COUNT];
 
 ///////////////////////////////////////////////////////////////////////////
 
- 
-
-
-
-
 // input pins
 
 const short int Bpow    = 14;    // power button input pin
@@ -84,12 +79,12 @@ bool stateA     = 1;
 bool autocount  = 0;
 short int auto0;
 unsigned short int Sauto;
-float autotime  = 0;
-float autotimer = 2000;
+short int autotime  = 0;
+short int autotimer = 2000;
 
 //delays
 short int buttondelay=300;// delay between each button press in ms
-float currenttime=0;
+short int currenttime=0;
 unsigned short int songindex=0;
 
 int measurePin = 19;
@@ -103,8 +98,8 @@ float averagedust=initialdust;
 //beep
 bool beepvar=0;
 bool beepstarted=0;
-float beeptime=0;
 bool beeppowervar=0;
+short int beeptime=0;
 
 ////////////////////////////////////VOID/////////////////////////////////////////////////
 ///////////////////////////////////SETUP/////////////////////////////////////////////////
@@ -118,7 +113,7 @@ Serial.begin(9600);
     Bpow,Bspeed,Bplasma,Btimer,Bauto
     };
 
-  int outputpins[8] = {
+   int outputpins[8] = {
     POW,PLASMA,M1,M2,M3,M4,BUZ,AUTO
   };
 
@@ -171,6 +166,8 @@ powerset();
 speedset();
 
 plasmaset();
+
+TIMER();
 
 Auto();
 

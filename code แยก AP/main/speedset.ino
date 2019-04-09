@@ -1,6 +1,6 @@
 void speedset(){
 
- if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (currenttime-speedt0 > buttondelay)&&(stateA==1)){  
+ if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (currenttime-speedt0 > buttondelay)){  
      stateS=!stateS;
      index++;
      if(index>4){index=1;}
@@ -14,7 +14,6 @@ void speedset(){
  else if ((Bs != Ls) && (Bs == 1)&& (currenttime-speedt0 > buttondelay)){
     Ls=Bs;
   }
-  
 }
 
 void applythespeedswitch(){

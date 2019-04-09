@@ -1,15 +1,15 @@
 void Auto(){
-
+    if(stateA==0&&Bs==0){Ba=0;}
   // set speed according to dust
     if(currenttime-autotime>autotimer && stateA==0){
-
-        if(averagedust>=40){index=4;Serial.println("speed is set to 4");}
-        else if(averagedust>=30){index=3;Serial.println("speed is set to 3");}
-        else if(averagedust>=20){index=2;Serial.println("speed is set to 2");}
-        else{index=1;Serial.println("speed is set to 1");}
+        digitalWrite(AUTO,stateA);
+        
+        if(averagedust>=40){index=4;Serial.println("speed is set by the auto function to 4");}
+        else if(averagedust>=30){index=3;Serial.println("speed is set by the auto function to 3");}
+        else if(averagedust>=20){index=2;Serial.println("speed is set by the auto functionto 2");}
+        else{index=1;Serial.println("speed is set by the auto function to 1");}
         autotime=currenttime;
         applythespeedswitch();
-        Serial.println("speed is set by the auto function");
     }
     
   // activate or deactivate auto function

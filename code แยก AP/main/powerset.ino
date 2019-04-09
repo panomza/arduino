@@ -14,7 +14,7 @@ void powerset(){
     poweroff();
     powercount = 1;
     datasent = (1);
-     
+    selectime=0;
     if(stateP==0){
       beeppowervar=1;
       songindex=1;

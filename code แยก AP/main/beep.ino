@@ -142,12 +142,11 @@ void beep(){
     tone1.tone (1000);
     beeptime=currenttime;
     beepstarted=1;
-    Serial.println("beepstarted");
+    Serial.println("beep");
   } else if (currenttime-beeptime>100 && beepstarted ==1){
     tone1.noTone();
     beepvar=0;
     beepstarted=0;
-    Serial.println("beepstopped");
   }
 
 }
@@ -163,28 +162,13 @@ void play_sound(int song[],int duration[],int sizesong){
 void beeppower(){
   if (beeppowervar==1){
     Serial.println("beep_power_started");
-
-    
     switch (songindex){
       
       case 1:
             play_sound(Pirates_note,Pirates_duration,sizeof(Pirates_note) / sizeof(int));// play on
         break;
-
       case 2:
             play_sound(melody1,noteDurations1,sizeof(melody1) / sizeof(int));
-        break;
-      
-      case 3:
-      
-        break;
-
-      case 4:
-      
-        break;
-
-      case 5:
-      
         break;
     }
 
