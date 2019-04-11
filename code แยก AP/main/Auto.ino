@@ -1,7 +1,7 @@
 void Auto(){
-    if(stateA==0&&Bs==0){Ba=0;}
+    if(stateA==1&&Bs==0){Ba=0;}
   // set speed according to dust
-    if(currenttime-autotime>autotimer && stateA==0){
+    if(currenttime-autotime>autotimer && stateA==1){
         digitalWrite(AUTO,stateA);
         
         if(averagedust>=40){index=4;Serial.println("speed is set by the auto function to 4");}

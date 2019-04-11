@@ -1,8 +1,11 @@
-int timeoff=0;
-int timetrig=0;
-int timedown=0;
+short int timeoff=0;
+short int timetrig=0;
+short int timedown=0;
+short int statetime=0;
 
 void TIMER(){
+statustimer();
+  
 if ((Bt != Lt) && Bt == 0  && (currenttime-timer0 > buttondelay) && (timercount ==0)){
         stateT=!stateT;
         selectime++;
@@ -47,6 +50,9 @@ if ((Bt != Lt) && Bt == 0  && (currenttime-timer0 > buttondelay) && (timercount 
 }
 void contdown(){
     switch(selectime){
+      case 0:
+      timedown=0;
+      break;
       case 1:
       timedown=10;
       break;
@@ -61,4 +67,19 @@ void contdown(){
       break;
       
     }
+}
+void statustimer(){
+  if(timedown==9){clearstatetime();digitalWrite(T1,1);}
+  if(timedown==20){clearstatetime();digitalWrite(T2,1);}
+  if(timedown==30){clearstatetime();digitalWrite(T3,1);}
+  if(timedown==40){clearstatetime();digitalWrite(T4,1);}
+  if(timedown==0){clearstatetime();}
+  if(selectime==0){timedown=0;clearstatetime();}
+}
+
+void clearstatetime(){
+  digitalWrite(T1,0);
+  digitalWrite(T2,0);
+  digitalWrite(T3,0);
+  digitalWrite(T4,0);
 }

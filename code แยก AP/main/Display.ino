@@ -12,7 +12,7 @@ void Display(){
   if(td-TD>timedisplay)
   {
     TD=td;
-     display.setBrightness(0x0f);
+     display.setBrightness(7);
      display.showNumberDec(averagedust, false);
      send_smart();
   }

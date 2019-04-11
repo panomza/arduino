@@ -3,14 +3,13 @@ void powerset(){
   // check if previous state is different from current state, current state is 0 and powercount=0
 
   if ((Bp != Lp) && (Bp == 0) && (currenttime-powert0 > buttondelay) && (powercount==0)){
+    clearspeed();
     stateP=!stateP;
     digitalWrite(POW,stateP);
     Serial.print("Power is set to: ");
-    Serial.println(stateP); 
-    applythespeedswitch(); // apply the switch for speed when turning on
+    Serial.println(stateP);   
     Lp=Bp;
-    powert0 = currenttime;
-    clearspeed();
+    powert0 = currenttime;   
     poweroff();
     powercount = 1;
     datasent = (1);
@@ -27,6 +26,7 @@ void powerset(){
       index=0;
       NodeSerial.print("F");
     }
+    applythespeedswitch(); // apply the switch for speed when turning on
 } // else if Bp is back to 1, reset the powercount
   else if ((Bp != Lp) && (Bp == 1)&& (currenttime-powert0 > buttondelay)){
     Lp=Bp;
