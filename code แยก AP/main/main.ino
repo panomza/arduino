@@ -74,6 +74,7 @@ bool Bt         = 1;
 bool Lt         = 1;
 bool stateT     = 1;
 bool timercount = 0;
+short int statetime=0;
 unsigned short int selectime = 0;
 short int timer0;
 
@@ -92,8 +93,8 @@ short int buttondelay=300;// delay between each button press in ms
 short int currenttime=0;
 unsigned short int songindex=0;
 
-int measurePin = 19;
-int ledPower = 12;
+int measurePin = 27;
+int ledPower = 26;
 const int numaverage = 20; ///number of values for taking average
 float dust[numaverage];
 unsigned short int count;
@@ -134,12 +135,13 @@ Serial.begin(9600);
     digitalWrite(outputpins[j],1);
   }
 
-    pinMode(ledPower,OUTPUT);
-  for(int i=0;i<numaverage;i++){
-  dust[i]=initialdust;
-  }
+//    pinMode(ledPower,OUTPUT);
+//  for(int i=0;i<numaverage;i++){
+//  dust[i]=initialdust;
+//  }
   beepvar=1;
   clearspeed();
+  clearstatetime();
   powoff();
  
   pinMode(7, INPUT); 
@@ -154,31 +156,33 @@ Serial.begin(9600);
 
 void loop() {
 currenttime=millis();
+//
+//digitalWrite (dim,1);
 
-digitalWrite (dim,1);
-
+Dimmer();
+//
 beep();//beep version 1
-
+//
 //beeppower();//beep version2 for power on-off
-
+//
 statebutton();
-
+//
 //Remote();
-
+//
 //Display();
-
+//
 //sensor_dust();
-
+//
 powerset();
-
+//
 speedset();
-
+//
 plasmaset();
-
+//
 TIMER();
-
-Auto();
-
+//
+//Auto();
+//
 //read_smart();//read from the smart board
 
 }
