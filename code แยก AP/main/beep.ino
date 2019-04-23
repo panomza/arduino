@@ -139,11 +139,10 @@ int noteDurations1[] = { 8, 16, 16, 8, 8, 8, 8, 8 };
 
 void beep(){
   if (beepvar==1 && beepstarted==0){
-    tone1.tone (1000);
+    tone1.tone (1500);
     beeptime=currenttime;
     beepstarted=1;
-    Serial.println("beep");
-  } else if (currenttime-beeptime>100 && beepstarted ==1){
+  } else if (currenttime-beeptime>50 && beepstarted ==1){
     tone1.noTone();
     beepvar=0;
     beepstarted=0;
@@ -161,7 +160,7 @@ void play_sound(int song[],int duration[],int sizesong){
 }
 void beeppower(){
   if (beeppowervar==1){
-    Serial.println("beep_power_started");
+    Serial.println("sound");
     switch (songindex){
       
       case 1:

@@ -53,14 +53,14 @@ bool Bp         = 1;         //power button state
 bool Lp         = 1;         //previous power button state 
 bool stateP     = 1;         //power output state
 bool powercount = 0;         // count if the power button is pushed
-short int powert0;
+int powert0;
 
 //plasma
 bool Bpm        = 1;                  // plasma button state
 bool Lpm        = 1;                  // previous plasma button state
-bool statePM    = 0;        // plasma output state
+bool statePM    = 1;        // plasma output state
 bool plasmacount= 0;       // count if plasma has been pressed
-short int plasmat0;
+int plasmat0;
 
 //speed
 bool Bs         = 1;                   // speed input state
@@ -73,24 +73,23 @@ short int speedt0;
 bool Bt         = 1;
 bool Lt         = 1;
 bool stateT     = 1;
-bool timercount = 0;
-short int statetime=0;
+short int Settime=0;
 unsigned short int selectime = 0;
-short int timer0;
+int timer0;
 
 //Auto
 bool Ba         = 1;
 bool La         = 1;
 bool stateA     = 0;
 bool autocount  = 0;
-short int auto0;
+int auto0;
 unsigned short int Sauto;
 short int autotime  = 0;
-short int autotimer = 2000;
+short int autotimer = 5000;
 
 //delays
 short int buttondelay=300;// delay between each button press in ms
-short int currenttime=0;
+unsigned int currenttime=0;
 unsigned short int songindex=0;
 
 int measurePin = 27;
@@ -125,24 +124,21 @@ Serial.begin(9600);
 
   for(int j=0;j< sizeof(inputpins)/sizeof(1);j++){
     pinMode(inputpins[j],INPUT);
-    Serial.print(inputpins[j]);
-    Serial.println(" is set as input");
   }
   for(int j=0;j< sizeof(outputpins)/sizeof(1);j++){
     pinMode(outputpins[j],OUTPUT);
-    Serial.print(outputpins[j]);
-    Serial.println(" is set as output");
-    digitalWrite(outputpins[j],1);
   }
 
-//    pinMode(ledPower,OUTPUT);
+//  pinMode(ledPower,OUTPUT);
 //  for(int i=0;i<numaverage;i++){
 //  dust[i]=initialdust;
 //  }
+
   beepvar=1;
   clearspeed();
   clearstatetime();
   powoff();
+  digitalWrite(POW,1);
  
   pinMode(7, INPUT); 
   pinMode(8,OUTPUT);
@@ -155,9 +151,8 @@ Serial.begin(9600);
 
 
 void loop() {
-currenttime=millis();
-//
-//digitalWrite (dim,1);
+  
+currenttime= millis();
 
 Dimmer();
 //
@@ -181,8 +176,8 @@ plasmaset();
 //
 TIMER();
 //
-//Auto();
+Auto();
 //
-//read_smart();//read from the smart board
+read_smart();//read from the smart board
 
 }

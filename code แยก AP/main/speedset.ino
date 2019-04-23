@@ -1,14 +1,13 @@
 void speedset(){
 
  if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (currenttime-speedt0 > buttondelay)){  
-     stateS=!stateS;
-     index++;
-     if(index>4){index=1;}
-     Serial.print("Speed is set to: ");
-     Serial.println(index);
-     speedt0=currenttime; // get the current time
      Ls=Bs;
+     index++;
+     speedt0=currenttime;             // get the current time
      beepvar=1;
+     if(index>4){index=1;}
+     Serial.print("Speed is : ");
+     Serial.println(index);
      applythespeedswitch();
  }
  else if ((Bs != Ls) && (Bs == 1)&& (currenttime-speedt0 > buttondelay)){

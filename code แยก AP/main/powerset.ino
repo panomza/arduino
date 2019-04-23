@@ -6,14 +6,14 @@ void powerset(){
     clearspeed();
     stateP=!stateP;
     digitalWrite(POW,stateP);
-    Serial.print("Power is set to: ");
+    Serial.print("Power to : ");
     Serial.println(stateP);   
     Lp=Bp;
     powert0 = currenttime;   
     poweroff();
     powercount = 1;
     datasent = (1);
-    selectime=0;
+    Settime=0;
     if(stateP==0){
       beeppowervar=1;
       songindex=1;

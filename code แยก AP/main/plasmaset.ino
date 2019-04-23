@@ -2,7 +2,7 @@ void plasmaset(){
     if ((Bpm != Lpm) && (stateP == 0) && (currenttime-plasmat0 > buttondelay) && (plasmacount ==0)){
     statePM=!statePM;
     digitalWrite(PLASMA,statePM);
-    Serial.print("Plasma is set to: ");
+    Serial.print("Plasma to : ");
     Serial.println(statePM); 
     Lpm=Bpm;
     plasmat0 = currenttime;

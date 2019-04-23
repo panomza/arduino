@@ -14,6 +14,6 @@ void Display(){
     TD=td;
      display.setBrightness(7);
      display.showNumberDec(averagedust, false);
-     send_smart();
+//     send_smart();
   }
 }
