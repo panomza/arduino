@@ -1,4 +1,4 @@
-unsigned int timedown=0;
+
 unsigned int timetrig=0;
 unsigned int runtime =0;
 
@@ -19,7 +19,7 @@ void TIMER(){
     }
 ///////////////////////////////////////////////////////////////////////////////.
   
-if(Settime==0) {timedown=0;clearstatetime();} 
+if(Settime==0) {timedown=0;} 
 if(Settime>0){  
         if(runtime - timetrig >1000){
                  timetrig = runtime;
@@ -30,10 +30,10 @@ if(Settime>0){
  
   if(timedown==0){Settime=0;}  
   if(timedown==1){Bp=0;}else{Bp=1;}
-  if(timedown==10){clearstatetime();digitalWrite(T1,1);}
-  if(timedown==20){clearstatetime();digitalWrite(T2,1);}
-  if(timedown==30){clearstatetime();digitalWrite(T3,1);}
-  if(timedown==40){clearstatetime();digitalWrite(T4,1);}
+//  if(timedown==10){clearstatetime();digitalWrite(T1,1);}
+//  if(timedown==20){clearstatetime();digitalWrite(T2,1);}
+//  if(timedown==30){clearstatetime();digitalWrite(T3,1);}
+//  if(timedown==40){clearstatetime();digitalWrite(T4,1);}
   }
 }
 
@@ -54,9 +54,9 @@ void selecttime(){
   }
 }
 
-void clearstatetime(){
-  digitalWrite(T1,0);
-  digitalWrite(T2,0);
-  digitalWrite(T3,0);
-  digitalWrite(T4,0);
-}
+//void clearstatetime(){
+//  digitalWrite(T1,0);
+//  digitalWrite(T2,0);
+//  digitalWrite(T3,0);
+//  digitalWrite(T4,0);
+//}

@@ -76,6 +76,7 @@ bool stateT     = 1;
 short int Settime=0;
 unsigned short int selectime = 0;
 int timer0;
+unsigned int timedown=0;
 
 //Auto
 bool Ba         = 1;
@@ -136,7 +137,7 @@ Serial.begin(9600);
 
   beepvar=1;
   clearspeed();
-  clearstatetime();
+//  clearstatetime();
   powoff();
   digitalWrite(POW,1);
  
@@ -172,7 +173,7 @@ powerset();
 
 speedset();
 
-plasmaset();
+//plasmaset();
 
 TIMER();
 
