@@ -5,20 +5,20 @@ char datar;
 int datasent=0;
 ///////////////////////////////////////////////////////////////////////////
 
-//#include <IRremote.h>
-//  const int RECV_PIN = 3;
-//  IRrecv irrecv(RECV_PIN);
-//  decode_results results;
-//#define OUTPUT_COUNT 5
-//
-//    unsigned long last = millis();
-//    long remote_key[]={0xDF40BF,0xDF609F,0xDF48B7,0xDF50AF,0xDF708F};
-//    const byte outputPins[OUTPUT_COUNT] = {0, 1, 2, 3,4};
-//    bool status1[5] = {0,0,0,0,0};
-//    struct keypad {
-//    boolean state;
-//};
-//keypad output[OUTPUT_COUNT];
+#include <IRremote.h>
+  const int RECV_PIN = 24;
+  IRrecv irrecv(RECV_PIN);
+  decode_results results;
+#define OUTPUT_COUNT 5
+
+    unsigned long last = millis();
+    long remote_key[]={0xDF40BF,0xDF609F,0xDF48B7,0xDF50AF,0xDF708F};
+    const byte outputPins[OUTPUT_COUNT] = {0, 1, 2, 3,4};
+    bool status1[5] = {0,0,0,0,0};
+    struct keypad {
+    boolean state;
+};
+keypad output[OUTPUT_COUNT];
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -89,12 +89,12 @@ short int autotimer = 5000;
 
 //delays
 short int buttondelay=300;// delay between each button press in ms
-unsigned int currenttime=0;
+unsigned long int currenttime=0;
 unsigned short int songindex=0;
 
 int measurePin = 27;
 int ledPower = 26;
-const int numaverage = 20; ///number of values for taking average
+const int numaverage = 30; ///number of values for taking average
 float dust[numaverage];
 unsigned short int count;
 float initialdust=20;
@@ -112,7 +112,7 @@ short int beeptime=0;
 void setup() {
 Serial.begin(9600);
 
-//  irrecv.enableIRIn(); // Start the receiver
+  irrecv.enableIRIn(); // Start the receiver
 
    int inputpins[5]={
     Bpow,Bspeed,Bplasma,Btimer,Bauto
@@ -129,10 +129,10 @@ Serial.begin(9600);
     pinMode(outputpins[j],OUTPUT);
   }
 
-//  pinMode(ledPower,OUTPUT);
-//  for(int i=0;i<numaverage;i++){
-//  dust[i]=initialdust;
-//  }
+  pinMode(ledPower,OUTPUT);
+  for(int i=0;i<numaverage;i++){
+  dust[i]=initialdust;
+  }
 
   beepvar=1;
   clearspeed();
@@ -155,29 +155,29 @@ void loop() {
 currenttime= millis();
 
 Dimmer();
-//
+
 beep();//beep version 1
-//
-//beeppower();//beep version2 for power on-off
-//
+
+beeppower();//beep version2 for power on-off
+
 statebutton();
-//
-//Remote();
-//
-//Display();
-//
-//sensor_dust();
-//
+
+Remote();
+
+Display();
+
+sensor_dust();
+
 powerset();
-//
+
 speedset();
-//
+
 plasmaset();
-//
+
 TIMER();
-//
+
 Auto();
-//
+
 read_smart();//read from the smart board
 
 }

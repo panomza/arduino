@@ -9,7 +9,7 @@ int timedim=10;
 
 
 void Dimmer(){
-  rundim++;
+  rundim=millis();
   
   if (timedim==0){PWM();}
   if (timedim>0){digitalWrite(dim,1);}
@@ -17,7 +17,7 @@ void Dimmer(){
   {
    timedim=10;
   }
-  if(rundim-trigdim>10125&&timedim>0){
+  if(rundim-trigdim>1000&&timedim>0){
     trigdim=rundim;
     timedim=timedim-+1;
   }

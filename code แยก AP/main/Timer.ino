@@ -3,7 +3,7 @@ unsigned int timetrig=0;
 unsigned int runtime =0;
 
 void TIMER(){
- runtime++;
+ runtime=millis();
     if ((Bt != Lt) && Bt == 0  && (currenttime-timer0 > buttondelay)){
         Lt=Bt;
         Settime++;
@@ -21,7 +21,7 @@ void TIMER(){
   
 if(Settime==0) {timedown=0;clearstatetime();} 
 if(Settime>0){  
-        if(runtime - timetrig >10125){
+        if(runtime - timetrig >1000){
                  timetrig = runtime;
                  timedown=timedown-+1;  
                  Serial.println(timedown);     
