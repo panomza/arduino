@@ -1,12 +1,12 @@
 #include <SoftwareSerial.h>
 
-SoftwareSerial NodeSerial(7,8); // RX | TX
+SoftwareSerial NodeSerial(11,12); // RX | TX
 char datar;
 int datasent=0;
 ///////////////////////////////////////////////////////////////////////////
 
 #include <IRremote.h>
-  const int RECV_PIN = 24;
+  const int RECV_PIN = 21;
   IRrecv irrecv(RECV_PIN);
   decode_results results;
 #define OUTPUT_COUNT 5
@@ -24,27 +24,27 @@ keypad output[OUTPUT_COUNT];
 
 // input pins
 
-const short int Bpow    = 31;    // power button input pin
-const short int Bspeed  = 23;    // speed input pin
-const short int Bplasma = 21;    // plasma button input pin
-const short int Bauto   = 20;    // Auto button input pin
-const short int Btimer  = 22;    // Timer button input pin
+const short int Bpow    = 17;    // power button input pin
+const short int Bspeed  = 16;    // speed input pin
+//const short int Bplasma = 30;    // plasma button input pin
+const short int Bauto   = 14;    // Auto button input pin
+const short int Btimer  = 15;    // Timer button input pin
 
 //output pins
 
-const short int POW    = 28;      //power output pin
-const short int PLASMA = 14;       // plasma button output pin
-const short int M1     = 12;       // motor output pin
-const short int M2     = 30;       // motor output pin
-const short int M3     = 10;       // motor output pin
-const short int M4     = 11;      // motor output pin
-const short int BUZ    = 13;         // buzzer output pin
-const short int AUTO   = 19; 
-const short int dim    = 29; 
-const short int T1     = 17;       // motor output pin
-const short int T2     = 18;       // motor output pin
-const short int T3     = 15;       // motor output pin
-const short int T4     = 16;
+const short int POW    = 3;      //power output pin
+const short int PLASMA = 30;       // plasma button output pin
+const short int M1     = 19;       // motor output pin
+const short int M2     = 8;       // motor output pin
+const short int M3     = 7;       // motor output pin
+const short int M4     = 10;      // motor output pin
+const short int BUZ    = 9;         // buzzer output pin
+const short int AUTO   = 18; 
+const short int dim    = 2; 
+//const short int T1     = 17;       // motor output pin
+//const short int T2     = 18;       // motor output pin
+//const short int T3     = 15;       // motor output pin
+//const short int T4     = 16;
 
 // state variables
 
@@ -90,15 +90,15 @@ short int autotimer = 5000;
 
 //delays
 short int buttondelay=300;// delay between each button press in ms
-unsigned long int currenttime=0;
+unsigned int currenttime=0;
 unsigned short int songindex=0;
 
-int measurePin = 27;
-int ledPower = 26;
-const int numaverage = 30; ///number of values for taking average
+int measurePin = A6;
+int ledPower = 4;
+const int numaverage = 100; ///number of values for taking average
 float dust[numaverage];
 unsigned short int count;
-float initialdust=20;
+float initialdust=0;
 float averagedust=initialdust;
 
 //beep
@@ -115,12 +115,12 @@ Serial.begin(9600);
 
   irrecv.enableIRIn(); // Start the receiver
 
-   int inputpins[5]={
-    Bpow,Bspeed,Bplasma,Btimer,Bauto
+   int inputpins[4]={
+    Bpow,Bspeed,Btimer,Bauto
     };
 
-   int outputpins[13] = {
-    POW,PLASMA,M1,M2,M3,M4,BUZ,AUTO,dim,T1,T2,T3,T4
+   int outputpins[8] = {
+    POW,M1,M2,M3,M4,BUZ,AUTO,dim 
   };
 
   for(int j=0;j< sizeof(inputpins)/sizeof(1);j++){
@@ -141,8 +141,8 @@ Serial.begin(9600);
   powoff();
   digitalWrite(POW,1);
  
-  pinMode(7, INPUT); 
-  pinMode(8,OUTPUT);
+  pinMode(11, INPUT); 
+  pinMode(12,OUTPUT);
 
   NodeSerial.begin(57600);
 }
@@ -152,14 +152,14 @@ Serial.begin(9600);
 
 
 void loop() {
-  
+
 currenttime= millis();
 
 Dimmer();
 
 beep();//beep version 1
 
-beeppower();//beep version2 for power on-off
+//beeppower();//beep version2 for power on-off
 
 statebutton();
 
@@ -179,6 +179,6 @@ TIMER();
 
 Auto();
 
-read_smart();//read from the smart board
+//read_smart();//read from the smart board
 
 }
