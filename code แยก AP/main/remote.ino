@@ -2,11 +2,11 @@ void Remote(){
     unsigned long currentMillis = millis();
     if (irrecv.decode(&results)) {
          if (currentMillis - last > 50) {
-
            if ( (results.value != 0xFFFFFFFF) && (results.value != 0x00) ) {
               for (int val=0;val<OUTPUT_COUNT;val++) {       
                   if ( results.value == remote_key[val] )  {
-                    Serial.println("remote button is pressed");
+                    Serial.println("remote");
+                    timedim=10;
                     status1[val]=!status1[val];
                     switch (val) {
                       case 0: //on-off
@@ -27,11 +27,6 @@ void Remote(){
                     }
                   }       
               }
-           }
-
-           for (int i=0;i<OUTPUT_COUNT;i++){
-               //digitalWrite(outputPins[i], output[i].state);
-//               digitalWrite(outputPins[i], status1[i]);  
            }
 
         last = currentMillis;      // record time

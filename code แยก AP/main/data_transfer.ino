@@ -8,22 +8,19 @@ void send_smart(){
 
 void read_smart() {
 
-if(currenttime-trans>100){
+if(currenttime-trans>50){
+
   datar = NodeSerial.read();
     if (datar=='O') {
-       Serial.println("ON OFF");
        Bp=0; 
     } else{Bp=1;}
     if (datar=='s') {
-       Serial.println("Speed"); 
        Bs=0;
     } else{Bs=1;}
     if (datar=='p') {
-       Serial.println("Plasma"); 
        Bpm=0;
     }else{Bpm=1;}
     if (datar=='a') {
-       Serial.println("Auto"); 
        Ba=0;
     }else{Ba=1;}
   trans=currenttime;

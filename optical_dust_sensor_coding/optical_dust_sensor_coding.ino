@@ -1,5 +1,5 @@
-int measurePin = A5;
-int ledPower = 13;
+int measurePin = A6;
+int ledPower = 4;
 
 unsigned int samplingTime = 280;
 unsigned int deltaTime = 40;

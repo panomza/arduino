@@ -89,14 +89,14 @@ void readReturnSignal(float current_time) {
       
   if (datar=='A')
       {
-      Serial.println("Plasma On");
+      Serial.println("Auto On");
       WidgetLED led2(V8);
       led2.setValue(255);
       }else
       
   if (datar=='a')
       {
-      Serial.println("Plasma Off");
+      Serial.println("Auto Off");
       WidgetLED led2(V8);
       led2.setValue(0);
       }else
@@ -156,6 +156,7 @@ BLYNK_WRITE(V0) // ON-OFF
 {
   int pinValue = param.asInt();
     if (pinValue == 1) {
+      Serial.println("123456 ");  
         NanoSerial.print("O"); 
     }
 }
