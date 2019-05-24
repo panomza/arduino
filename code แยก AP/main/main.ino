@@ -22,6 +22,7 @@ keypad output[OUTPUT_COUNT];
 
 ///////////////////////////////////////////////////////////////////////////
 
+
 // input pins
 
 const short int Bpow    = 17;    // power button input pin
@@ -32,7 +33,7 @@ const short int Btimer  = 15;    // Timer button input pin
 
 //output pins
 
-const short int POW    = 3;      //power output pin
+const short int POW    = 5;      //power output pin
 const short int PLASMA = 30;       // plasma button output pin
 const short int M1     = 19;       // motor output pin
 const short int M2     = 8;       // motor output pin
@@ -40,11 +41,8 @@ const short int M3     = 7;       // motor output pin
 const short int M4     = 10;      // motor output pin
 const short int BUZ    = 9;         // buzzer output pin
 const short int AUTO   = 18; 
-const short int dim    = 2; 
-//const short int T1     = 17;       // motor output pin
-//const short int T2     = 18;       // motor output pin
-//const short int T3     = 15;       // motor output pin
-//const short int T4     = 16;
+const short int dim    = 6; 
+
 
 // state variables
 
@@ -66,7 +64,7 @@ int plasmat0;
 bool Bs         = 1;                   // speed input state
 bool Ls         = 1;                   // previous speed input state
 bool stateS     = 0;         // speed state
-unsigned short int index = 1;                // case counter
+unsigned int index = 0;                // case counter
 short int speedt0;
 
 //Timer
@@ -76,7 +74,10 @@ bool stateT     = 1;
 short int Settime=0;
 unsigned short int selectime = 0;
 int timer0;
-unsigned int timedown=0;
+float timedown=0;
+int timeshow0=0;
+float timeshow1=0;
+float timeshow2=0;
 
 //Auto
 bool Ba         = 1;
@@ -95,7 +96,7 @@ unsigned short int songindex=0;
 
 int measurePin = A6;
 int ledPower = 4;
-const int numaverage = 100; ///number of values for taking average
+const int numaverage = 150; ///number of values for taking average
 float dust[numaverage];
 unsigned short int count;
 float initialdust=0;
@@ -112,6 +113,7 @@ short int beeptime=0;
 
 void setup() {
 Serial.begin(9600);
+
 
   irrecv.enableIRIn(); // Start the receiver
 
@@ -130,20 +132,22 @@ Serial.begin(9600);
     pinMode(outputpins[j],OUTPUT);
   }
 
-  pinMode(ledPower,OUTPUT);
+  
   for(int i=0;i<numaverage;i++){
   dust[i]=initialdust;
   }
 
   beepvar=1;
   clearspeed();
-//  clearstatetime();
   powoff();
+  
   digitalWrite(POW,1);
  
   pinMode(11, INPUT); 
   pinMode(12,OUTPUT);
 
+  pinMode(ledPower,OUTPUT);
+  
   NodeSerial.begin(57600);
 }
 
@@ -152,6 +156,7 @@ Serial.begin(9600);
 
 
 void loop() {
+
 
 currenttime= millis();
 
@@ -179,6 +184,8 @@ TIMER();
 
 Auto();
 
-//read_smart();//read from the smart board
+read_smart();//read from the smart board
+
+send_smart();
 
 }

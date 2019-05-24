@@ -18,8 +18,8 @@ void Auto(){
         digitalWrite(AUTO,stateA);
         Serial.print("Auto to : ");
         Serial.println(stateA); 
-        if(stateA==0){NodeSerial.print("A");}
-        else if (stateA==1){NodeSerial.print("a");}
+        if(stateA==0){NodeSerial.print("a");}
+        else if (stateA==1){NodeSerial.print("A");}
         La=Ba;
         auto0 = currenttime;
         autocount =1;

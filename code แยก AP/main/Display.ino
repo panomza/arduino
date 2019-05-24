@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <TM1637Display.h>
-#define CLK 5
-#define DIO 6
+#define CLK 3
+#define DIO 2
 TM1637Display display(CLK, DIO);
 unsigned int TD=0;
 unsigned int td=0;
@@ -24,11 +24,11 @@ void Display(){
   if (Bt==0){sw_count=1;SW_display=0;}
   if (timedown==5){sw_count=1;SW_display=0;}
       if (sw_count==0){      
-          if(SW_display>=5&&Settime>0){SW_display=0; sw_count=1;}
+          if(SW_display>=5&&Settime>0){SW_display=0; sw_count=1;display.clear();}
           show=0;
       }       
       if (sw_count==1){    
-          if(SW_display>=5){SW_display=0; sw_count=0;}
+          if(SW_display>=5){SW_display=0; sw_count=0;display.clear();}
           if(SW_display>=5&&Settime==0){sw_count=3;}   
          show=1;
       }
@@ -36,16 +36,17 @@ void Display(){
   
   switch (show){
     case 0:
-     if(td-TD>2000){
-       TD=td;
-       display.setBrightness(7);
-       display.showNumberDec(averagedust,false,2,1);
-     send_smart();
+     if(td-TD>1000){
+      display.showNumberDec(averagedust*10,false);
+       TD=td;   
+       NodeSerial.print("d");
+       NodeSerial.print(averagedust);
       }
+      display.setBrightness(7);
       break;
 
     case 1:
-       if(td-ST>300 && ST_count==0){
+       if(td-ST>700 && ST_count==0){
        ST=td;
        display.setBrightness(0);
        ST_count=1;
@@ -55,8 +56,7 @@ void Display(){
         ST=td;
         ST_count=0;
         }
-       
-       display.showNumberDec(timedown, false,2,1);
+       display.showNumberDec(timeshow2*1000,true);
       break;
   }
 }
