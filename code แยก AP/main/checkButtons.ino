@@ -1,10 +1,9 @@
 
-short int tc=0;
+unsigned int tc=0;
 
 void checkbuttons(){
   Bp      =  digitalRead(Bpow);
   Bs      =  digitalRead(Bspeed);
-//  Bpm     =  digitalRead(Bplasma);
   Ba      =  digitalRead(Bauto);
   Bt      =  digitalRead(Btimer);
 
@@ -18,7 +17,7 @@ void statebutton(){
   checkbuttons();
   }
 
-  if(currenttime-tc>100){
+  if(currenttime-tc>200){
     checkbuttons();
     tc=currenttime;
   }

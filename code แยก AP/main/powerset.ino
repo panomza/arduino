@@ -10,19 +10,18 @@ void powerset(){
     Serial.println(stateP);   
     Lp=Bp;
     powert0 = currenttime;   
-    poweroff();
     powercount = 1;
     if(stateP==0){
       beeppowervar=1;
-      songindex=1;
+      songindex=0;
       index=1;
-      NodeSerial.print("O");
     }else 
     if(stateP==1){
       beeppowervar=1;
-      songindex=2;
+      songindex=1;
       index=0;
-      NodeSerial.print("F");
+      stateA=0;
+      digitalWrite(AUTO,stateA);
     }
     applythespeedswitch(); // apply the switch for speed when turning on
 } // else if Bp is back to 1, reset the powercount

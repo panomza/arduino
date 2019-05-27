@@ -1,5 +1,5 @@
 void Remote(){
-    unsigned long currentMillis = millis();
+    unsigned int currentMillis = millis();
     if (irrecv.decode(&results)) {
          if (currentMillis - last > 50) {
            if ( (results.value != 0xFFFFFFFF) && (results.value != 0x00) ) {
@@ -15,7 +15,7 @@ void Remote(){
                         Bs=0;
                         break;
                       case 2: // plasma
-                        Bpm=0;
+                       
                         break;
                       case 3: // timer
                         Bt=0;
@@ -45,7 +45,7 @@ void Remote(){
                         Bs=1;
                         break;
                       case 2: // plasma
-                        Bpm=1;
+                        
                         break;
                       case 3: // timer
                         Bt=1;

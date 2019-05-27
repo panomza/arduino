@@ -5,7 +5,7 @@ unsigned int timedim=10;
 unsigned int dim1=0;
 unsigned int delaydim=0;
 unsigned int countdim=0;
-int lll=0;
+
 
 
 void Dimmer(){
@@ -33,6 +33,5 @@ void PWM(){
     dim1=rundim;
     countdim=countdim-1;
     if(countdim==50){delaydim=1;}
-  }
-  
+  } 
 }

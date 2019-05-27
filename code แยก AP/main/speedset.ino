@@ -16,7 +16,7 @@ void speedset(){
 }
 
 void applythespeedswitch(){
-  if(stateP==0){
+  
     switch (index) {
     case 0:
       clearspeed();
@@ -24,23 +24,19 @@ void applythespeedswitch(){
     case 1:
       clearspeed();
       digitalWrite(M1,1);   
-      NodeSerial.print("l");
       break;
     case 2:
       clearspeed();
       digitalWrite(M2,1);
-      NodeSerial.print("m");
       break;
     case 3:
       clearspeed();
       digitalWrite(M3,1);
-      NodeSerial.print("h");
       break;
     case 4:
       clearspeed();
       digitalWrite(M4,1);
-      NodeSerial.print("t");
       break;
   }
-  }
+  
 }

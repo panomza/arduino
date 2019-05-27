@@ -163,10 +163,10 @@ void beeppower(){
     Serial.println("sound");
     switch (songindex){
       
-      case 1:
+      case 0:
             play_sound(Pirates_note,Pirates_duration,sizeof(Pirates_note) / sizeof(int));// play on
         break;
-      case 2:
+      case 1:
             play_sound(melody1,noteDurations1,sizeof(melody1) / sizeof(int));
         break;
     }

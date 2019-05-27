@@ -11,7 +11,7 @@ void TIMER(){
         Settime++;
         timer0 = currenttime;
         beepvar=1;
-        if(Settime==5){Settime=0;NodeSerial.print("z");}
+        if(Settime==5){Settime=0;}
         selecttime();
       Serial.print("Timer to : ");
       Serial.println(Settime);
@@ -22,8 +22,8 @@ void TIMER(){
 ///////////////////////////////////////////////////////////////////////////////.
 if(Bp==0){Settime=0;timeshow2=0;}
 if(timedown==0&&Settime>0){Bp=0;Settime=0;}
-if(Settime==0){timeshow2=0;}
-if(Settime>0){ Serial.println(timedown); 
+if(Settime==0){timeshow2=0;timedown=0;}
+
   runtime=millis();
         if(runtime - timetrig >1000){
                  timetrig = runtime;
@@ -37,27 +37,21 @@ if(Settime>0){ Serial.println(timedown);
   timeshow2=timeshow1+timeshow0;   
   }
 
-  
-  
-}
+ 
 
 void selecttime(){
   switch(Settime){
     case 1:
     timedown=10;
-    NodeSerial.print("x");
     break;
     case 2:
     timedown=20;
-    NodeSerial.print("c");
     break;
     case 3:
     timedown=60;
-    NodeSerial.print("v");
     break;
     case 4:
     timedown=150;
-    NodeSerial.print("b");
     break;
   }
 }

@@ -3,6 +3,11 @@
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 
+#include "DHT.h"
+#define DHTPIN D5
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
 
 // wifimanager
 #include <DNSServer.h>
@@ -31,116 +36,88 @@ void configModeCallback (WiFiManager *myWiFiManager) {
 /// read the stupid board
 
 char datar;
+
 unsigned int dust=0;
 unsigned int timer=0;
 unsigned int Speed=0;
+unsigned int Power=0;
+unsigned int Auto=0;
 
 void readReturnSignal() { 
-  
-  datar = NanoSerial.read();
-  Serial.println(datar);
-  if (datar=='O')
-      {
-       Serial.println("ON");
-       Blynk.virtualWrite(V0, 1);
-      }
-  if (datar=='F')
-      {
-       Blynk.virtualWrite(V5, 0);
-       Blynk.virtualWrite(V0, 0);     
-       WidgetLED led2(V8);
-       led2.setValue(0);
-      }
-
-//////////////////////////////SPEED////////////////////
- 
-  if (datar=='s'){
-      Speed = NanoSerial.parseInt(); 
-      Blynk.virtualWrite(V5,Speed);}
-  
-  if (datar=='x'){
-      timer = NanoSerial.parseInt(); 
-      Blynk.virtualWrite(V6,timer);}
-  
-      
-  if (datar=='A')
-      {
-//      Serial.println("Auto On");
-      WidgetLED led2(V8);
-      led2.setValue(255);
-      }
-      
-  if (datar=='a')
-      {
-//      Serial.println("Auto Off");
-      WidgetLED led2(V8);
-      led2.setValue(0);
-      }
+  while(NanoSerial.available()>0){
     
-  if (datar=='d')
-      {
-        dust = NanoSerial.parseInt(); 
-        Blynk.virtualWrite(V9, dust);
-      }
+  datar = NanoSerial.read();
 
+  if (datar=='S'){
+       Speed = NanoSerial.parseInt(); 
+       Blynk.virtualWrite(V5,Speed);
+       }
+  if (datar=='d'){
+       dust = NanoSerial.parseInt();
+       Blynk.virtualWrite(V9, dust);
+      }
+  if (datar=='A'){
+       Auto = NanoSerial.parseInt();
+       WidgetLED led2(V8);
+       if(Auto==1){led2.setValue(255);}
+       if(Auto==0){led2.setValue(0);}
+      }
+   if (datar=='P'){
+       Power = NanoSerial.parseInt();
+       Blynk.virtualWrite(V0, !Power);
+      }
+   if (datar=='T'){
+       timer = NanoSerial.parseInt(); 
+       Blynk.virtualWrite(V6,timer);}      
+   }
 }
 
 
 // Blynk read button and Trasfer functions///////////////////////////////////////////////////////////
 unsigned int current=0;
 unsigned int timesent=0;
-unsigned int button=0;
-unsigned int count0=0;
-void sent(){
 
-  
-  current=millis();
- 
-  if(count0>=6){count0=0;}
-  if(current-timesent > 1 && count0>0&&button==1) {count0++;NanoSerial.print("O");timesent=current;}
-  if(current-timesent > 1 && count0>0&&button==2) {count0++;NanoSerial.print("s");timesent=current;}
-  if(current-timesent > 1 && count0>0&&button==3) {count0++;NanoSerial.print("a");timesent=current;}
-  if(current-timesent > 1 && count0>0&&button==4) {count0++;NanoSerial.print("t");timesent=current;}
+
+
+void Sensor_DHT(){
+  int h = dht.readHumidity();
+  int t = dht.readTemperature();
+
+   if (isnan(h) || isnan(t)) {
+      return;
+   }
+  Blynk.virtualWrite(V11,t);
+  Blynk.virtualWrite(V10,h);
 }
+
+
 
 BLYNK_WRITE(V0) // ON-OFF
 {
-  int pinValue = param.asInt();
-    if (pinValue == 1) {
-       count0=1;
-       button=1; 
-       NanoSerial.print("O");    
-    }  
+
+       NanoSerial.print("O"); 
+
 }
 
 BLYNK_WRITE(V1) // Speed
 {
-  int pinValue = param.asInt();
-    if (pinValue == 1) {
-       count0=1;
-       button=2;
+
        NanoSerial.print("s");
-  }
+  
 }
 
 BLYNK_WRITE(V3) // Timer
 {
-  int pinValue = param.asInt();
-  if (pinValue == 1 ){
-       count0=1;
-       button=4; 
+
        NanoSerial.print("t"); 
-  }
+  
 }
 
 BLYNK_WRITE(V4) //Auto
 {
-  int pinValue = param.asInt();
-    if (pinValue == 1 ){
-       count0=1;
-       button=3;
+
        NanoSerial.print("a");  
-  }
+  
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,6 +126,8 @@ void setup()
 {
   // Debug console
   Serial.begin(9600);
+
+   dht.begin();
 
   /////////////// wifimanager//////////////////
   WiFiManager wifiManager;
@@ -169,5 +148,6 @@ void loop()
 {
   Blynk.run();
   readReturnSignal();
-  sent();
+//  sent();
+  Sensor_DHT();
 }

@@ -39,8 +39,6 @@ void Display(){
      if(td-TD>1000){
       display.showNumberDec(averagedust*10,false);
        TD=td;   
-       NodeSerial.print("d");
-       NodeSerial.print(averagedust);
       }
       display.setBrightness(7);
       break;
