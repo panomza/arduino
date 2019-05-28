@@ -2,9 +2,6 @@
 #include <TonePlayer.h> 
 TonePlayer tone1 (TCCR1A, TCCR1B, OCR1AH, OCR1AL, TCNT1H, TCNT1L);  
 /////////////////song definition////////////
-/*************************************************
- * Public Constants
- *************************************************/
 
 #define NOTE_B0  31
 #define NOTE_C1  33
@@ -97,44 +94,7 @@ TonePlayer tone1 (TCCR1A, TCCR1B, OCR1AH, OCR1AL, TCNT1H, TCNT1L);
 #define NOTE_DS8 4978
 
 
-// notes in the melody:
-int melody[] = {
-  NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4
-};
 
-// note durations: 4 = quarter note, 8 = eighth note, etc.:
-int noteDurations[] = {
-  4, 8, 8, 4, 4, 4, 4, 4
-};
-int Pirates_note[] = {
-  NOTE_C4, NOTE_C5, NOTE_A3, NOTE_A4,
-  NOTE_AS3, NOTE_AS4, 0
-};
-
-int Pirates_duration[] = {
-    12, 12, 12, 12,
-  12, 12, 6,
-  3,
-  12, 12, 12, 12,
-  12, 12, 6,
-  3,
-  12, 12, 12, 12,
-  12, 12, 6,
-  3,
-  12, 12, 12, 12,
-  12, 12, 6,
-  6, 18, 18, 18,
-  6, 6,
-  6, 6,
-  6, 6,
-  18, 18, 18, 18, 18, 18,
-  10, 10, 10,
-  10, 10, 10,
-  3, 3, 3
-};
-
-int melody1[] = { 262, 196, 196, 220, 196, 0, 247, 262 };
-int noteDurations1[] = { 8, 16, 16, 8, 8, 8, 8, 8 };
 
 
 void beep(){
@@ -148,33 +108,21 @@ void beep(){
     beepstarted=0;
   }
 
-}
+  
+if (currenttime-soundtime>3&&beeppowervar>0){play++;soundtime=currenttime;}
 
+if (beeppowervar==1&&play==25&&songindex==0){tone1.tone (1760);beeppowervar=2;}
+if (beeppowervar==2&&play==50&&songindex==0){tone1.tone (1976);beeppowervar=3;}
+if (beeppowervar==3&&play==75&&songindex==0){tone1.tone (2093);beeppowervar=4;}
+if (beeppowervar==4&&play==100&&songindex==0){tone1.tone (2349);beeppowervar=5;}
+if (beeppowervar==5&&play==125&&songindex==0){tone1.tone (2637);beeppowervar=6;}
+if (beeppowervar==6&&play==170&&songindex==0){tone1.noTone ();beeppowervar=0;play=0;}
 
-void play_sound(int song[],int duration[],int sizesong){
-    for (int thisNote = 0; thisNote < sizesong; thisNote++) {
-    int noteDuration = 1000/duration[thisNote];
-    tone1.tone(song[thisNote]); // Play thisNote at full volume for noteDuration in the background.
-    delay(noteDuration * 4 / 3); // Wait while the tone plays in the background, plus another 33% delay between notes.
-  }
-}
-void beeppower(){
-  if (beeppowervar==1){
-    Serial.println("sound");
-    switch (songindex){
-      
-      case 0:
-            play_sound(Pirates_note,Pirates_duration,sizeof(Pirates_note) / sizeof(int));// play on
-        break;
-      case 1:
-            play_sound(melody1,noteDurations1,sizeof(melody1) / sizeof(int));
-        break;
-    }
-
-      
-    tone1.noTone();
-    beeppowervar=0;
-
-  }
+if (beeppowervar==1&&play==25&&songindex==1){tone1.tone (2349);beeppowervar=2;}
+if (beeppowervar==2&&play==50&&songindex==1){tone1.tone (2093);beeppowervar=3;}
+if (beeppowervar==3&&play==75&&songindex==1){tone1.tone (1760);beeppowervar=4;}
+if (beeppowervar==4&&play==100&&songindex==1){tone1.tone (1480);beeppowervar=5;}
+if (beeppowervar==5&&play==125&&songindex==1){tone1.tone (1319);beeppowervar=6;}
+if (beeppowervar==6&&play==170&&songindex==1){tone1.noTone ();beeppowervar=0;play=0;}
 
 }

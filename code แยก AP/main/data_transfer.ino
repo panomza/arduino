@@ -7,8 +7,7 @@ char datar;
 
 void send_smart(){
 
-
- if(currenttime-sent>400){
+ if(currenttime-sent>450){
 
       NodeSerial.print("P");NodeSerial.print(stateP);NodeSerial.print("\n");
       NodeSerial.print("S");NodeSerial.print(index);NodeSerial.print("\n");
@@ -21,17 +20,16 @@ void send_smart(){
 }
 
 void read_smart() {
-  
-  while(NodeSerial.available()>0){
-    
+
+  if(NodeSerial.available()>0){
+
   datar = NodeSerial.read();
-  
+   
     if (datar=='O' ) {Bp=0;}
     if (datar=='s' ) {Bs=0;}
     if (datar=='a' ) {Ba=0;}
-    if (datar=='t' ) {Bt=0;}
+    if (datar=='t' ) {Bt=0;checkstate_in=1;}
   }
-  
 }
 
  

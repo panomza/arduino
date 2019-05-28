@@ -17,7 +17,7 @@ void statebutton(){
   checkbuttons();
   }
 
-  if(currenttime-tc>200){
+  if(currenttime-tc>100){
     checkbuttons();
     tc=currenttime;
   }

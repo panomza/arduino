@@ -2,7 +2,7 @@
 void powerset(){
   // check if previous state is different from current state, current state is 0 and powercount=0
 
-  if ((Bp != Lp) && (Bp == 0) && (currenttime-powert0 > buttondelay) && (powercount==0)){
+  if ((Bp != Lp) && (Bp == 0) && (currenttime-powert0 > buttondelay) && (powercount==0)&&play==0){
     clearspeed();
     stateP=!stateP;
     digitalWrite(POW,stateP);
@@ -25,7 +25,7 @@ void powerset(){
     }
     applythespeedswitch(); // apply the switch for speed when turning on
 } // else if Bp is back to 1, reset the powercount
-  else if ((Bp != Lp) && (Bp == 1)&& (currenttime-powert0 > buttondelay)){
+  else if ((Bp != Lp) && (Bp == 1)&& (currenttime-powert0 > buttondelay)&&play==0){
     Lp=Bp;
     powercount = 0;
   }

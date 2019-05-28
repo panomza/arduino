@@ -9,8 +9,7 @@ SoftwareSerial NodeSerial(13,12); // RX | TX
   IRrecv irrecv(RECV_PIN);
   decode_results results;
 #define OUTPUT_COUNT 5
-
-    unsigned long last = millis();
+    
     long remote_key[]={0xDF40BF,0xDF609F,0xDF48B7,0xDF50AF,0xDF708F};
     const byte outputPins[OUTPUT_COUNT] = {0, 1, 2, 3,4};
     bool status1[5] = {0,0,0,0,0};
@@ -32,14 +31,13 @@ const short int Btimer  = 15;    // Timer button input pin
 //output pins
 
 const short int POW    = 5;      //power output pin
-const short int PLASMA = 30;       // plasma button output pin
 const short int M1     = 19;       // motor output pin
 const short int M2     = 8;       // motor output pin
 const short int M3     = 7;       // motor output pin
 const short int M4     = 10;      // motor output pin
 const short int BUZ    = 9;         // buzzer output pin
 const short int AUTO   = 18; 
-const short int dim   = 6; 
+const short int dim    = 6; 
 
 
 // state variables
@@ -62,12 +60,22 @@ unsigned int speedt0 = 0;
 bool Bt         = 1;
 bool Lt         = 1;
 bool stateT     = 1;
+bool BTcount = 0; 
 byte Settime=0;
 unsigned int timer0;
 float timedown=0;
 unsigned int timeshow0=0;
 float timeshow1=0;
 float timeshow2=0;
+
+unsigned int timetrig=0;
+unsigned int runtime =0;
+unsigned int buttontime0 =0;
+unsigned int buttontime1 =0;
+byte buttoncount0 =0;
+byte buttoncount1 =0;
+bool beepout =0;
+bool checkstate_in=0;
 
 //Auto
 bool Ba         = 1;
@@ -79,9 +87,10 @@ unsigned int autotime = 0;
 
 
 //delays
-unsigned int buttondelay=300;// delay between each button press in ms
+unsigned int buttondelay=200;// delay between each button press in ms
 unsigned int currenttime=0;
 bool songindex=0;
+
 
 const short int measurePin = A6;
 const short int ledPower = 4;
@@ -94,8 +103,12 @@ float averagedust=initialdust;
 //beep
 bool beepvar=0;
 bool beepstarted=0;
-bool beeppowervar=0;
+byte beeppowervar=0;
 unsigned int beeptime=0;
+int play = 0;
+int soundtime = 0;
+
+byte bright = 0;
 
 ////////////////////////////////////VOID/////////////////////////////////////////////////
 ///////////////////////////////////SETUP/////////////////////////////////////////////////
@@ -146,9 +159,7 @@ currenttime= millis();
 
 Dimmer();
 
-beep();//beep version 1
-
-//beeppower();//beep version2 for power on-off
+beep();
 
 statebutton();
 

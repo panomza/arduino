@@ -13,9 +13,9 @@ void Dimmer(){
   TCCR0A = _BV(COM0A1) | _BV(WGM01)| _BV(WGM00);
   OCR0A = countdim;
   
-  if (timedim==0){PWM();}
+  if (timedim==0){PWM();bright=2;}
   
-  if (timedim>0){delaydim=0;countdim=255;}
+  if (timedim>0){delaydim=0;countdim=255;bright=7;}
   if (digitalRead(Bpow)==0 || digitalRead(Bspeed)==0  || digitalRead(Bauto)==0 || digitalRead(Btimer)==0)
   {
    timedim=5;

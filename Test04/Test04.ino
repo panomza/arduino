@@ -19,11 +19,8 @@ DHT dht(DHTPIN, DHTTYPE);
 SoftwareSerial NanoSerial(D3, D2); // RX | TX
 
 //wifi variables
-//const char auth[] = "a7a249ec5f2c41edabf98479ba690559";
+
 const char auth[] = "d7c89935fa6449caabdb6753b6d80b11";
-
-
-
 
 
 void configModeCallback (WiFiManager *myWiFiManager) {
@@ -44,80 +41,98 @@ unsigned int Power=0;
 unsigned int Auto=0;
 
 void readReturnSignal() { 
+  
   while(NanoSerial.available()>0){
+        Serial.println(datar);
+      datar = NanoSerial.read();
     
-  datar = NanoSerial.read();
-
-  if (datar=='S'){
-       Speed = NanoSerial.parseInt(); 
-       Blynk.virtualWrite(V5,Speed);
-       }
-  if (datar=='d'){
-       dust = NanoSerial.parseInt();
-       Blynk.virtualWrite(V9, dust);
-      }
-  if (datar=='A'){
-       Auto = NanoSerial.parseInt();
-       WidgetLED led2(V8);
-       if(Auto==1){led2.setValue(255);}
-       if(Auto==0){led2.setValue(0);}
-      }
-   if (datar=='P'){
-       Power = NanoSerial.parseInt();
-       Blynk.virtualWrite(V0, !Power);
-      }
-   if (datar=='T'){
-       timer = NanoSerial.parseInt(); 
-       Blynk.virtualWrite(V6,timer);}      
-   }
+        if (datar=='S'){
+             Speed = NanoSerial.parseInt(); 
+             Blynk.virtualWrite(V5,Speed);
+             }
+        if (datar=='d'){
+             dust = NanoSerial.parseInt();
+             Blynk.virtualWrite(V9, dust);
+            }
+        if (datar=='A'){
+             Auto = NanoSerial.parseInt();
+             WidgetLED led2(V8);
+             if(Auto==1){led2.setValue(255);}
+             if(Auto==0){led2.setValue(0);}
+            }
+        if (datar=='P'){
+           Power = NanoSerial.parseInt();
+           Blynk.virtualWrite(V0, !Power);
+            }
+        if (datar=='T'){
+           timer = NanoSerial.parseInt(); 
+           Blynk.virtualWrite(V6,timer);}      
+            }
 }
 
 
 // Blynk read button and Trasfer functions///////////////////////////////////////////////////////////
-unsigned int current=0;
-unsigned int timesent=0;
 
-
+unsigned int DHT_delay=0;
+unsigned int DHT_time=0;
 
 void Sensor_DHT(){
+
+  DHT_delay=millis();
+  
   int h = dht.readHumidity();
   int t = dht.readTemperature();
-
-   if (isnan(h) || isnan(t)) {
-      return;
-   }
-  Blynk.virtualWrite(V11,t);
-  Blynk.virtualWrite(V10,h);
+  
+  if (isnan(h) || isnan(t)) {return;}
+  
+  if (DHT_time-DHT_delay>1000){
+      Blynk.virtualWrite(V11,t);
+      Blynk.virtualWrite(V10,h);
+      DHT_delay=DHT_time;
+  }
 }
 
-
+byte button=0;
+byte num=10;
 
 BLYNK_WRITE(V0) // ON-OFF
 {
-
-       NanoSerial.print("O"); 
-
+  while(button<num){
+      NanoSerial.print("O"); 
+      button++;
+      Serial.println(button);
+  } 
+  button=0;   
 }
 
 BLYNK_WRITE(V1) // Speed
 {
-
-       NanoSerial.print("s");
-  
+  while(button<num){
+      NanoSerial.print("s"); 
+      button++;
+      Serial.println(button);
+  } 
+  button=0;           
 }
 
 BLYNK_WRITE(V3) // Timer
 {
-
-       NanoSerial.print("t"); 
-  
+  while(button<num){
+      NanoSerial.print("t"); 
+      button++;
+      Serial.println(button);
+  } 
+  button=0;          
 }
 
 BLYNK_WRITE(V4) //Auto
 {
-
-       NanoSerial.print("a");  
-  
+   while(button<num){
+      NanoSerial.print("a"); 
+      button++;
+      Serial.println(button);
+  } 
+  button=0;           
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +162,8 @@ void setup()
 void loop()
 {
   Blynk.run();
+  
   readReturnSignal();
-//  sent();
+
   Sensor_DHT();
 }

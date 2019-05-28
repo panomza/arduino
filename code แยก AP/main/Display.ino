@@ -6,12 +6,11 @@ TM1637Display display(CLK, DIO);
 unsigned int TD=0;
 unsigned int td=0;
 unsigned int ST=0;
-unsigned int ST_count=0;
-unsigned int SW_display=0;
 unsigned int sw=0;
-unsigned int sw_count=0;
-unsigned int show=0;
-
+byte SW_display=0;
+byte sw_count=0;
+byte show=0;
+bool ST_count=0;
 
 void Display(){
  td = currenttime;
@@ -19,10 +18,13 @@ void Display(){
   if (td-sw>1000&&sw_count<2){
     sw=td;
     SW_display++;
+    checkstate_in=0;
     }
     
-  if (Bt==0){sw_count=1;SW_display=0;}
+  if (buttoncount1>0 || checkstate_in==1){sw_count=1;SW_display=0;}
+  
   if (timedown==5){sw_count=1;SW_display=0;}
+  
       if (sw_count==0){      
           if(SW_display>=5&&Settime>0){SW_display=0; sw_count=1;display.clear();}
           show=0;
@@ -40,7 +42,7 @@ void Display(){
       display.showNumberDec(averagedust*10,false);
        TD=td;   
       }
-      display.setBrightness(7);
+      display.setBrightness(bright);
       break;
 
     case 1:
@@ -50,7 +52,7 @@ void Display(){
        ST_count=1;
        }else 
        if (td-ST>300 && ST_count==1){
-        display.setBrightness(7);
+        display.setBrightness(bright);
         ST=td;
         ST_count=0;
         }
