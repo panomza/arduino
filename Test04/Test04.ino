@@ -43,7 +43,7 @@ unsigned int Auto=0;
 void readReturnSignal() { 
   
   while(NanoSerial.available()>0){
-        Serial.println(datar);
+        
       datar = NanoSerial.read();
     
         if (datar=='S'){
@@ -73,24 +73,20 @@ void readReturnSignal() {
 
 // Blynk read button and Trasfer functions///////////////////////////////////////////////////////////
 
-unsigned int DHT_delay=0;
-unsigned int DHT_time=0;
+
+int h = 0;
+int t = 0;
 
 void Sensor_DHT(){
 
-  DHT_delay=millis();
-  
-  int h = dht.readHumidity();
-  int t = dht.readTemperature();
-  
-  if (isnan(h) || isnan(t)) {return;}
-  
-  if (DHT_time-DHT_delay>1000){
+       h = dht.readHumidity();
+       t = dht.readTemperature();
+       
       Blynk.virtualWrite(V11,t);
       Blynk.virtualWrite(V10,h);
-      DHT_delay=DHT_time;
-  }
 }
+
+
 
 byte button=0;
 byte num=10;

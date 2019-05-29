@@ -10,7 +10,8 @@ currentMillis = millis();
            if ( (results.value != 0xFFFFFFFF) && (results.value != 0x00) ) {
               for (int val=0;val<OUTPUT_COUNT;val++) {       
                   if ( results.value == remote_key[val] )  {
-                    timedim=5;
+                    
+                    timedim=10;
                     
                     status1[val]=!status1[val];
                     switch (val) {

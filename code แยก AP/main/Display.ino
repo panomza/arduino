@@ -13,6 +13,7 @@ byte show=0;
 bool ST_count=0;
 
 void Display(){
+  
  td = currenttime;
  
   if (td-sw>1000&&sw_count<2){

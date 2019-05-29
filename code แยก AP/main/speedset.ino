@@ -4,7 +4,7 @@ void speedset(){
      Ls=Bs;
      index++;
      speedt0=currenttime;             // get the current time
-     beepvar=1;
+     beepvarB=1;
      if(index>4){index=1;}
      Serial.print("Speed is : ");
      Serial.println(index);

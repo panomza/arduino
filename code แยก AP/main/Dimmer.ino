@@ -16,9 +16,10 @@ void Dimmer(){
   if (timedim==0){PWM();bright=2;}
   
   if (timedim>0){delaydim=0;countdim=255;bright=7;}
+  
   if (digitalRead(Bpow)==0 || digitalRead(Bspeed)==0  || digitalRead(Bauto)==0 || digitalRead(Btimer)==0)
   {
-   timedim=5;
+   timedim=10;
   }
   if(rundim-trigdim>1000&&timedim>0){
     trigdim=rundim;
@@ -29,7 +30,7 @@ void Dimmer(){
 }
 
 void PWM(){
-  if(rundim-dim1>2&&delaydim==0){
+  if(rundim-dim1>4&&delaydim==0){
     dim1=rundim;
     countdim=countdim-1;
     if(countdim==50){delaydim=1;}

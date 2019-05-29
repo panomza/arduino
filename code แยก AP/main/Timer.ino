@@ -17,9 +17,10 @@ void TIMER(){
         buttoncount1=buttoncount1-1;
         }
       }
+  if (buttoncount1>0&&Bt==0){buttoncount1=10;}
   
-  if (buttoncount1==0){beepout = 0; } 
-  if (buttoncount1==10&&beepout == 0){beepvar=1;beepout = 1;}
+  if (buttoncount1==0  && beepout == 1 ){beepvarS=1;beepout = 0; } 
+  if (buttoncount1==10 && beepout == 0 ){beepvarS=1;beepout = 1;}
     
   if (buttoncount0<=2&&buttoncount1>0 || checkstate_in==1){
       
@@ -27,7 +28,7 @@ void TIMER(){
         Lt=Bt;
         Settime++;
         timer0 = currenttime;
-        beepvar=1;
+        beepvarB=1;
         if(Settime==5){Settime=0;}
         selecttime();
       Serial.print("Timer to : ");

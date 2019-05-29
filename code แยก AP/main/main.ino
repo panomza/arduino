@@ -101,10 +101,13 @@ float initialdust=0;
 float averagedust=initialdust;
 
 //beep
-bool beepvar=0;
+bool beepvarB=0;
+bool beepvarS=0;
 bool beepstarted=0;
+bool beepstartedS=0;
 byte beeppowervar=0;
 unsigned int beeptime=0;
+unsigned int beeptimeS=0;
 int play = 0;
 int soundtime = 0;
 
@@ -135,7 +138,7 @@ Serial.begin(9600);
   }
 
 
-  beepvar=1;
+  beepvarS=1;
   clearspeed();
   
   digitalWrite(POW,1);
