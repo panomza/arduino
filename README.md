@@ -9,18 +9,15 @@ Development project
 To solve this problem we have the current Facelift air purifier product which working well address this issue. But, we would like to leverage the advantage of IoT to make the air purifier smarter.
 
 ***Steps Involved:***
-        1. Hardware design
-        2. Software component design
-        3. Make development sample
-        4. Test
+1. Hardware design
+2. Software component design
+3. Make development sample
+4. Test
 
 ## Project descriptions
-Develop Electronics control board with Micro-controller and Wifi module (ESP8286) to connect online data to mobile application, with sufficient I/O pins to support the large number of peripherals. Remote control and Touchpad Capacitive sensor for user control, Buzzer, 7 segments display and LED status for interfacing with the user. Power supply unit sufficiently large for a system use. Soft switch Triac to control fan motor speed. Plasma control.
+Develop PCBA with Micro controller(ATMEGA328P) and Wifi module(ESP8286) to connect online data to mobile application, with sufficient I/O pins to support the large number of peripherals. Remote control and Touchpad Capacitive sensor for user control, Buzzer, 7 segments display and LED status for interfacing with the user. Power supply unit sufficiently large for a system use. Soft switch Triac to control fan motor speed.
 
 #### Step1
-Design Hardware diagram and overall function.
-![Block diagram](https://ws2.sinaimg.cn/large/006tNc79gy1g2tnwsc0cfj30xq0h241i.jpg)
-
 ***Required function:***
 
 No. | item | Descriptions | Note
@@ -31,6 +28,10 @@ No. | item | Descriptions | Note
 4| Manual function | Functional controls and displays on control panel(Capacitive sensor) | ON/OFF, Speed control 1-4, Automatic Mode, Turn ON/OFF Plasma, Timer ON / OFF 
 5 | Remote control | Functional controls |control is like as manual function
 6 | Display/Alert | status for interfacing with the user |***LED Status;*** ON/OFF, Speed control 1-4, Automatic Mode, Turn ON/OFF Plasma, Timer ON / OFF ***LED 7 segments;*** Air quality ***Buzzer;*** push button switch pressed canbe turned On/Off
+
+Design Hardware diagram and overall function.
+![Block diagram](https://ws2.sinaimg.cn/large/006tNc79gy1g2tnwsc0cfj30xq0h241i.jpg)
+
 
 #### Step2
 ***Gather all components***
@@ -62,3 +63,6 @@ This developed version can be controlled by all Touchpad control panel, Remote c
 - [x] Fan speed control(Low, Mid,High,Turbo)
 - [x] Plasma module control, **Canceled**
 - [x] Timer( 8,4,2,1 hrs)
+
+## Project time plan
+![Timeplan](http://ww3.sinaimg.cn/large/006tNc79gy1g3rtjs0t08j31s90u0kcg.jpg)
