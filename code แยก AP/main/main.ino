@@ -39,10 +39,11 @@ const short int BUZ    = 9;         // buzzer output pin
 const short int AUTO   = 18; 
 const short int dim    = 6; 
 
-
+//////////////////////////////////////////////////////////////////////////
 // state variables
 
-//power
+//////////////////////power//////////////////////
+
 bool Bp         = 1;         //power button state
 bool Lp         = 1;         //previous power button state 
 bool stateP     = 1;         //power output state
@@ -50,13 +51,16 @@ bool powercount = 0;         // count if the power button is pushed
 unsigned int powert0 = 0;
 
 
-//speed
-bool Bs         = 1;                   // speed input state
-bool Ls         = 1;                   // previous speed input state
+/////////////////////speed////////////////////
+
+bool Bs         = 1;           // speed input state
+bool Ls         = 1;           // previous speed input state
+bool speedcount = 0; 
 byte index = 0;                // case counter
 unsigned int speedt0 = 0;
 
-//Timer
+////////////////////Timer////////////////////
+
 bool Bt         = 1;
 bool Lt         = 1;
 bool stateT     = 1;
@@ -77,7 +81,8 @@ byte buttoncount1 =0;
 bool beepout =0;
 bool checkstate_in=0;
 
-//Auto
+/////////////////Auto////////////////////
+
 bool Ba         = 1;
 bool La         = 1;
 bool stateA     = 0;
@@ -86,21 +91,25 @@ unsigned int auto0 = 0;
 unsigned int autotime = 0;
 
 
-//delays
+///////////////delays////////////////////
+
 unsigned int buttondelay=200;// delay between each button press in ms
 unsigned int currenttime=0;
-bool songindex=0;
 
+
+//////////////dust sensor///////////////
 
 const short int measurePin = A6;
 const short int ledPower = 4;
 const short int numaverage = 150; ///number of values for taking average
 byte count;
-float dust[numaverage];
-float initialdust=0;
-float averagedust=initialdust;
+int dust[numaverage];
+unsigned int initialdust=0;
+unsigned int averagedust=initialdust;
 
-//beep
+///////////////beep///////////////////
+
+bool songindex=0;
 bool beepvarB=0;
 bool beepvarS=0;
 bool beepstarted=0;
@@ -110,45 +119,58 @@ unsigned int beeptime=0;
 unsigned int beeptimeS=0;
 int play = 0;
 int soundtime = 0;
+unsigned int bwf = 0;
+byte bnum = 0;
+bool wfcount = 0;
+byte wifi = 0;
+bool Wi = 0;
 
-byte bright = 0;
+///////////////Bright////////////////
+
+byte bright7 = 0;
+byte brightdim = 30;
+
+
+char datar;
+
 
 ////////////////////////////////////VOID/////////////////////////////////////////////////
 ///////////////////////////////////SETUP/////////////////////////////////////////////////
 
 void setup() {
+  
 Serial.begin(9600);
 
 
   irrecv.enableIRIn(); // Start the receiver
 
-   int inputpins[4]={
-    Bpow,Bspeed,Btimer,Bauto
-    };
+   int inputpins[4]={Bpow,Bspeed,Btimer,Bauto};
 
-   int outputpins[8] = {
-    POW,M1,M2,M3,M4,BUZ,AUTO,dim
-  };
+   int outputpins[8] = {POW,M1,M2,M3,M4,BUZ,AUTO,dim};
 
   for(int j=0;j< sizeof(inputpins)/sizeof(1);j++){
     pinMode(inputpins[j],INPUT);
   }
+  
   for(int j=0;j< sizeof(outputpins)/sizeof(1);j++){
     pinMode(outputpins[j],OUTPUT);
   }
 
 
+
   beepvarS=1;
+
   clearspeed();
   
   digitalWrite(POW,1);
  
-  pinMode(13, INPUT); 
+  pinMode(13,INPUT); 
   pinMode(12,OUTPUT);
 
   pinMode(ledPower,OUTPUT);
-  
+
   NodeSerial.begin(57600);
+  pinMode(A7,OUTPUT);
 }
 
 //////////////////////////////////////VOID////////////////////////////////////
@@ -157,7 +179,7 @@ Serial.begin(9600);
 
 void loop() {
 
-
+digitalWrite(A7,1);
 currenttime= millis();
 
 Dimmer();
@@ -180,8 +202,9 @@ TIMER();
 
 Auto();
 
-read_smart();//read from the smart board
+read_smart();
 
 send_smart();
+
 
 }

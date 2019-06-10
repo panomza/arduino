@@ -11,12 +11,13 @@ void powerset(){
     Lp=Bp;
     powert0 = currenttime;   
     powercount = 1;
+    
     if(stateP==0){
       beeppowervar=1;
       songindex=0;
       index=1;
-    }else 
-    if(stateP==1){
+    } 
+    else if(stateP==1){
       beeppowervar=1;
       songindex=1;
       index=0;
@@ -24,10 +25,12 @@ void powerset(){
       digitalWrite(AUTO,stateA);
     }
     applythespeedswitch(); // apply the switch for speed when turning on
+    
 } // else if Bp is back to 1, reset the powercount
+
   else if ((Bp != Lp) && (Bp == 1)&& (currenttime-powert0 > buttondelay)&&play==0){
-    Lp=Bp;
-    powercount = 0;
+      Lp=Bp;
+      powercount = 0;
   }
   
 }

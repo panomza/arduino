@@ -4,7 +4,7 @@
 #include <BlynkSimpleEsp8266.h>
 
 #include "DHT.h"
-#define DHTPIN D5
+#define DHTPIN D4
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -16,7 +16,7 @@ DHT dht(DHTPIN, DHTTYPE);
 
 
 #include <SoftwareSerial.h>
-SoftwareSerial NanoSerial(D3, D2); // RX | TX
+SoftwareSerial NanoSerial(D5, D6); // RX | TX
 
 //wifi variables
 
@@ -35,14 +35,14 @@ void configModeCallback (WiFiManager *myWiFiManager) {
 char datar;
 
 unsigned int dust=0;
-unsigned int timer=0;
+float timer=0;
 unsigned int Speed=0;
 unsigned int Power=0;
 unsigned int Auto=0;
 
 void readReturnSignal() { 
-  
-  while(NanoSerial.available()>0){
+
+  if(NanoSerial.available()>0){
         
       datar = NanoSerial.read();
     
@@ -65,7 +65,7 @@ void readReturnSignal() {
            Blynk.virtualWrite(V0, !Power);
             }
         if (datar=='T'){
-           timer = NanoSerial.parseInt(); 
+           timer = NanoSerial.parseFloat(); 
            Blynk.virtualWrite(V6,timer);}      
             }
 }
@@ -76,17 +76,21 @@ void readReturnSignal() {
 
 int h = 0;
 int t = 0;
+unsigned int time_DHT = 0;
+
 
 void Sensor_DHT(){
 
+    if (millis()-time_DHT>1000){
+      time_DHT=millis();
+ 
        h = dht.readHumidity();
        t = dht.readTemperature();
        
       Blynk.virtualWrite(V11,t);
       Blynk.virtualWrite(V10,h);
+    }
 }
-
-
 
 byte button=0;
 byte num=10;
@@ -122,36 +126,67 @@ BLYNK_WRITE(V3) // Timer
 }
 
 BLYNK_WRITE(V4) //Auto
-{
+{  
    while(button<num){
       NanoSerial.print("a"); 
       button++;
-      Serial.println(button);
+      Serial.println(button);    
   } 
   button=0;           
 }
+
+  /////////////// wifimanager//////////////////
+
+
+void wifi(){
+
+
+if (datar=='W'){
+  digitalWrite(D0,0);
+  WiFi.disconnect();
+  WiFiManager wifiManager;
+  wifiManager.setAPCallback(configModeCallback);
+  wifiManager.autoConnect("Air Purifier"); 
+  digitalWrite(D0,1);
+
+      NanoSerial.print("w"); NanoSerial.print("w");
+      NanoSerial.print("w"); NanoSerial.print("w");
+      NanoSerial.print("w"); NanoSerial.print("w");
+      NanoSerial.print("w"); NanoSerial.print("w");
+      NanoSerial.print("w"); NanoSerial.print("w");
+      NanoSerial.print("w"); NanoSerial.print("w");
+      NanoSerial.print("w"); NanoSerial.print("w");
+           
+  } 
+ 
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 void setup()
 {
-  // Debug console
+
   Serial.begin(9600);
 
-   dht.begin();
-
-  /////////////// wifimanager//////////////////
-  WiFiManager wifiManager;
+  dht.begin();
+  
+  WiFiManager wifiManager;  
   wifiManager.setAPCallback(configModeCallback);
   wifiManager.setConfigPortalTimeout(180);
-  wifiManager.autoConnect("nodemcu");
-  Serial.println("connected...yeey :)");
+  wifiManager.autoConnect("Air Purifier");
+  
   Blynk.config(auth);
 
   /////////////////////////////////Send data////////////////////////////////////
-  pinMode(D3, INPUT);
-  pinMode(D2, OUTPUT);
+  
+  pinMode(D5, INPUT);
+  pinMode(D6, OUTPUT);
+  pinMode(D4, INPUT);
+  pinMode(D0, OUTPUT);
+
   NanoSerial.begin(57600);
+  digitalWrite(D0,1);
 }
 
 
@@ -160,6 +195,9 @@ void loop()
   Blynk.run();
   
   readReturnSignal();
-
+  
   Sensor_DHT();
+
+  wifi();
+
 }

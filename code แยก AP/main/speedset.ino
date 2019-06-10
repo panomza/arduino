@@ -1,17 +1,19 @@
 void speedset(){
 
- if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (currenttime-speedt0 > buttondelay)){  
+ if ((Bs != Ls) && (stateP==0) && (Bs == 0)&& (currenttime-speedt0 > buttondelay)&&speedcount==0){  
      Ls=Bs;
+     speedcount=1;
      index++;
-     speedt0=currenttime;             // get the current time
+     speedt0=currenttime;      // get the current time
      beepvarB=1;
      if(index>4){index=1;}
      Serial.print("Speed is : ");
      Serial.println(index);
      applythespeedswitch();
  }
- else if ((Bs != Ls) && (Bs == 1)&& (currenttime-speedt0 > buttondelay)){
-    Ls=Bs;
+ else if ((Bs != Ls) && (Bs == 1)&& (currenttime-speedt0 > buttondelay)&&speedcount==1){
+      Ls=Bs;
+      speedcount=0;
   }
 }
 

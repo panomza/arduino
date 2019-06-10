@@ -11,7 +11,7 @@ currentMillis = millis();
               for (int val=0;val<OUTPUT_COUNT;val++) {       
                   if ( results.value == remote_key[val] )  {
                     
-                    timedim=10;
+                    timedim=brightdim;
                     
                     status1[val]=!status1[val];
                     switch (val) {

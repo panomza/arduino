@@ -1,6 +1,7 @@
 
 #include <TonePlayer.h> 
 TonePlayer tone1 (TCCR1A, TCCR1B, OCR1AH, OCR1AL, TCNT1H, TCNT1L);  
+
 /////////////////song definition////////////
 
 #define NOTE_B0  31
@@ -98,6 +99,19 @@ TonePlayer tone1 (TCCR1A, TCCR1B, OCR1AH, OCR1AL, TCNT1H, TCNT1L);
 
 
 void beep(){
+  if (currenttime-bwf>700&&wifi==1&&wfcount==0){
+      bwf=currenttime;
+      bnum++;
+      tone1.tone (880);
+      wfcount=1;
+      }else if (currenttime-bwf>150&&bnum>0&&wfcount==1){
+                bwf=currenttime;
+                tone1.noTone();
+                wfcount=0;
+                }
+     if (bnum==6){wifi=0;bnum=0;tone1.noTone();wfcount=0;}           
+
+  
   if (beepvarB==1 && beepstarted==0){
     tone1.tone (1500);
     beeptime=currenttime;
@@ -119,13 +133,13 @@ void beep(){
   }
 
   
-if (currenttime-soundtime>3&&beeppowervar>0){play++;soundtime=currenttime;}
+if (currenttime-soundtime>4&&beeppowervar>0){play++;soundtime=currenttime;}
 
 if (beeppowervar==1&&play==25&&songindex==0){tone1.tone (1661);beeppowervar=2;}
 if (beeppowervar==2&&play==50&&songindex==0){tone1.tone (1865);beeppowervar=3;}
 if (beeppowervar==3&&play==75&&songindex==0){tone1.tone (1976);beeppowervar=4;}
 if (beeppowervar==4&&play==100&&songindex==0){tone1.tone (2217);beeppowervar=5;}
-if (beeppowervar==5&&play==125&&songindex==0){tone1.tone (2500);beeppowervar=6;}
+if (beeppowervar==5&&play==125&&songindex==0){tone1.tone (2489);beeppowervar=6;}
 if (beeppowervar==6&&play==190&&songindex==0){tone1.noTone ();beeppowervar=0;play=0;}
 
 if (beeppowervar==1&&play==25&&songindex==1){tone1.tone (2300);beeppowervar=2;}

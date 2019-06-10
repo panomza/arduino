@@ -5,7 +5,7 @@ short int timer=100;  // time between each reading
 
 float voMeasured = 0;
 float calcVoltage = 0;
-float dustDensity = 0;
+unsigned int dustDensity = 0;
 
 
 float readdust(){
@@ -26,9 +26,9 @@ float readdust(){
 return dustDensity;
 }
 
-float takeaverage(float input[]){
+int takeaverage(int input[]){
   
-  float sum=0;
+  int sum=0;
   for(int i = 0; i < int(numaverage) ; i++){
     sum+=input[i];
   }
@@ -38,10 +38,11 @@ float takeaverage(float input[]){
 void sensor_dust() {
 
     if(averagedust>=1000){averagedust=999;} 
+    
     if(currenttime-t0>timer){
       count++;
       dust[count]=readdust();
-    averagedust=takeaverage(dust);
+      averagedust=takeaverage(dust);
 
     ///// get index for the next reading
     if ((count>numaverage)){

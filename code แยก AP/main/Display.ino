@@ -27,7 +27,7 @@ void Display(){
   if (timedown==5){sw_count=1;SW_display=0;}
   
       if (sw_count==0){      
-          if(SW_display>=5&&Settime>0){SW_display=0; sw_count=1;display.clear();}
+          if(SW_display>=10&&Settime>0){SW_display=0; sw_count=1;display.clear();}
           show=0;
       }       
       if (sw_count==1){    
@@ -40,24 +40,26 @@ void Display(){
   switch (show){
     case 0:
      if(td-TD>1000){
-      display.showNumberDec(averagedust*10,false);
+       display.showNumberDec(averagedust*10,false);
        TD=td;   
       }
-      display.setBrightness(bright);
+       display.setBrightness(bright7);
       break;
 
     case 1:
-       if(td-ST>700 && ST_count==0){
-       ST=td;
-       display.setBrightness(0);
-       ST_count=1;
-       }else 
-       if (td-ST>300 && ST_count==1){
-        display.setBrightness(bright);
+    
+     if (td-ST>700 && ST_count==0){
+        ST=td;
+        display.setBrightness(0);
+        ST_count=1;
+        }else 
+       
+     if (td-ST>300 && ST_count==1){
+        display.setBrightness(bright7);
         ST=td;
         ST_count=0;
         }
-       display.showNumberDec(timeshow2*1000,true);
+        display.showNumberDec(timeshow2*1000,true);
       break;
   }
 }

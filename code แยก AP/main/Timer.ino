@@ -9,18 +9,18 @@ void TIMER(){
       }
       else if(Bt==1){buttoncount0=0;}
  
-  if (buttoncount0==3){buttoncount1=10;}
+  if (buttoncount0==3){buttoncount1=5;}
   
   if (currenttime-buttontime1>1000&&buttoncount1>0){
       buttontime1=currenttime; 
-       if(buttoncount1<=10){
+       if(buttoncount1<=5){
         buttoncount1=buttoncount1-1;
         }
       }
-  if (buttoncount1>0&&Bt==0){buttoncount1=10;}
+  if (buttoncount1>0&&Bt==0){buttoncount1=5;}
   
-  if (buttoncount1==0  && beepout == 1 ){beepvarS=1;beepout = 0; } 
-  if (buttoncount1==10 && beepout == 0 ){beepvarS=1;beepout = 1;}
+  if (buttoncount1==0 && beepout == 1 ){beepvarS=1;beepout = 0;} 
+  if (buttoncount1==5 && beepout == 0 ){beepvarS=1;beepout = 1;}
     
   if (buttoncount0<=2&&buttoncount1>0 || checkstate_in==1){
       
@@ -31,12 +31,12 @@ void TIMER(){
         beepvarB=1;
         if(Settime==5){Settime=0;}
         selecttime();
-      Serial.print("Timer to : ");
-      Serial.println(Settime);
+        Serial.print("Timer to : ");
+        Serial.println(Settime);
     } else 
     if ((Bt != Lt) && (Bt == 1)&& (currenttime-timer0 > buttondelay)){
-      Lt=Bt;  
-      BTcount=1;    
+        Lt=Bt;  
+        BTcount=1;    
     }
   }
     
@@ -57,22 +57,19 @@ void TIMER(){
       timeshow2=timeshow1+timeshow0;   
 }
 
-
- 
-
 void selecttime(){
   switch(Settime){
     case 1:
-    timedown=10;
-    break;
-    case 2:
-    timedown=20;
-    break;
-    case 3:
     timedown=60;
     break;
+    case 2:
+    timedown=120;
+    break;
+    case 3:
+    timedown=240;
+    break;
     case 4:
-    timedown=150;
+    timedown=360;
     break;
   }
 }
