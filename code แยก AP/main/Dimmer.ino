@@ -1,38 +1,38 @@
+unsigned int rundim=0;
+unsigned int trigdim=0;
+unsigned int timedim=10;
 
 unsigned int dim1=0;
-unsigned long int delaydim=1;
-unsigned long int rundim=0;
-unsigned long int trigdim=0;
+unsigned int delaydim=0;
 unsigned int countdim=0;
-unsigned int timedim=10;
+int lll=0;
 
 
 void Dimmer(){
+  rundim=millis();
+  TCCR0A = _BV(COM0A1) | _BV(WGM01)| _BV(WGM00);
+  OCR0A = countdim;
   
-  rundim=micros();
+  if (timedim==0){PWM();}
   
-//  if (timedim==0){PWM();}
-  if (timedim>0){digitalWrite(dim,1);}else{digitalWrite(dim,0);}
+  if (timedim>0){delaydim=0;countdim=255;}
   if (digitalRead(Bpow)==0 || digitalRead(Bspeed)==0  || digitalRead(Bauto)==0 || digitalRead(Btimer)==0)
   {
    timedim=5;
   }
-  if(rundim-trigdim>1000000&&timedim>0){
+  if(rundim-trigdim>1000&&timedim>0){
     trigdim=rundim;
     timedim=timedim-1;   
+    
   }
+
 }
 
 void PWM(){
-  
-  if (rundim-delaydim>1 && dim1==0){
-    digitalWrite(dim,0);
-    delaydim=rundim;
-    dim1=1;
-  } else 
-  if (rundim-delaydim>1000 && dim1==1){
-    digitalWrite(dim,1);
-    delaydim=rundim;
-    dim1=0;
+  if(rundim-dim1>2&&delaydim==0){
+    dim1=rundim;
+    countdim=countdim-1;
+    if(countdim==50){delaydim=1;}
   }
+  
 }

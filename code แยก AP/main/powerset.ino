@@ -12,8 +12,6 @@ void powerset(){
     powert0 = currenttime;   
     poweroff();
     powercount = 1;
-    datasent = (1);
-    Settime=0;
     if(stateP==0){
       beeppowervar=1;
       songindex=1;
@@ -32,4 +30,5 @@ void powerset(){
     Lp=Bp;
     powercount = 0;
   }
+  
 }
