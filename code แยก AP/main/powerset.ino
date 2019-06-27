@@ -5,7 +5,7 @@ void powerset(){
   if ((Bp != Lp) && (Bp == 0) && (currenttime-powert0 > buttondelay) && (powercount==0)&&play==0){
     clearspeed();
     stateP=!stateP;
-    digitalWrite(POW,stateP);
+//    digitalWrite(POW,stateP);
     Serial.print("Power to : ");
     Serial.println(stateP);   
     Lp=Bp;

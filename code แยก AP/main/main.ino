@@ -31,13 +31,14 @@ const short int Btimer  = 15;    // Timer button input pin
 //output pins
 
 const short int POW    = 5;      //power output pin
-const short int M1     = 19;       // motor output pin
-const short int M2     = 8;       // motor output pin
-const short int M3     = 7;       // motor output pin
+const short int M1     = 4;       // motor output pin
+const short int M2     = 7;       // motor output pin
+const short int M3     = 8;       // motor output pin
 const short int M4     = 10;      // motor output pin
 const short int BUZ    = 9;         // buzzer output pin
-const short int AUTO   = 18; 
+const short int AUTO   = 20; 
 const short int dim    = 6; 
+const short int timerled    = 18; 
 
 //////////////////////////////////////////////////////////////////////////
 // state variables
@@ -63,7 +64,6 @@ unsigned int speedt0 = 0;
 
 bool Bt         = 1;
 bool Lt         = 1;
-bool stateT     = 1;
 bool BTcount = 0; 
 byte Settime=0;
 unsigned int timer0;
@@ -100,7 +100,7 @@ unsigned int currenttime=0;
 //////////////dust sensor///////////////
 
 const short int measurePin = A6;
-const short int ledPower = 4;
+const short int ledPower = 19;
 const short int numaverage = 150; ///number of values for taking average
 byte count;
 int dust[numaverage];
@@ -146,7 +146,7 @@ Serial.begin(9600);
 
    int inputpins[4]={Bpow,Bspeed,Btimer,Bauto};
 
-   int outputpins[8] = {POW,M1,M2,M3,M4,BUZ,AUTO,dim};
+   int outputpins[9] = {POW,M1,M2,M3,M4,BUZ,AUTO,dim,timerled};
 
   for(int j=0;j< sizeof(inputpins)/sizeof(1);j++){
     pinMode(inputpins[j],INPUT);
@@ -178,11 +178,14 @@ Serial.begin(9600);
 
 
 void loop() {
+Serial.println(stateP);
+digitalWrite(dim,1);
+if (stateP==0){digitalWrite(timerled,1);}else{digitalWrite(timerled,0);}
+if (stateP==0){digitalWrite(POW,1);}else{digitalWrite(POW,0);}
 
-digitalWrite(A7,1);
 currenttime= millis();
 
-Dimmer();
+//Dimmer();
 
 beep();
 

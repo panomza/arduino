@@ -40,7 +40,7 @@ void Display(){
   switch (show){
     case 0:
      if(td-TD>1000){
-       display.showNumberDec(averagedust*10,false);
+       display.showNumberDec(averagedust,false);
        TD=td;   
       }
        display.setBrightness(bright7);
@@ -59,7 +59,7 @@ void Display(){
         ST=td;
         ST_count=0;
         }
-        display.showNumberDec(timeshow2*1000,true);
+        display.showNumberDec(timeshow2,true);
       break;
   }
 }
