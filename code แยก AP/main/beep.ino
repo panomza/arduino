@@ -3,7 +3,7 @@
 TonePlayer tone1 (TCCR1A, TCCR1B, OCR1AH, OCR1AL, TCNT1H, TCNT1L);  
 
 /////////////////song definition////////////
-
+/*
 #define NOTE_B0  31
 #define NOTE_C1  33
 #define NOTE_CS1 35
@@ -93,6 +93,7 @@ TonePlayer tone1 (TCCR1A, TCCR1B, OCR1AH, OCR1AL, TCNT1H, TCNT1L);
 #define NOTE_CS8 4435
 #define NOTE_D8  4699
 #define NOTE_DS8 4978
+*/
 
 
 
@@ -113,10 +114,10 @@ void beep(){
 
   
   if (beepvarB==1 && beepstarted==0){
-    tone1.tone (1500);
+    tone1.tone (1661);
     beeptime=currenttime;
     beepstarted=1;
-  } else if (currenttime-beeptime>50 && beepstarted ==1){
+  } else if (currenttime-beeptime>100 && beepstarted ==1){
     tone1.noTone();
     beepvarB=0;
     beepstarted=0;

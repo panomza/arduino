@@ -59,7 +59,7 @@ void Display(){
         ST=td;
         ST_count=0;
         }
-        display.showNumberDec(timeshow2,true);
+        display.showNumberDec(timeshow2*100,true);
       break;
   }
 }

@@ -13,7 +13,7 @@ void Dimmer(){
   TCCR0A = _BV(COM0A1) | _BV(WGM01)| _BV(WGM00);
   OCR0A = countdim;
   
-  if (timedim==0){PWM();bright7=3;}
+  if (timedim==0){PWM();bright7=1;}
   
   if (timedim>0){delaydim=0;countdim=255;bright7=7;}
   

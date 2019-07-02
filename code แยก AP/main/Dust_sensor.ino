@@ -1,7 +1,7 @@
 
 
-short int t0;         // time of last reading
-short int timer=100;  // time between each reading
+unsigned int t0;         // time of last reading
+unsigned int timer=100;  // time between each reading
 
 float voMeasured = 0;
 float calcVoltage = 0;
@@ -26,28 +26,27 @@ float readdust(){
 return dustDensity;
 }
 
-int takeaverage(int input[]){
+unsigned int takeaverage(unsigned int input[]){
+    
+  unsigned long sum=0;
   
-  int sum=0;
-  for(int i = 0; i < int(numaverage) ; i++){
+  for(int i = 0; i < (numaverage) ; i++){
     sum+=input[i];
   }
   return sum/numaverage;
 }
 
 void sensor_dust() {
-
-    if(averagedust>=1000){averagedust=999;} 
-    
-    if(currenttime-t0>timer){
-      count++;
-      dust[count]=readdust();
-      averagedust=takeaverage(dust);
+  Serial.println(averagedust);
+    if (currenttime-t0>timer){
+       count++;
+       dust[count]=readdust();
+       averagedust=takeaverage(dust);
 
     ///// get index for the next reading
-    if ((count>numaverage)){
-      count =0;
-    }
+    
+    if ((count>numaverage)){ count =0; }
+    
     t0=currenttime;
   } 
 

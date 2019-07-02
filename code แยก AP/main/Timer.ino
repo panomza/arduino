@@ -1,5 +1,19 @@
+bool shift = 0;
 
 void TIMER(){
+
+  digitalWrite(timerled,statetime);
+ 
+  if (stateP==1 && timedim==0){statetime=0; shift=0; }
+  
+  if (shift==0){
+     if (digitalRead(Bpow)==0 || digitalRead(Bspeed)==0 || digitalRead(Bauto)==0 || digitalRead(Btimer)==0 ) {
+      statetime=1;
+      shift=1;
+    }
+  }
+
+
 
   if (currenttime-buttontime0>1000&&Bt==0){
       buttontime0=currenttime;
