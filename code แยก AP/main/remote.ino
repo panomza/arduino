@@ -10,7 +10,7 @@ currentMillis = millis();
            if ( (results.value != 0xFFFFFFFF) && (results.value != 0x00) ) {
               for (int val=0;val<OUTPUT_COUNT;val++) {       
                   if ( results.value == remote_key[val] )  {
-                    
+                    Serial.println("remote");
                     timedim=brightdim;
                     
                     status1[val]=!status1[val];

@@ -1,7 +1,7 @@
 
 
 unsigned int t0;         // time of last reading
-unsigned int timer=100;  // time between each reading
+unsigned int timer=200;  // time between each reading
 
 float voMeasured = 0;
 float calcVoltage = 0;
@@ -37,7 +37,7 @@ unsigned int takeaverage(unsigned int input[]){
 }
 
 void sensor_dust() {
-  Serial.println(averagedust);
+
     if (currenttime-t0>timer){
        count++;
        dust[count]=readdust();

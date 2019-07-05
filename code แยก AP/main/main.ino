@@ -1,6 +1,6 @@
 #include <SoftwareSerial.h>
 
-SoftwareSerial NodeSerial(11, 12); // RX | TX
+SoftwareSerial NodeSerial(12, 11); // RX | TX
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -68,10 +68,10 @@ bool BTcount = 0;
 byte Settime = 0;
 byte statetime = 0;
 unsigned int timer0;
-float timedown = 0;
+unsigned int timedown = 0;
 unsigned int timeshow0 = 0;
-float timeshow1 = 0;
-float timeshow2 = 0;
+unsigned int timeshow1 = 0;
+unsigned int timeshow2 = 0;
 
 unsigned int timetrig = 0;
 unsigned int runtime = 0;
@@ -167,8 +167,8 @@ void setup() {
   
   statetime=0;
 
-  pinMode(11, INPUT);
-  pinMode(12, OUTPUT);
+  pinMode(12, INPUT);
+  pinMode(11, OUTPUT);
 
   pinMode(ledPower, OUTPUT);
 
@@ -187,11 +187,11 @@ void loop() {
 
   Dimmer();
 
-//  beep();
+  beep();
 
   statebutton();
 
-//  Remote();
+  Remote();
 
   Display();
 
@@ -205,9 +205,9 @@ void loop() {
 
   Auto();
 
-//  read_smart();
+  read_smart();
 
-//  send_smart();
+  send_smart();
 
 
 }

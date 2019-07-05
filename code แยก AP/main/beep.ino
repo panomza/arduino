@@ -103,7 +103,7 @@ void beep(){
   if (currenttime-bwf>700&&wifi==1&&wfcount==0){
       bwf=currenttime;
       bnum++;
-      tone1.tone (880);
+      tone1.tone (1000);
       wfcount=1;
       }else if (currenttime-bwf>150&&bnum>0&&wfcount==1){
                 bwf=currenttime;
@@ -114,7 +114,7 @@ void beep(){
 
   
   if (beepvarB==1 && beepstarted==0){
-    tone1.tone (1661);
+    tone1.tone (4500);
     beeptime=currenttime;
     beepstarted=1;
   } else if (currenttime-beeptime>100 && beepstarted ==1){

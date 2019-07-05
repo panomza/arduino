@@ -4,7 +4,7 @@
 #include <BlynkSimpleEsp8266.h>
 
 #include "DHT.h"
-#define DHTPIN D4
+#define DHTPIN 3
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -16,7 +16,7 @@ DHT dht(DHTPIN, DHTTYPE);
 
 
 #include <SoftwareSerial.h>
-SoftwareSerial NanoSerial(D5, D6); // RX | TX
+SoftwareSerial NanoSerial(0, 2); // RX | TX
 
 //wifi variables
 
@@ -41,6 +41,7 @@ unsigned int Power=0;
 unsigned int Auto=0;
 
 void readReturnSignal() { 
+  
 
   if(NanoSerial.available()>0){
         
@@ -101,6 +102,7 @@ BLYNK_WRITE(V0) // ON-OFF
       NanoSerial.print("O"); 
       button++;
       Serial.println(button);
+     
   } 
   button=0;   
 }
@@ -111,6 +113,7 @@ BLYNK_WRITE(V1) // Speed
       NanoSerial.print("s"); 
       button++;
       Serial.println(button);
+      ;
   } 
   button=0;           
 }
@@ -121,6 +124,7 @@ BLYNK_WRITE(V3) // Timer
       NanoSerial.print("t"); 
       button++;
       Serial.println(button);
+      
   } 
   button=0;          
 }
@@ -130,7 +134,7 @@ BLYNK_WRITE(V4) //Auto
    while(button<num){
       NanoSerial.print("a"); 
       button++;
-      Serial.println(button);    
+     
   } 
   button=0;           
 }
@@ -142,12 +146,12 @@ void wifi(){
 
 
 if (datar=='W'){
-  digitalWrite(D0,0);
+  digitalWrite(1,0);
   WiFi.disconnect();
   WiFiManager wifiManager;
   wifiManager.setAPCallback(configModeCallback);
   wifiManager.autoConnect("Air Purifier"); 
-  digitalWrite(D0,1);
+  digitalWrite(1,1);
 
       NanoSerial.print("w"); NanoSerial.print("w");
       NanoSerial.print("w"); NanoSerial.print("w");
@@ -167,7 +171,7 @@ if (datar=='W'){
 void setup()
 {
 
-  Serial.begin(9600);
+//  Serial.begin(9600);
 
   dht.begin();
   
@@ -180,13 +184,16 @@ void setup()
 
   /////////////////////////////////Send data////////////////////////////////////
   
-  pinMode(D5, INPUT);
-  pinMode(D6, OUTPUT);
-  pinMode(D4, INPUT);
-  pinMode(D0, OUTPUT);
+  pinMode(0, INPUT);
+  pinMode(2, OUTPUT);
+  
+  pinMode(3, INPUT);
+  pinMode(1, OUTPUT);
 
   NanoSerial.begin(57600);
-  digitalWrite(D0,1);
+
+  digitalWrite(1,0);
+  
 }
 
 

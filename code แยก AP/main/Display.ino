@@ -47,19 +47,25 @@ void Display(){
       break;
 
     case 1:
-    
+     uint8_t segto;
      if (td-ST>700 && ST_count==0){
         ST=td;
-        display.setBrightness(0);
+        display.clear();
+        
+        
         ST_count=1;
+        
         }else 
        
      if (td-ST>300 && ST_count==1){
         display.setBrightness(bright7);
+        display.showNumberDec(timeshow2, true);
+        segto = 0x80 | display.encodeDigit((timeshow2 / 100)%10);
+        display.setSegments(&segto, 1, 1);
         ST=td;
         ST_count=0;
         }
-        display.showNumberDec(timeshow2*100,true);
+        
       break;
   }
 }
