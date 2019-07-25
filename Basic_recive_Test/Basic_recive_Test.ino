@@ -1,7 +1,8 @@
 
 #include <SoftwareSerial.h>
-
+#include <ArduinoJson.h>
 SoftwareSerial NodeSerial(2,3); // RX | TX
+
 
 float lastsent=0;
 float lastread=0;
@@ -35,30 +36,63 @@ void send_smart(){
 
 }
 
+char datar ;
+String dataj;
+
 void loop() {
     float current_time=millis();
 
-     
-    if (NodeSerial.read()=='<'&& current_time-lastread>50) {
-          Auto       = NodeSerial.parseInt(); 
-          plasma     = NodeSerial.parseInt();
-          speed1     = NodeSerial.parseInt();
-          speed2     = NodeSerial.parseInt();
-          speed3     = NodeSerial.parseInt();
-          speed4     = NodeSerial.parseInt();
-          Serial.print("speed1");      Serial.print(" : "); Serial.print(speed1);
-          Serial.print("\tspeed2");      Serial.print(" : "); Serial.print(speed2);
-          Serial.print("\tspeed3");      Serial.print(" : "); Serial.print(speed3);
-          Serial.print("\tspeed4");      Serial.print(" : "); Serial.print(speed4);
-          Serial.print("\tplasma");    Serial.print(" : "); Serial.print(plasma);
-          Serial.print("\tAuto");      Serial.print(" : "); Serial.println(Auto); 
-          lastread=current_time;
-          send_smart();
-          
-    }
-    if (current_time-lastsent>10000){
-      send_smart();
-      lastsent=current_time;
+   
+  if(NodeSerial.available()>0){
+        
+    datar = NodeSerial.read(); 
+    dataj += datar;
+   StaticJsonDocument<200> jsonBuffer;
+    
+      DeserializationError error =  deserializeJson(jsonBuffer, dataj); 
+    if (datar=='\n'){
+ Serial.println(dataj);
+
+    
+   
+
+    
+
+      // Test if parsing succeeds.
+  if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.c_str());
+    NodeSerial.print("failed");
+    dataj = datar;
+    return;
+  }
+    
+      // Get the root object in the document
+      JsonObject root = jsonBuffer.as<JsonObject>();
+    
+   
+      String Power = root ["state"]["desired"]["power"];
+      String Speed = root ["state"]["desired"]["speed"];
+      String Timer = root ["state"]["desired"]["timer"];
+      String Auto = root ["state"]["desired"]["auto"];
+      
+    
+    if(Power||Speed||Timer||Auto==0){
+      
+      Serial.println("failed");
+      }else{
+        Serial.print("Power = "); Serial.println(Power);
+      Serial.print("Speed = "); Serial.println(Speed);
+      Serial.print("timer = "); Serial.println(Timer);
+      Serial.print("Auto  = "); Serial.println(Auto);}
+      // Print values.
+      
+    
+dataj = datar;
+       }
+//    if (current_time-lastsent>1000){
+//    Serial.println(datar);
+//      lastsent=current_time;
     }
 
 } 

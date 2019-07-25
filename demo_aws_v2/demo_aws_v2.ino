@@ -24,8 +24,9 @@ byte button=0;
 byte num=1;
 const char auth[] = "d7c89935fa6449caabdb6753b6d80b11";
 
-#else
 
+
+#else
 #error Platform not supported
 #endif
 #include <WiFiClientSecure.h>
@@ -152,7 +153,6 @@ void pubSubErr(int8_t MQTTErr)
 #else
 
 
-
 void messageReceived(String &topic, String &payload)
 {
   Serial.println("Recieved : " + payload);
@@ -164,26 +164,15 @@ void messageReceived(String &topic, String &payload)
 
   // Get the root object in the document
   JsonObject root = jsonBuffer.as<JsonObject>();
-//  JsonObject state = root.createNestedObject("state");
-//  JsonObject desired = state.createNestedObject("desired");
 
+  int piak = root ["state"]["desired"]["power"];
+  int power = root ["state"]["desired"]["piak"];
 
-
-
-
-
-  String piak = root ["state"];
-//  String power = state["desired"];
-//  String power1 = desired["power"];
-//  double latitude = root["data"][0];
-//  double longitude = root["data"][1];
 
   // Print values.
-  Serial.println(piak);
-//  Serial.println(power);
-//  Serial.println(power1);
-//  Serial.println(latitude,6);
-//  Serial.println(longitude,6);
+  Serial.print("Power = "); Serial.println(piak);
+  Serial.print("piak  = "); Serial.println(power);
+ 
 }
 
 
@@ -427,27 +416,17 @@ void loop()
 
   
 if (button==1){    
-  asd++;
-      sendData();
-     
+      asd++;
+      sendData();  
       }
   
   
   if (!client.connected())
   {
     checkWiFiThenMQTT();
-    //checkWiFiThenMQTTNonBlocking();
-    //checkWiFiThenReboot();
   }
   else
   {
     client.loop();
-   
-//  if (millis() - lastMillis > 5000)
-//    {
-//      asd++;
-//      lastMillis = millis();
-//      sendData();
-//    }
   }
 }
