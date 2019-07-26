@@ -68,41 +68,33 @@ void Sensor_DHT(){
 BLYNK_WRITE(V0) // ON-OFF
 {
     if (param.asInt()==1){
-        button=1;
-        Bpower = !Bpower;
-//    Serial.println (Bpower);
-
-    }else{button=0;}
+        buttonP=1;
+    }else{buttonP=0;}
 }
 
 BLYNK_WRITE(V1) // Speed
 {
   if (param.asInt()==1){
-      button=1;
-        Bspeed++;
-        if (Bspeed==5){Bspeed=0;}
-//    Serial.println (Bspeed);
-    }else{button=0;} 
+      buttonS=1;
+
+    }else{buttonS=0;} 
              
 }
 
 BLYNK_WRITE(V3) // Timer
 {
   if (param.asInt()==1){
-      button=1;
-        Btimer++;
-//    Serial.println (Btimer);
-    }else{button=0;} 
+      buttonT=1;
+    }else{buttonT=0;} 
           
 }
 
 BLYNK_WRITE(V4) //Auto
 {  
    if (param.asInt()==1){
-       button=1;
-        Bauto = !Bauto;
-//    Serial.println (Bauto);
-    }else{button=0;}
+       buttonP=1;
+
+    }else{buttonA=0;}
         
 }
 

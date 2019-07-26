@@ -12,10 +12,16 @@
 #define BLYNK_PRINT Serial
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
-byte Bpower = 0;
-byte Bspeed = 0;
-byte Btimer = 0;
-byte Bauto  = 0;
+int Bpower = 0;
+int Bspeed = 0;
+int Btimer = 0;
+int Bauto  = 0;
+
+byte buttonP =0;
+byte buttonS =0;
+byte buttonT =0;
+byte buttonA =0;
+
 byte button = 0;
 const char auth[] = "d7c89935fa6449caabdb6753b6d80b11";
 
@@ -155,6 +161,43 @@ void pubSubErr(int8_t MQTTErr)
   }
 #else
 
+//////////////////////////// Sent data to AWS /////////////////////
+
+void sendData(void)
+  {
+      DynamicJsonDocument jsonBuffer(JSON_OBJECT_SIZE(3) + 100);
+      JsonObject root = jsonBuffer.to<JsonObject>();
+      JsonObject state = root.createNestedObject("state");
+    //  JsonObject state_reported = state.createNestedObject("reported");
+      JsonObject state_desired = state.createNestedObject("desired");
+    
+    //  state_reported["value"] = "0";// send this value
+    
+      state_desired["power" ] = button;
+      state_desired["speed"] = button;
+      state_desired["timer"] = button;
+      state_desired["auto"] = button;
+    
+      Serial.print("Sending  : ");
+      serializeJson(root,Serial);//send command      Serial.println(root);   
+      Serial.print("\n"); 
+      char shadow[measureJson(root) + 1];
+      serializeJson(root, shadow, sizeof(shadow));//send command
+        
+    #ifdef USE_PUB_SUB
+      if (!client.publish(MQTT_PUB_TOPIC, shadow, false))
+        pubSubErr(client.state());
+    #else
+      if (!client.publish(MQTT_PUB_TOPIC, shadow, false, 0))
+        lwMQTTErr(client.lastError());
+    #endif   
+  }
+
+
+//////////////////// Receive data from AWS ///////////////////////
+
+String datasent;
+
 
 void messageReceived(String &topic, String &payload)
   {
@@ -176,13 +219,16 @@ void messageReceived(String &topic, String &payload)
       
     
     
-      // Print values.
-      Serial.print("Power = "); Serial.println(Power);
-      Serial.print("Speed = "); Serial.println(Speed);
-      Serial.print("timer = "); Serial.println(Timer);
-      Serial.print("Auto  = "); Serial.println(Auto);
-     
+//      // Print values.
+//      Serial.print("Power = "); Serial.println(Power);
+//      Serial.print("Speed = "); Serial.println(Speed);
+//      Serial.print("timer = "); Serial.println(Timer);
+//      Serial.print("Auto  = "); Serial.println(Auto);
+      
+     datasent=payload;
+     senddata();
   }
+
 
 
 
@@ -324,42 +370,6 @@ void checkWiFiThenReboot(void)
   }
 
 
-//String ss;
-
-void sendData(void)
-  {
-      DynamicJsonDocument jsonBuffer(JSON_OBJECT_SIZE(3) + 100);
-      JsonObject root = jsonBuffer.to<JsonObject>();
-      JsonObject state = root.createNestedObject("state");
-    //  JsonObject state_reported = state.createNestedObject("reported");
-      JsonObject state_desired = state.createNestedObject("desired");
-    
-    //  state_reported["value"] = "0";// send this value
-    
-      state_desired["power" ] = Bpower;
-      state_desired["speed"] = Bspeed;
-      state_desired["timer"] = Btimer;
-      state_desired["auto"] = Bauto;
-    
-      Serial.print("Sending  : ");
-      serializeJson(root,Serial);//send command      Serial.println(root);
-    
-      Serial.print("\n");
-      char shadow[measureJson(root) + 1];
-      serializeJson(root, shadow, sizeof(shadow));//send command
-      Serial.print("shadow");
-      Serial.println(shadow);
-      NanoSerial.print(shadow);
-      NanoSerial.print("\n");
-    #ifdef USE_PUB_SUB
-      if (!client.publish(MQTT_PUB_TOPIC, shadow, false))
-        pubSubErr(client.state());
-    #else
-      if (!client.publish(MQTT_PUB_TOPIC, shadow, false, 0))
-        lwMQTTErr(client.lastError());
-    #endif   
-  }
-
 
 
 void setup()
@@ -411,13 +421,20 @@ void setup()
 
 
 
+
+
 void loop()
 {
     Blynk.run();
 
     now = time(nullptr);
-  
-  if (button==1){sendData();}
+
+    transfer_data_Bord();
+
+    
+    
+    if (button==1){sendData();}
+    
     
     
     if (!client.connected())
