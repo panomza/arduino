@@ -1,4 +1,5 @@
 #include <SoftwareSerial.h>
+#include <ArduinoJson.h>
 
 SoftwareSerial NodeSerial(12, 11); // RX | TX
 
@@ -47,7 +48,7 @@ const short int timerled    = 18;
 
 bool Bp         = 1;         //power button state
 bool Lp         = 1;         //previous power button state
-bool stateP     = 1;         //power output state
+byte stateP     = 1;         //power output state
 bool powercount = 0;         // count if the power button is pushed
 unsigned int powert0 = 0;
 
@@ -86,7 +87,7 @@ bool checkstate_in = 0;
 
 bool Ba         = 1;
 bool La         = 1;
-bool stateA     = 0;
+byte stateA     = 0;
 bool autocount  = 0;
 unsigned int auto0 = 0;
 unsigned int autotime = 0;
@@ -187,7 +188,7 @@ void loop() {
 
   Dimmer();
 
-  beep();
+//  beep();
 
   statebutton();
 

@@ -59,7 +59,7 @@ void TIMER(){
     if(Bp==0){Settime=0;timeshow2=0;}
     if(timedown==0&&Settime>0){Bp=0;Settime=0;}
     if(Settime==0){timeshow2=0;timedown=0;}
-    Serial.println(timeshow2);
+//    Serial.println(timeshow2);
       runtime=millis();
             if(runtime - timetrig >1000){
                      timetrig = runtime;
@@ -67,8 +67,9 @@ void TIMER(){
                      timeshow0=timeshow0-1;  
              }
       timeshow0=(timedown/60)*100;  
-      timeshow1=timedown%60;
+      timeshow1=(timedown%60);
       timeshow2=timeshow1+timeshow0;   
+      if (Settime==0){timeshow2=0;}
 }
 
 void selecttime(){

@@ -12,17 +12,29 @@
 #define BLYNK_PRINT Serial
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
-int Bpower = 0;
-int Bspeed = 0;
-int Btimer = 0;
-int Bauto  = 0;
 
-byte buttonP =0;
-byte buttonS =0;
-byte buttonT =0;
-byte buttonA =0;
+char datar;
 
-byte button = 0;
+int Rpower = 0;
+int Rspeed = 0;
+int Rtimer = 0;
+int Rauto  = 0;
+
+byte buttonP = 0;
+byte buttonS = 0;
+byte buttonT = 0;
+byte buttonA = 0;
+
+unsigned int dust=0;
+float timer=0;
+unsigned int Speed=0;
+unsigned int Power=0;
+unsigned int Auto=0;
+
+unsigned int current_time =0;
+
+byte state_button = 0;
+
 const char auth[] = "d7c89935fa6449caabdb6753b6d80b11";
 
 ////////////////// DTH //////////////////////
@@ -165,22 +177,24 @@ void pubSubErr(int8_t MQTTErr)
 
 void sendData(void)
   {
-      DynamicJsonDocument jsonBuffer(JSON_OBJECT_SIZE(3) + 100);
+      DynamicJsonDocument jsonBuffer(JSON_OBJECT_SIZE(1) + 100);
       JsonObject root = jsonBuffer.to<JsonObject>();
       JsonObject state = root.createNestedObject("state");
-    //  JsonObject state_reported = state.createNestedObject("reported");
       JsonObject state_desired = state.createNestedObject("desired");
+//      JsonObject state_reported = state.createNestedObject("reported");     
+
+         
+      state_desired["dust"]  = dust;
+      state_desired["power"] = Power;
+      state_desired["speed"] = Speed;
+      state_desired["timer"] = timer;
+      state_desired["auto"]  = Auto;
+      
     
-    //  state_reported["value"] = "0";// send this value
-    
-      state_desired["power" ] = button;
-      state_desired["speed"] = button;
-      state_desired["timer"] = button;
-      state_desired["auto"] = button;
-    
-      Serial.print("Sending  : ");
-      serializeJson(root,Serial);//send command      Serial.println(root);   
-      Serial.print("\n"); 
+//      Serial.print("Sending  : ");
+//      serializeJson(root,Serial);//send command      Serial.println(root);   
+//      Serial.print("\n");
+ 
       char shadow[measureJson(root) + 1];
       serializeJson(root, shadow, sizeof(shadow));//send command
         
@@ -192,11 +206,46 @@ void sendData(void)
         lwMQTTErr(client.lastError());
     #endif   
   }
+  
+void send_button_state(void)
+  {
+      DynamicJsonDocument jsonBuffer(JSON_OBJECT_SIZE(1) + 100);
+      JsonObject root = jsonBuffer.to<JsonObject>();
+      JsonObject state = root.createNestedObject("state");
+      JsonObject state_reported = state.createNestedObject("reported");     
+
+    
+      state_reported["Bpower"] = buttonP;
+      state_reported["Bspeed"] = buttonS;
+      state_reported["Btimer"] = buttonT;
+      state_reported["Bauto"]  = buttonA;
+      
+
+      char shadows[measureJson(root) + 1];
+      serializeJson(root, shadows, sizeof(shadows));//send command
+        
+    #ifdef USE_PUB_SUB
+      if (!client.publish(MQTT_PUB_TOPIC, shadows, false))
+        pubSubErr(client.state());
+    #else
+      if (!client.publish(MQTT_PUB_TOPIC, shadows, false, 0))
+        lwMQTTErr(client.lastError());
+    #endif   
+
+
+  }
 
 
 //////////////////// Receive data from AWS ///////////////////////
 
+
+
 String datasent;
+
+byte Bpower = 0;
+byte Bspeed = 0;
+byte Btimer = 0;
+byte Bauto = 0;
 
 
 void messageReceived(String &topic, String &payload)
@@ -212,21 +261,24 @@ void messageReceived(String &topic, String &payload)
       JsonObject root = jsonBuffer.as<JsonObject>();
     
    
-      int Power = root ["state"]["desired"]["power"];
-      int Speed = root ["state"]["desired"]["speed"];
-      int Timer = root ["state"]["desired"]["timer"];
-      int Auto = root ["state"]["desired"]["auto"];
+      Rpower = root ["state"]["desired"]["power"];
+      Rspeed = root ["state"]["desired"]["speed"];
+      Rtimer = root ["state"]["desired"]["timer"];
+      Rauto = root ["state"]["desired"]["auto"];
       
-    
-    
-//      // Print values.
-//      Serial.print("Power = "); Serial.println(Power);
-//      Serial.print("Speed = "); Serial.println(Speed);
-//      Serial.print("timer = "); Serial.println(Timer);
-//      Serial.print("Auto  = "); Serial.println(Auto);
-      
-     datasent=payload;
-     senddata();
+      Bpower = root ["state"]["reported"]["Bpower"];
+      Bspeed = root ["state"]["reported"]["Bspeed"];
+      Btimer = root ["state"]["reported"]["Btimer"];
+      Bauto = root ["state"]["reported"]["Bauto"];
+
+//       Print values.
+//      Serial.print("Power = "); Serial.println(Rpower);
+//      Serial.print("Speed = "); Serial.println(Rspeed);
+//      Serial.print("timer = "); Serial.println(Rtimer);
+//      Serial.print("Auto  = "); Serial.println(Rauto);
+
+
+
   }
 
 
@@ -425,15 +477,17 @@ void setup()
 
 void loop()
 {
+  current_time=millis();
+  
     Blynk.run();
 
     now = time(nullptr);
 
-    transfer_data_Bord();
+    receive_bord();
 
-    
-    
-    if (button==1){sendData();}
+    button_key();
+
+    senddata();
     
     
     
