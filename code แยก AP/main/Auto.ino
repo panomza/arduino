@@ -47,6 +47,7 @@ void Auto(){
         set_wifi=1;
         wifi=1;
         NodeSerial.print("W");
+        NodeSerial.print("\n");
     }
 
     if (set_wifi==1){

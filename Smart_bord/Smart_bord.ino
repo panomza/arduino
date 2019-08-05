@@ -13,7 +13,9 @@
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 
-char datar;
+//char datar;
+char data_bord ;
+String dataj_bord;
 
 int Rpower = 0;
 int Rspeed = 0;
@@ -39,7 +41,7 @@ const char auth[] = "d7c89935fa6449caabdb6753b6d80b11";
 
 ////////////////// DTH //////////////////////
 #include "DHT.h"
-#define DHTPIN 3
+#define DHTPIN D4
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -250,8 +252,8 @@ byte Bauto = 0;
 
 void messageReceived(String &topic, String &payload)
   {
-      Serial.println("Recieved : " + payload);
-      Serial.println("\n");
+//      Serial.println("Recieved : " + payload);
+//      Serial.println("\n");
     
        StaticJsonDocument<200> jsonBuffer;
     
@@ -489,7 +491,9 @@ void loop()
 
     senddata();
     
-    
+    wifi();
+
+    Sensor_DHT();
     
     if (!client.connected())
        {

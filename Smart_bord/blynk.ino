@@ -3,12 +3,24 @@ int h = 0;
 int t = 0;
 unsigned int time_DHT = 0;
 
+void status_blynk(){
+  
+  Blynk.virtualWrite(V0,!Power);
+  Blynk.virtualWrite(V5,Speed);
+  Blynk.virtualWrite(V9,dust);
+  Blynk.virtualWrite(V2,timer);
+  
+  WidgetLED led2(V8);
+    if(Auto==1){led2.setValue(255);}
+    if(Auto==0){led2.setValue(0);}
+  
+}
 
 void Sensor_DHT(){
 
     if (millis()-time_DHT>1000){
       time_DHT=millis();
- 
+
        h = dht.readHumidity();
        t = dht.readTemperature();
        
@@ -70,7 +82,8 @@ BLYNK_WRITE(V4) //Auto
 void wifi(){
 
 
-if (datar=='W'){
+if (data_bord=='W'){
+  Serial.println("wifi");
   digitalWrite(1,0);
   WiFi.disconnect();
   WiFiManager wifiManager;

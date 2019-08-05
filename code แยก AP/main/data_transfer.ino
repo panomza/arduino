@@ -3,7 +3,7 @@ unsigned int sent=0;
 
 void send_smart(){
 
- if(currenttime-sent>2000){
+ if(currenttime-sent>1000){
 
       DynamicJsonDocument jsonBuffer(JSON_OBJECT_SIZE(3) + 100);
       JsonObject root = jsonBuffer.to<JsonObject>();

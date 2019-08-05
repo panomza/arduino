@@ -188,7 +188,7 @@ void loop() {
 
   Dimmer();
 
-//  beep();
+  beep();
 
   statebutton();
 
