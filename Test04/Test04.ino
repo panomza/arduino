@@ -14,9 +14,10 @@ DHT dht(DHTPIN, DHTTYPE);
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>         //https://github.com/tzapu/WiFiManager
 
+#include <ArduinoJson.h> 
 
 #include <SoftwareSerial.h>
-SoftwareSerial NanoSerial(D2, D3); // RX | TX
+SoftwareSerial NanoSerial(0, 2); // RX | TX
 
 //wifi variables
 
@@ -34,43 +35,19 @@ void configModeCallback (WiFiManager *myWiFiManager) {
 
 char datar;
 
+char data_bord ;
+String dataj_bord;
+
 unsigned int dust=0;
 float timer=0;
 unsigned int Speed=0;
 unsigned int Power=0;
 unsigned int Auto=0;
 
-void readReturnSignal() { 
-  
 
-  if(NanoSerial.available()>0){
-        
-      datar = NanoSerial.read();
-    
-        if (datar=='S'){
-             Speed = NanoSerial.parseInt(); 
-             Blynk.virtualWrite(V5,Speed);
-             }
-        if (datar=='d'){
-             dust = NanoSerial.parseInt();
-             Blynk.virtualWrite(V9, dust);
-            }
-        if (datar=='A'){
-             Auto = NanoSerial.parseInt();
-             WidgetLED led2(V8);
-             if(Auto==1){led2.setValue(255);}
-             if(Auto==0){led2.setValue(0);}
-            }
-        if (datar=='P'){
-           Power = NanoSerial.parseInt();
-           Blynk.virtualWrite(V0, !Power);
-            }
-        if (datar=='T'){
-           timer = NanoSerial.parseFloat(); 
-           Blynk.virtualWrite(V6,timer);}      
-            }
-}
 
+
+byte state_button = 0;
 
 // Blynk read button and Trasfer functions///////////////////////////////////////////////////////////
 
@@ -79,19 +56,6 @@ int h = 0;
 int t = 0;
 unsigned int time_DHT = 0;
 
-
-void Sensor_DHT(){
-
-    if (millis()-time_DHT>1000){
-      time_DHT=millis();
- 
-       h = dht.readHumidity();
-       t = dht.readTemperature();
-       
-      Blynk.virtualWrite(V11,t);
-      Blynk.virtualWrite(V10,h);
-    }
-}
 
 byte button=0;
 byte num=10;
@@ -184,24 +148,30 @@ void setup()
 
   /////////////////////////////////Send data////////////////////////////////////
   
-  pinMode(D2, INPUT);
-  pinMode(D3, OUTPUT);
+//  pinMode(D2, INPUT);
+//  pinMode(D3, OUTPUT);
   
-//  pinMode(3, INPUT);
-//  pinMode(1, OUTPUT);
+  pinMode(2, INPUT);
+  pinMode(0, OUTPUT);
+  
+  pinMode(3, INPUT);
+  pinMode(1, OUTPUT);
 
   NanoSerial.begin(57600);
 
-  digitalWrite(1,0);
+//  digitalWrite(1,0);
   
 }
+
+
+
 
 
 void loop()
 {
   Blynk.run();
   
-  readReturnSignal();
+  receive_bord();
   
   Sensor_DHT();
 

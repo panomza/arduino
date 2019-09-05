@@ -6,7 +6,7 @@ void TIMER(){
  
   if (stateP==1 && timedim==0){statetime=0; shift=0; }
   
-  if (shift==0){
+  if (shift==0&&timedim<5){
      if (digitalRead(Bpow)==0 || digitalRead(Bspeed)==0 || digitalRead(Bauto)==0 || digitalRead(Btimer)==0 ) {
       statetime=1;
       shift=1;
