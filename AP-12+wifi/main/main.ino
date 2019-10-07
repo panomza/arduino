@@ -1,12 +1,16 @@
 #include <SoftwareSerial.h>
 #include <ArduinoJson.h>
+#include <Wire.h>
+#include "Adafruit_MCP23017.h"
+Adafruit_MCP23017 mcp;
+
 
 SoftwareSerial NodeSerial(12, 11); // RX | TX
 
 ///////////////////////////////////////////////////////////////////////////
 
 #include <IRremote.h>
-const int RECV_PIN = 21;
+const int RECV_PIN = 8;
 IRrecv irrecv(RECV_PIN);
 decode_results results;
 #define OUTPUT_COUNT 5
@@ -26,20 +30,32 @@ keypad output[OUTPUT_COUNT];
 
 const short int Bpow    = 14;    // power button input pin
 const short int Bspeed  = 15;    // speed input pin
-const short int Bauto   = 17;    // Auto button input pin
 const short int Btimer  = 16;    // Timer button input pin
 
 //output pins
 
-const short int POW    = 5;      //power output pin
-const short int M1     = 4;       // motor output pin
-const short int M2     = 7;       // motor output pin
-const short int M3     = 8;       // motor output pin
-const short int M4     = 10;      // motor output pin
-const short int BUZ    = 9;         // buzzer output pin
-const short int AUTO   = 20;
+const short int POW    = 5;        // power output pin
+const short int s1     = 9;        // speeed output pin
+const short int s2     = 10;       // speeed output pin
+const short int s3     = 11;       // speeed output pin
+const short int s4     = 12;       // speeed output pin
+const short int AUTO   = 13;
+const short int timerled    = 6;
+const short int h1     = 5;
+const short int h2     = 4;
+const short int h4     = 3;
+const short int h8     = 2;
 const short int dim    = 6;
-const short int timerled    = 18;
+const short int wifi_L   = 0;
+const short int filtor = 1;
+
+const short int BUZ    = 9;         // buzzer output pin
+const short int M1     = 4;         // motor output pin
+const short int M2     = 5;         // motor output pin
+const short int M3     = 6;         // motor output pin
+const short int M4     = 7;         // motor output pin
+
+
 
 //////////////////////////////////////////////////////////////////////////
 // state variables
@@ -150,16 +166,16 @@ void setup() {
 
   irrecv.enableIRIn(); // Start the receiver
 
-  int inputpins[5] = {Bpow, Bspeed, Btimer, Bauto,lightpin};
+  int inputpins[4] = {Bpow, Bspeed, Btimer, lightpin};
 
-  int outputpins[9] = {POW, M1, M2, M3, M4, BUZ, AUTO, dim, timerled};
+  int outputpins[12] = {POW, M1, M2, M3, M4, AUTO, dim, timerled, h1, h2, h4, h8};
 
   for (int j = 0; j < sizeof(inputpins) / sizeof(1); j++) {
     pinMode(inputpins[j], INPUT);
   }
 
   for (int j = 0; j < sizeof(outputpins) / sizeof(1); j++) {
-    pinMode(outputpins[j], OUTPUT);
+    mcp.pinMode(outputpins[j], OUTPUT);
   }
 
 
@@ -174,7 +190,7 @@ void setup() {
 
   pinMode(12, INPUT);
   pinMode(11, OUTPUT);
-
+  pinMode(9, OUTPUT);
   pinMode(ledPower, OUTPUT);
 
   NodeSerial.begin(57600);
@@ -198,9 +214,9 @@ void loop() {
 
   Remote();
 
-  Display();
+//  Display();
 
-  sensor_dust();
+//  sensor_dust();
 
   powerset();
 
@@ -212,7 +228,7 @@ void loop() {
 
   read_smart();
 
-  send_smart();
+//  send_smart();
 
 
 }

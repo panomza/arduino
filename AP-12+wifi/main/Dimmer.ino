@@ -17,7 +17,7 @@ void Dimmer(){
   
   if (timedim>0){delaydim=0;countdim=255;bright7=7;}
   
-  if (digitalRead(Bpow)==0 || digitalRead(Bspeed)==0  || digitalRead(Bauto)==0 || digitalRead(Btimer)==0)
+  if (digitalRead(Bpow)==0 || digitalRead(Bspeed)==0  || digitalRead(Btimer)==0)
   {
    timedim=brightdim;
   }
