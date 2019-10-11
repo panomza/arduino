@@ -6,7 +6,7 @@ void speedset(){
      index++;
      speedt0=currenttime;      // get the current time
      beepvarB=1;
-     if(index>4){index=1;}
+     if(index>5){index=1;}
      Serial.print("Speed is : ");
      Serial.println(index);
      applythespeedswitch();
@@ -39,6 +39,11 @@ void applythespeedswitch(){
       clearspeed();
       digitalWrite(M4,1);
       break;
+     case 5:
+      clearspeed();
+      stateA=1;
+      break;
+  
   }
   
 }
@@ -50,5 +55,10 @@ void clearspeed(){
       digitalWrite(M3,0);
       digitalWrite(M4,0);
 
+      mcp.digitalWrite(s1,0);
+      mcp.digitalWrite(s2,0);
+      mcp.digitalWrite(s3,0);
       mcp.digitalWrite(s4,0);
+
+      stateA=0;
 }

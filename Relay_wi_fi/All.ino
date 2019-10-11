@@ -12,6 +12,7 @@ BLYNK_WRITE(V5) // ALL ON
      Blynk.virtualWrite(V2,1 ); 
      Blynk.virtualWrite(V3,1 ); 
      Blynk.virtualWrite(V4,1 ); 
+     Blynk.virtualWrite(V5,1 );
   }
   if(pinValue==1 && Bord =="slave"){
      digitalWrite(0,0);
