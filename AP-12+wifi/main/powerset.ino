@@ -3,9 +3,10 @@ void powerset(){
   // check if previous state is different from current state, current state is 0 and powercount=0
 
   if ((Bp != Lp) && (Bp == 0) && (currenttime-powert0 > buttondelay) && (powercount==0)&&play==0){
-    clearspeed();
+    
     stateP=!stateP;
-    digitalWrite(POW,!stateP);
+    mcp.digitalWrite(POW,!stateP);
+    mcp.digitalWrite(timerled,!stateP);
     Serial.print("Power to : ");
     Serial.println(stateP);   
     Lp=Bp;
@@ -15,18 +16,14 @@ void powerset(){
     if(stateP==0){
       beeppowervar=1;
       songindex=0;
-      index=1;
-      statetime=1;
+      index=5;
     } 
     
     else if(stateP==1){
       beeppowervar=1;
       songindex=1;
       index=0;
-      stateA=0;
-      digitalWrite(AUTO,stateA); 
-      statetime=0;
-      
+      stateA=0;      
     }
     
     applythespeedswitch(); // apply the switch for speed when turning on
@@ -35,7 +32,7 @@ void powerset(){
 
   else if ((Bp != Lp) && (Bp == 1)&& (currenttime-powert0 > buttondelay)&&play==0){
       Lp=Bp;
-      powercount = 0;shift=0;
+      powercount = 0;
   }
   
 }

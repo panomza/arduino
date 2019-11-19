@@ -40,6 +40,7 @@ void sensor_dust() {
 
     if (currenttime-t0>timer){
        count++;
+//       Serial.println(averagedust);
        dust[count]=readdust();
        averagedust=takeaverage(dust);
 

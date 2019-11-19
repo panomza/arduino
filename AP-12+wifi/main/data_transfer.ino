@@ -11,9 +11,9 @@ void send_smart(){
       JsonObject state_desired = state.createNestedObject("desired");
     
     
-      state_desired["power" ] = stateP;
+      state_desired["power"] = stateP;
       state_desired["speed"] = index;
-      state_desired["timer"] = timeshow2;
+      state_desired["timer"] = timedown;
       state_desired["auto"] = stateA;
       state_desired["dust"] = averagedust;
 
@@ -22,8 +22,7 @@ void send_smart(){
       
       NodeSerial.print(status_bord);
       NodeSerial.print("\n");
-
- 
+      
    sent=currenttime;
  }
  
@@ -42,9 +41,9 @@ void read_smart() {
     
         if (datar=='O' ) {Bp=0;}
         if (datar=='s' ) {Bs=0;}
+        if (datar=='t' ) {Bt=0;}
         if (datar=='a' ) {Ba=0;}
-        if (datar=='t' ) {Bt=0;checkstate_in=1;}
-        if (datar=='w' ) {set_wifi=0;Wi=1;}
+        if (datar=='w' ) {}
 
         
       }

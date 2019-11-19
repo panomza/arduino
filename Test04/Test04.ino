@@ -17,7 +17,8 @@ DHT dht(DHTPIN, DHTTYPE);
 #include <ArduinoJson.h> 
 
 #include <SoftwareSerial.h>
-SoftwareSerial NanoSerial(0, 2); // RX | TX
+//SoftwareSerial NanoSerial(2, 0); // RX | TX
+SoftwareSerial NanoSerial(D2, D3); // RX | TX
 
 //wifi variables
 
@@ -106,28 +107,6 @@ BLYNK_WRITE(V4) //Auto
   /////////////// wifimanager//////////////////
 
 
-void wifi(){
-
-
-if (datar=='W'){
-  digitalWrite(1,0);
-  WiFi.disconnect();
-  WiFiManager wifiManager;
-  wifiManager.setAPCallback(configModeCallback);
-  wifiManager.autoConnect("Air Purifier"); 
-  digitalWrite(1,1);
-
-      NanoSerial.print("w"); NanoSerial.print("w");
-      NanoSerial.print("w"); NanoSerial.print("w");
-      NanoSerial.print("w"); NanoSerial.print("w");
-      NanoSerial.print("w"); NanoSerial.print("w");
-      NanoSerial.print("w"); NanoSerial.print("w");
-      NanoSerial.print("w"); NanoSerial.print("w");
-      NanoSerial.print("w"); NanoSerial.print("w");
-           
-  } 
- 
-}
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +114,7 @@ if (datar=='W'){
 void setup()
 {
 
-  Serial.begin(9600);
+//  Serial.begin(9600);
 
   dht.begin();
   
@@ -148,18 +127,16 @@ void setup()
 
   /////////////////////////////////Send data////////////////////////////////////
   
-//  pinMode(D2, INPUT);
-//  pinMode(D3, OUTPUT);
+  pinMode(D2, INPUT);
+  pinMode(D3, OUTPUT);
   
-  pinMode(2, INPUT);
-  pinMode(0, OUTPUT);
+//  pinMode(0, INPUT);
+//  pinMode(2, OUTPUT);
   
-  pinMode(3, INPUT);
-  pinMode(1, OUTPUT);
+//  pinMode(3, INPUT);
+//  pinMode(1, OUTPUT);
 
   NanoSerial.begin(57600);
-
-//  digitalWrite(1,0);
   
 }
 
@@ -171,10 +148,10 @@ void loop()
 {
   Blynk.run();
   
-  receive_bord();
+//  receive_bord();
   
-  Sensor_DHT();
+//  Sensor_DHT();
 
-  wifi();
+//  wifi();
 
 }

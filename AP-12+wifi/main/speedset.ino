@@ -25,25 +25,32 @@ void applythespeedswitch(){
       break;
     case 1:
       clearspeed();
-      digitalWrite(M1,1);   
+      digitalWrite(M1,1);  
+      mcp.digitalWrite(s1,1); 
+      stateA=0;
       break;
     case 2:
       clearspeed();
       digitalWrite(M2,1);
+      mcp.digitalWrite(s2,1);
+      stateA=0;
       break;
     case 3:
       clearspeed();
       digitalWrite(M3,1);
+      mcp.digitalWrite(s3,1);
+      stateA=0;
       break;
     case 4:
       clearspeed();
       digitalWrite(M4,1);
+      mcp.digitalWrite(s4,1);
+      stateA=0;
       break;
      case 5:
       clearspeed();
       stateA=1;
       break;
-  
   }
   
 }
@@ -58,7 +65,5 @@ void clearspeed(){
       mcp.digitalWrite(s1,0);
       mcp.digitalWrite(s2,0);
       mcp.digitalWrite(s3,0);
-      mcp.digitalWrite(s4,0);
-
-      stateA=0;
+      mcp.digitalWrite(s4,0);    
 }

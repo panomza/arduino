@@ -3,9 +3,9 @@
 #include <Wire.h>
 #include "Adafruit_MCP23017.h"
 Adafruit_MCP23017 mcp;
+#include <avr/wdt.h>#include <avr/wdt.h>
 
-
-SoftwareSerial NodeSerial(12, 11); // RX | TX
+SoftwareSerial NodeSerial(20, 21); // RX | TX
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -34,18 +34,19 @@ const short int Btimer  = 16;    // Timer button input pin
 
 //output pins
 
-const short int POW    = 5;        // power output pin
-const short int s1     = 9;        // speeed output pin
-const short int s2     = 10;       // speeed output pin
-const short int s3     = 11;       // speeed output pin
-const short int s4     = 12;       // speeed output pin
-const short int AUTO   = 13;
+
+const short int POW     = 9; 
+const short int s1     = 10;        // speeed output pin
+const short int s2     = 11;       // speeed output pin
+const short int s3     = 12;       // speeed output pin
+const short int s4     = 13;       // speeed output pin
+const short int AUTO   = 14;
 const short int timerled    = 6;
 const short int h1     = 5;
 const short int h2     = 4;
 const short int h4     = 3;
 const short int h8     = 2;
-const short int dim    = 6;
+const short int dim    = 8;
 const short int wifi_L   = 0;
 const short int filtor = 1;
 
@@ -73,7 +74,7 @@ unsigned int powert0 = 0;
 
 bool Bs         = 1;           // speed input state
 bool Ls         = 1;           // previous speed input state
-bool speedcount = 0;
+bool speedcount = 0;           // check if button is pressed in the last loop
 byte index = 0;                // case counter
 unsigned int speedt0 = 0;
 
@@ -81,32 +82,22 @@ unsigned int speedt0 = 0;
 
 bool Bt         = 1;
 bool Lt         = 1;
-bool BTcount = 0;
 byte Settime = 0;
-byte statetime = 0;
 unsigned int timer0;
-unsigned int timedown = 0;
-unsigned int timeshow0 = 0;
-unsigned int timeshow1 = 0;
-unsigned int timeshow2 = 0;
+unsigned int timedown = 0;        // remaining time
 
 unsigned int timetrig = 0;
 unsigned int runtime = 0;
-unsigned int buttontime0 = 0;
-unsigned int buttontime1 = 0;
-byte buttoncount0 = 0;
-byte buttoncount1 = 0;
-bool beepout = 0;
-bool checkstate_in = 0;
+
 
 /////////////////Auto////////////////////
 
 bool Ba         = 1;
 bool La         = 1;
-byte stateA     = 0;
+bool stateA     = 0;    //auto state
 bool autocount  = 0;
-unsigned int auto0 = 0;
 unsigned int autotime = 0;
+unsigned int auto0 = 0;
 
 
 ///////////////delays////////////////////
@@ -118,8 +109,8 @@ unsigned int currenttime = 0;
 //////////////dust sensor///////////////
 
 const short int measurePin = A6;
-const short int ledPower = 19;
-const short int numaverage = 150; ///number of values for taking average
+const short int ledPower = 17;
+const short int numaverage = 100; ///number of values for taking average
 unsigned int count;
 unsigned int dust[numaverage];
 unsigned int averagedust = 0;
@@ -139,6 +130,7 @@ int play = 0;
 int soundtime = 0;
 unsigned int bwf = 0;
 byte bnum = 0;
+
 bool wfcount = 0;
 byte wifi = 0;
 bool Wi = 0;
@@ -147,11 +139,12 @@ bool Wi = 0;
 
 byte bright7 = 0;
 byte brightdim = 30;
+bool ck = 0;
+bool Rd         = 1;           // speed input state
+bool Ld        = 1;           // previous speed input state
+bool dimcount = 0;               // case counter
+unsigned int Rdim0 = 0;
 
-
-int lightpin = A7;
-int lightin = 0;
-int lightout = 0;
 
 char datar;
 
@@ -162,39 +155,41 @@ char datar;
 void setup() {
 
   Serial.begin(9600);
-
-
+  NodeSerial.begin(57600);
+  mcp.begin();
+  tm1637_init_pin_for_sent_I2C();
   irrecv.enableIRIn(); // Start the receiver
+  
+  wdt_enable(WDTO_120MS); // Watch dog function start
 
-  int inputpins[4] = {Bpow, Bspeed, Btimer, lightpin};
+  int inputpins[3] = {Bpow, Bspeed, Btimer};
 
-  int outputpins[12] = {POW, M1, M2, M3, M4, AUTO, dim, timerled, h1, h2, h4, h8};
+  int ledpins[12] = { POW, s1, s2, s3, s4, AUTO, dim, timerled, h1, h2, h4, h8};
+
+  int outputpins[6] = { M1, M2, M3, M4, BUZ, ledPower };
 
   for (int j = 0; j < sizeof(inputpins) / sizeof(1); j++) {
     pinMode(inputpins[j], INPUT);
   }
 
-  for (int j = 0; j < sizeof(outputpins) / sizeof(1); j++) {
-    mcp.pinMode(outputpins[j], OUTPUT);
+  for (int j = 0; j < sizeof(ledpins) / sizeof(1); j++) {
+    mcp.pinMode(ledpins[j], OUTPUT);
+    mcp.digitalWrite(ledpins[j],0);
   }
 
+  for (int j = 0; j < sizeof(outputpins) / sizeof(1); j++) {
+    pinMode(outputpins[j], OUTPUT);
+  }
 
-
+  digitalWrite(outputpins[6],0);
+  
   beepvarS = 1;
 
   clearspeed();
-
-  digitalWrite(POW, 0);
   
-  statetime=0;
-
-  pinMode(12, INPUT);
-  pinMode(11, OUTPUT);
-  pinMode(9, OUTPUT);
-  pinMode(ledPower, OUTPUT);
-
-  NodeSerial.begin(57600);
-  pinMode(A7, OUTPUT);
+  pinMode(20, INPUT);
+  pinMode(21, OUTPUT);
+  Serial.println("Bord Reset");
 }
 
 //////////////////////////////////////VOID////////////////////////////////////
@@ -202,7 +197,6 @@ void setup() {
 
 
 void loop() {
-
 
   currenttime = millis();
 
@@ -214,9 +208,9 @@ void loop() {
 
   Remote();
 
-//  Display();
+  Display();
 
-//  sensor_dust();
+  sensor_dust();
 
   powerset();
 
@@ -228,7 +222,9 @@ void loop() {
 
   read_smart();
 
-//  send_smart();
+  send_smart();
 
+//  simulate_hang(); //stalls if timedown > 35 and stateA ==1
 
+  wdt_reset(); // Watch dog reset
 }

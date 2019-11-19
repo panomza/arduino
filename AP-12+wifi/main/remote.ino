@@ -20,16 +20,16 @@ currentMillis = millis();
                         break;
                       case 1: // speed
                         Bs=0;
+                        if(index==4){index=0;}
                         break;
-                      case 2: // plasma
-                       
+                      case 2: // Auto
+                         Ba=0;
                         break;
                       case 3: // timer
                         Bt=0;
-                        checkstate_in=1;
                         break;
-                      case 4: // ionizer
-                      Ba=0;
+                      case 4: // dim
+                        Rd=0;
                         break;
                     }
                   }       
@@ -41,7 +41,7 @@ currentMillis = millis();
 
     }
   }
-    if (currentMillis - last>500){
+    if (currentMillis - last>50){
       for (int i=0;i<OUTPUT_COUNT;i++){
           if (status1[i]){
            status1[i]=0;
@@ -52,15 +52,14 @@ currentMillis = millis();
                       case 1: // speed
                         Bs=1;
                         break;
-                      case 2: // plasma
-                        
+                      case 2: // Auto
+                        Ba=1;
                         break;
                       case 3: // timer
                         Bt=1;
-                        checkstate_in=0;
                         break;
-                      case 4: // ionizer
-                        Ba=1;
+                      case 4: // dim
+                        Rd=1;
                         break;
            }
         }
