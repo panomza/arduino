@@ -114,7 +114,7 @@ BLYNK_WRITE(V4) //Auto
 void setup()
 {
 
-//  Serial.begin(9600);
+  Serial.begin(9600);
 
   dht.begin();
   
