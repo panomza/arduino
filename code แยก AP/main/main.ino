@@ -3,6 +3,7 @@
 
 SoftwareSerial NodeSerial(12, 11); // RX | TX
 
+
 ///////////////////////////////////////////////////////////////////////////
 
 #include <IRremote.h>
@@ -26,8 +27,10 @@ keypad output[OUTPUT_COUNT];
 
 const short int Bpow    = 14;    // power button input pin
 const short int Bspeed  = 15;    // speed input pin
+
 const short int Bauto   = 17;    // Auto button input pin
 const short int Btimer  = 16;    // Timer button input pin
+
 
 //output pins
 
@@ -157,6 +160,7 @@ void setup() {
   for (int j = 0; j < sizeof(outputpins) / sizeof(1); j++) {
     pinMode(outputpins[j], OUTPUT);
   }
+
 
 
 

@@ -1,5 +1,7 @@
 
+
 unsigned int sent=0;
+
 
 void send_smart(){
 
@@ -33,6 +35,7 @@ void send_smart(){
 
 void read_smart() {
 
+
   if(NodeSerial.available()>0){
      datar = NodeSerial.read();
      Serial.println(datar);
@@ -49,4 +52,85 @@ void read_smart() {
   }
 }
 
+
+
+// Example 6 - Receiving binary data
+
+const byte numBytes = 32;
+byte receivedBytes[numBytes];
+byte numReceived = 0;
+
+boolean newData = false;
+
+
+
+void recvBytesWithStartEndMarkers() {
+    static boolean recvInProgress = false;
+    static byte ndx = 0;
+    byte startMarker = 0x3C;
+    byte endMarker = 0x3E;
+    byte rb;
+   
+
+    while (Serial.available() > 0 && newData == false) {
+        rb = Serial.read();
+
+        if (recvInProgress == true) {
+            if (rb != endMarker) {
+                receivedBytes[ndx] = rb;
+                ndx++;
+                if (ndx >= numBytes) {
+                    ndx = numBytes - 1;
+                }
+            }
+            else {
+                receivedBytes[ndx] = '\0'; // terminate the string
+                recvInProgress = false;
+                numReceived = ndx;  // save the number for use when printing
+                ndx = 0;
+                newData = true;
+            }
+        }
+
+        else if (rb == startMarker) {
+            recvInProgress = true;
+        }
+    }
+}
+
+void applyNewData() {
+    if (newData == true) {
+        Serial.println("Data is in: ");
+        for (byte n = 0; n < numReceived; n+=2) {
+          switch(receivedBytes[n]){
+            case 'P' : {
+              Serial.print("Power");
+              Serial.println(receivedBytes[n+1]>'0'&&receivedBytes[n+1]<'2');
+              Bp= receivedBytes[n+1]-'0';
+              Serial.println(Bp);
+              break;
+            }
+            case 'p' : {
+              Serial.print("plasma");
+              Serial.println(receivedBytes[n+1]>'0'&&receivedBytes[n+1]<'2');
+              break;
+            }
+            case 's' : {
+              Serial.print("speed");
+              if (receivedBytes[n+1]-'0'<5&&receivedBytes[n+1]-'0'>=0){
+                Serial.println(receivedBytes[n+1]-'0');
+              }
+                else{
+                  Serial.println("error value of speed");
+              }
+
+              break;
+            }
+          }
+        }
+        Serial.println();
+        newData = false;
+    }
+}
+    
  
