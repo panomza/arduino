@@ -1,64 +1,137 @@
 
 #include <SoftwareSerial.h>
+#include <ArduinoJson.h>
 
-SoftwareSerial NodeSerial(2,3); // RX | TX
+SoftwareSerial NodeSerial(12,11); // RX | TX
 
-float lastsent=0;
-float lastread=0;
+unsigned int  current_time;
 
-    bool Auto=0;
-    bool plasma=0;
-    bool speed1=0;
-    bool speed2=0;
-    bool speed3=0;
-    bool speed4=0;
+
+byte check=0;
+unsigned int de=0;
+unsigned int desent=0;
+
+int Bpower =0;
+int Bspeed =0;
+int Btimer =0;
+int Bauto =0;
 
 void setup() {
 
-  pinMode(2, INPUT); 
-  pinMode(3,OUTPUT);
+  pinMode(12, INPUT); 
+  pinMode(11,OUTPUT);
 
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   NodeSerial.begin(57600);
 
  }
 
 void send_smart(){
-  NodeSerial.print("<");
-  NodeSerial.print(Auto);          NodeSerial.print("  ");
-  NodeSerial.print(plasma);        NodeSerial.print("  ");
-  NodeSerial.print(speed1);        NodeSerial.print("  ");
-  NodeSerial.print(speed2);        NodeSerial.print("  ");
-  NodeSerial.print(speed3);        NodeSerial.print("  ");
-  NodeSerial.print(speed4);        NodeSerial.print("\n");
+
 
 }
 
-void loop() {
-    float current_time=millis();
 
-     
-    if (NodeSerial.read()=='<'&& current_time-lastread>50) {
-          Auto       = NodeSerial.parseInt(); 
-          plasma     = NodeSerial.parseInt();
-          speed1     = NodeSerial.parseInt();
-          speed2     = NodeSerial.parseInt();
-          speed3     = NodeSerial.parseInt();
-          speed4     = NodeSerial.parseInt();
-          Serial.print("speed1");      Serial.print(" : "); Serial.print(speed1);
-          Serial.print("\tspeed2");      Serial.print(" : "); Serial.print(speed2);
-          Serial.print("\tspeed3");      Serial.print(" : "); Serial.print(speed3);
-          Serial.print("\tspeed4");      Serial.print(" : "); Serial.print(speed4);
-          Serial.print("\tplasma");    Serial.print(" : "); Serial.print(plasma);
-          Serial.print("\tAuto");      Serial.print(" : "); Serial.println(Auto); 
-          lastread=current_time;
-          send_smart();
-          
+
+void fail_check()
+{
+    if(current_time-de>500&&check==1)
+    {    
+      DynamicJsonDocument jsonBuffer(JSON_OBJECT_SIZE(3) + 100);
+      JsonObject root = jsonBuffer.to<JsonObject>();
+
+      root["failed"] = check;
+
+      char fail[measureJson(root) + 1];
+      serializeJson(root, fail, sizeof(fail));
+
+      Serial.println("failed");
+      Serial.println();
+      NodeSerial.print(fail);
+      NodeSerial.print("\n");
+
+      de=current_time;
+  }
+}
+
+char datar ;
+String dataj;
+void recive_data_ESP()
+{
+  if(NodeSerial.available()>0){
+        
+    datar = NodeSerial.read(); 
+    dataj += datar;
+    
+    StaticJsonDocument<100> jsonBuffer;
+    deserializeJson(jsonBuffer, dataj); 
+    Serial.println(dataj);
+    if (datar=='\n'){
+            // Test if parsing succeeds.
+      
+      // Get the root object in the document
+      JsonObject root = jsonBuffer.as<JsonObject>();
+    Serial.println(dataj);
+   
+      String Power = root ["power"];
+      String Speed = root ["speed"];
+      String Timer = root ["timer"];
+      String Auto = root ["auto"];
+
+      Bpower = root ["power"];
+      Bspeed = root ["speed"];
+      Btimer = root ["timer"];
+      Bauto = root ["auto"];
+
+    if (Bpower ==0){Bspeed =0;Btimer=0;Bauto=0;}
+    if(Power == "null" ||Speed =="null" || Timer =="null" ||Auto =="null")
+      {
+      check=1;     
+      }
+      else{
+        check=0;control_status();
+        
+        }  
+        dataj = datar;
+       }
+       
     }
-    if (current_time-lastsent>10000){
-      send_smart();
-      lastsent=current_time;
-    }
+}
+//
+//void sent_data_esp()
+//{
+//   if(current_time-desent>1000){
+//      DynamicJsonDocument jsonBuffer(JSON_OBJECT_SIZE(3) + 100);
+//      JsonObject root = jsonBuffer.to<JsonObject>();
+//      JsonObject state = root.createNestedObject("state");
+//      JsonObject state_desired = state.createNestedObject("desired");
+//    
+//    
+//      state_desired["power" ] = Bpower;
+//      state_desired["speed"] = Bspeed;
+//      state_desired["timer"] = Btimer;
+//      state_desired["auto"] = Bauto;
+//
+//      char status_bord[measureJson(root) + 1];
+//      serializeJson(root, status_bord, sizeof(status_bord));
+//      
+//      NodeSerial.print(status_bord);
+//      NodeSerial.print("\n");
+//
+//      desent=current_time;
+//   }
+//}
+
+ 
+void loop() {
+  
+  current_time=millis();
+  
+  recive_data_ESP();
+
+//  sent_data_esp();
+  
+//  fail_check();
 
 } 

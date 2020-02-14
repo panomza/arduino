@@ -1,145 +1,184 @@
 #include <SoftwareSerial.h>
+#include <ArduinoJson.h>
 
-SoftwareSerial NodeSerial(7,8); // RX | TX
+SoftwareSerial NodeSerial(12, 11); // RX | TX
 
-int datasent=0;
+
 ///////////////////////////////////////////////////////////////////////////
 
 #include <IRremote.h>
-  const int RECV_PIN = 3;
-  IRrecv irrecv(RECV_PIN);
-  decode_results results;
+const int RECV_PIN = 21;
+IRrecv irrecv(RECV_PIN);
+decode_results results;
 #define OUTPUT_COUNT 5
 
-    unsigned long last = millis();
-    long remote_key[]={0xDF40BF,0xDF609F,0xDF48B7,0xDF50AF,0xDF708F};
-    const byte outputPins[OUTPUT_COUNT] = {0, 1, 2, 3,4};
-    bool status1[5] = {0,0,0,0,0};
-    struct keypad {
-    boolean state;
+long remote_key[] = {0xDF40BF, 0xDF609F, 0xDF48B7, 0xDF50AF, 0xDF708F};
+const byte outputPins[OUTPUT_COUNT] = {0, 1, 2, 3, 4};
+bool status1[5] = {0, 0, 0, 0, 0};
+struct keypad {
+  boolean state;
 };
 keypad output[OUTPUT_COUNT];
 
 ///////////////////////////////////////////////////////////////////////////
 
-short int powert0; 
-short int speedt0;
-short int plasmat0;
-short int auto0;
-short int timer0;
 
 // input pins
 
 const short int Bpow    = 14;    // power button input pin
 const short int Bspeed  = 15;    // speed input pin
-const short int Bplasma = 16;    // plasma button input pin
-const short int Bauto   = 18;    // Auto button input pin
-const short int Btimer=99 ;    // Timer button input pin
+
+const short int Bauto   = 17;    // Auto button input pin
+const short int Btimer  = 16;    // Timer button input pin
+
 
 //output pins
 
-const short int POW    = 13;      //power output pin
-const short int PLASMA = 6;       // plasma button output pin
-const short int M1     = 19;       // motor output pin
-const short int M2     = 20;       // motor output pin
-const short int M3     = 17;       // motor output pin
+const short int POW    = 5;      //power output pin
+const short int M1     = 4;       // motor output pin
+const short int M2     = 7;       // motor output pin
+const short int M3     = 8;       // motor output pin
 const short int M4     = 10;      // motor output pin
 const short int BUZ    = 9;         // buzzer output pin
-const short int AUTO   = 11; 
+const short int AUTO   = 20;
+const short int dim    = 6;
+const short int timerled    = 18;
 
+//////////////////////////////////////////////////////////////////////////
 // state variables
 
-//power
+//////////////////////power//////////////////////
+
 bool Bp         = 1;         //power button state
-bool Lp         = 1;         //previous power button state 
-bool stateP     = 1;         //power output state
+bool Lp         = 1;         //previous power button state
+byte stateP     = 1;         //power output state
 bool powercount = 0;         // count if the power button is pushed
+unsigned int powert0 = 0;
 
-//plasma
-bool Bpm        = 1;                  // plasma button state
-bool Lpm        = 1;                  // previous plasma button state
-bool statePM    = 1;        // plasma output state
-bool plasmacount= 0;       // count if plasma has been pressed
 
-//speed
-bool Bs         = 1;                   // speed input state
-bool Ls         = 1;                   // previous speed input state
-bool stateS     = 0;         // speed state
-unsigned short int index = 1;                // case counter
+/////////////////////speed////////////////////
 
-//Timer
+bool Bs         = 1;           // speed input state
+bool Ls         = 1;           // previous speed input state
+bool speedcount = 0;
+byte index = 0;                // case counter
+unsigned int speedt0 = 0;
+
+////////////////////Timer////////////////////
+
 bool Bt         = 1;
 bool Lt         = 1;
-bool stateT     = 1;
-bool timercount = 0;
-unsigned short int selectime = 0;
+bool BTcount = 0;
+byte Settime = 0;
+byte statetime = 0;
+unsigned int timer0;
+unsigned int timedown = 0;
+unsigned int timeshow0 = 0;
+unsigned int timeshow1 = 0;
+unsigned int timeshow2 = 0;
 
-//Auto
+unsigned int timetrig = 0;
+unsigned int runtime = 0;
+unsigned int buttontime0 = 0;
+unsigned int buttontime1 = 0;
+byte buttoncount0 = 0;
+byte buttoncount1 = 0;
+bool beepout = 0;
+bool checkstate_in = 0;
+
+/////////////////Auto////////////////////
+
 bool Ba         = 1;
 bool La         = 1;
-bool stateA     = 1;
+byte stateA     = 0;
 bool autocount  = 0;
-unsigned short int Sauto;
-float autotime  = 0;
-float autotimer = 2000;
+unsigned int auto0 = 0;
+unsigned int autotime = 0;
 
-//delays
-short int buttondelay=300;// delay between each button press in ms
-float currenttime=0;
-unsigned short int songindex=0;
 
-int measurePin = 19;
-int ledPower = 12;
-const int numaverage = 20; ///number of values for taking average
-float dust[numaverage];
-unsigned short int count;
-float initialdust=20;
-float averagedust=initialdust;
+///////////////delays////////////////////
 
-//beep
-bool beepvar=0;
-bool beepstarted=0;
-float beeptime=0;
-bool beeppowervar=0;
+unsigned int buttondelay = 200; // delay between each button press in ms
+unsigned int currenttime = 0;
+
+
+//////////////dust sensor///////////////
+
+const short int measurePin = A6;
+const short int ledPower = 19;
+const short int numaverage = 150; ///number of values for taking average
+unsigned int count;
+unsigned int dust[numaverage];
+unsigned int averagedust = 0;
+
+
+///////////////beep///////////////////
+
+bool songindex = 0;
+bool beepvarB = 0;
+bool beepvarS = 0;
+bool beepstarted = 0;
+bool beepstartedS = 0;
+byte beeppowervar = 0;
+unsigned int beeptime = 0;
+unsigned int beeptimeS = 0;
+int play = 0;
+int soundtime = 0;
+unsigned int bwf = 0;
+byte bnum = 0;
+bool wfcount = 0;
+byte wifi = 0;
+bool Wi = 0;
+
+///////////////Bright////////////////
+
+byte bright7 = 0;
+byte brightdim = 30;
+
+
+char datar;
+
 
 ////////////////////////////////////VOID/////////////////////////////////////////////////
 ///////////////////////////////////SETUP/////////////////////////////////////////////////
 
 void setup() {
-Serial.begin(9600);
+
+  Serial.begin(9600);
+
 
   irrecv.enableIRIn(); // Start the receiver
+
+  int inputpins[4] = {Bpow, Bspeed, Btimer, Bauto};
+
+  int outputpins[9] = {POW, M1, M2, M3, M4, BUZ, AUTO, dim, timerled};
+
+  for (int j = 0; j < sizeof(inputpins) / sizeof(1); j++) {
+    pinMode(inputpins[j], INPUT);
+  }
+
+  for (int j = 0; j < sizeof(outputpins) / sizeof(1); j++) {
+    pinMode(outputpins[j], OUTPUT);
+  }
+
+
+
+
+  beepvarS = 1;
+
+  clearspeed();
+
+  digitalWrite(POW, 0);
   
-   int inputpins[5]={
-    Bpow,Bspeed,Bplasma,Btimer,Bauto
-    };
+  statetime=0;
 
-  int outputpins[8] = {
-    POW,PLASMA,M1,M2,M3,M4,BUZ,AUTO
-  };
+  pinMode(12, INPUT);
+  pinMode(11, OUTPUT);
 
-  for(int j=0;j< sizeof(inputpins)/sizeof(1);j++){
-    pinMode(inputpins[j],INPUT);
-    Serial.print(inputpins[j]);
-    Serial.println(" is set as input");
-  }
-  for(int j=0;j< sizeof(outputpins)/sizeof(1);j++){
-    pinMode(outputpins[j],OUTPUT);
-    Serial.print(outputpins[j]);
-    Serial.println(" is set as output");
-    digitalWrite(outputpins[j],1);
-  }
-
-    pinMode(ledPower,OUTPUT);
-  for(int i=0;i<numaverage;i++){
-  dust[i]=initialdust;
-  }
-  beepvar=1;
-
-  pinMode(7, INPUT); //nanoserial in
-  pinMode(8,OUTPUT); //nanoserial out
+  pinMode(ledPower, OUTPUT);
 
   NodeSerial.begin(57600);
+  pinMode(A7, OUTPUT);
 }
 
 //////////////////////////////////////VOID////////////////////////////////////
@@ -147,22 +186,33 @@ Serial.begin(9600);
 
 
 void loop() {
-currenttime=millis();
 
 
-//beep();//beep version 1
-//beeppower();//beep version2 for power on-off
+  currenttime = millis();
 
-//checkbuttons();
-statebutton();
-Remote();
-//applythespeedswitch();
-//Display();
-//sensor_dust();
-powerset();
-speedset();
-plasmaset();
-Auto();
-read_smart();//read from the smart board
-//rundata();
+  Dimmer();
+
+  beep();
+
+  statebutton();
+
+  Remote();
+
+  Display();
+
+  sensor_dust();
+
+  powerset();
+
+  speedset();
+
+  TIMER();
+
+  Auto();
+
+  read_smart();
+
+  send_smart();
+
+
 }

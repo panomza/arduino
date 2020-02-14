@@ -53,7 +53,8 @@ const uint8_t digitToSegment[] = {
   0b00111001,    // C
   0b01011110,    // d
   0b01111001,    // E
-  0b01110001     // F
+  0b01110001,    // F
+  0b10000000     //.
   };
 
 static const uint8_t minusSegments = 0b01000000;

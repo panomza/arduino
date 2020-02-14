@@ -1,48 +1,55 @@
-float lastsent=0;
-float lastread=0;
-short int count_data =0;
+
+
+unsigned int sent=0;
+
 
 void send_smart(){
-  
-  NodeSerial.print("<");
-  NodeSerial.print(datasent);          
-  NodeSerial.print(">");
+
+ if(currenttime-sent>1000){
+
+      DynamicJsonDocument jsonBuffer(JSON_OBJECT_SIZE(3) + 100);
+      JsonObject root = jsonBuffer.to<JsonObject>();
+      JsonObject state = root.createNestedObject("state");
+      JsonObject state_desired = state.createNestedObject("desired");
+    
+    
+      state_desired["power" ] = stateP;
+      state_desired["speed"] = index;
+      state_desired["timer"] = timeshow2;
+      state_desired["auto"] = stateA;
+      state_desired["dust"] = averagedust;
+
+      char status_bord[measureJson(root) + 1];
+      serializeJson(root, status_bord, sizeof(status_bord));
+      
+      NodeSerial.print(status_bord);
+      NodeSerial.print("\n");
 
 
+ 
+   sent=currenttime;
+ }
+ 
 }
 
+
 void read_smart() {
-//char datar = NodeSerial.read();// read from NodeSerial
-//char datar = Serial.read();// for debugging
 
 
-recvBytesWithStartEndMarkers();// recieve data
-applyNewData();// parse data
+  if(NodeSerial.available()>0){
+     datar = NodeSerial.read();
+     Serial.println(datar);
+   if (datar=='O'||datar=='s'||datar=='a'||datar=='t'||datar=='w'){
+        if (datar=='O' ) {Bp=0;}
+        if (datar=='s' ) {Bs=0;}
+        if (datar=='a' ) {Ba=0;}
+        if (datar=='t' ) {Bt=0;checkstate_in=1;}
+        if (datar=='w' ) {set_wifi=0;Wi=1;}
 
-//    if (datar=='P') {
-//       Serial.print(datar);
-//       Serial.println("ON OFF");
-//       Bp=0; 
-//    } else{Bp=1;}
-//    if (datar=='s') {
-//       Serial.print(datar);
-//       Serial.println("Speed"); 
-//       Bs=0;
-//    } else{Bs=1;}
-//    if (datar=='p') {
-//       Serial.print(datar);
-//       Serial.println("Plasma"); 
-//       Bpm=0;
-//    }else{Bpm=1;}
-
-//void rundata()
-//{
-//  if (data==1){Bp=0;Serial.println("Bp trig");}else{Bp=1;}
-//  if (data==2){Bs=0;Serial.println("Bs trig");}else{Bs=1;}
-//  if (data==3){Bpm=0;Serial.println("Bpm trig");}else{Bs=1;}
-//  if (data==4){Bt=0;Serial.println("Bp trig");}else{Bs=1;} 
-//  if (data==5){Ba=0;Serial.println("Bp trig");}else{Bs=1;}
-//
+        NodeSerial.print("F");
+        NodeSerial.print("\n");
+      }
+  }
 }
 
 

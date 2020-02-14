@@ -1,0 +1,25 @@
+{
+    "name": "Byteduino",
+    "description": "Micro implementation of Obyte cryptocurrency platform",
+    "keywords": "obyte, byteball, crypto, bitcoin, iot",
+    "authors": [
+        {
+            "name": "Papabyte",
+            "url": "papabyte.com",
+            "maintainer": true
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Papabyte/byteduino"
+    },
+    "version": "0.2.2",
+    "license": "MIT",
+    "export": {
+        "exclude": [
+            "tests"
+        ]
+    },
+    "frameworks": "arduino",
+    "platforms": "espressif8266, espressif32"
+}

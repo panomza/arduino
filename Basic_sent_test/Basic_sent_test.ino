@@ -1,30 +1,37 @@
-int i_data = 1234;
-int plasma = 14;
+int i = 0;
+int f = 0;
+
 float f_data = 567.89;
 
-#include <SoftwareSerial.h>
-#include <ESP8266WiFi.h>
-
-SoftwareSerial NanoSerial(D3, D2); // RX | TX
+//#include <SoftwareSerial.h>
+//
+//
+//SoftwareSerial NanoSerial(11, 12); // RX | TX
 
 void setup()
 
 {  
 
-  pinMode(D3,INPUT);
+  pinMode(11,OUTPUT);
 
-  pinMode(D2,OUTPUT);
+  pinMode(12,OUTPUT);
+
+  pinMode(7,OUTPUT);
+
+  pinMode(14,INPUT);
+  pinMode(15,INPUT);
 
   Serial.begin(9600);
 
-  NanoSerial.begin(57600);           
+//  NanoSerial.begin(57600);           
 
 }
 
 void loop() {
+i=digitalRead(14);
+f=digitalRead(15);
 
-  NanoSerial.print(f_data); NanoSerial.print("\n");
-
-  delay(100);
+if(i==0){digitalWrite(11,1);}else{digitalWrite(11,0);}
+if(f==0){digitalWrite(12,1);}else{digitalWrite(12,0);}
 
 }
