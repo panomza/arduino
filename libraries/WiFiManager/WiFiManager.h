@@ -117,6 +117,10 @@ class WiFiManager
     void          setCustomHeadElement(const char* element);
     //if this is true, remove duplicated Access Points - defaut true
     void          setRemoveDuplicateAPs(boolean removeDuplicates);
+    
+    String        getRootCA();
+    String        getCert();
+    String        getPrivateKey();
 
   private:
     std::unique_ptr<DNSServer>        dnsServer;
@@ -134,6 +138,10 @@ class WiFiManager
     const char*   _apPassword             = NULL;
     String        _ssid                   = "";
     String        _pass                   = "";
+    String        _rootCA                 = "";
+    String        _cert                   = "";
+    String        _privateKey             = "";
+    
     unsigned long _configPortalTimeout    = 0;
     unsigned long _connectTimeout         = 0;
     unsigned long _configPortalStart      = 0;
@@ -163,6 +171,12 @@ class WiFiManager
     void          handleRoot();
     void          handleWifi(boolean scan);
     void          handleWifiSave();
+    void          handleInfoJson();
+    
+    void          handleRootCA();
+    void          handleCert();
+    void          handlePrivateKey();
+    
     void          handleInfo();
     void          handleReset();
     void          handleNotFound();

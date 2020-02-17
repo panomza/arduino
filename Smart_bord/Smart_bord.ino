@@ -411,7 +411,8 @@ void checkWiFiThenMQTTNonBlocking(void)
       if (millis() - previousMillis >= interval && !client.connected()) {
         previousMillis = millis();
         connectToMqtt(true);
-      }
+    
+  }
   }
 
 
@@ -422,8 +423,6 @@ void checkWiFiThenReboot(void)
       Serial.print("Rebooting");
       ESP.restart();
   }
-
-
 
 
 void setup()

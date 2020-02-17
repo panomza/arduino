@@ -6,9 +6,9 @@
 #define TM1637_CMD1_write_auto_inc_addr (0x40)
 #define TM1637_CMD2_1st_mem_addr_7seg_1xxx (0xC0)   
 #define TM1637_CMD3_ctrl_screen_head (0x80)         
-int k1=0;
-int k2=0;
-int k3=0;
+byte k1=0;
+byte k2=0;
+byte k3=0;
 
      const uint8_t SEVEN_SEG_DIGITS[] = {
            // gfedcba
@@ -25,6 +25,28 @@ int k3=0;
 
           
            0b00000000, // 10
+
+           0b00000001, // 11
+           0b00000011, // 12
+           0b00000111, // 13
+           0b00001011, // 14
+           0b00010011, // 15
+           0b00100011, // 16
+           0b01000011, // 17
+           
+           0b00000000, // 18
+           0b00000001, // 19
+           0b00000011, // 20
+           0b00000101, // 21
+           0b00001001, // 22
+           0b00010001, // 23
+           0b00100000, // 24
+           0b01000000, // 25
+
+           0b00000000, // 26
+           0b00100000, // 27
+
+           
    };
 
     void tm1637_init_pin_for_sent_I2C() {
@@ -77,7 +99,7 @@ int k3=0;
        // send the second command-------------------
          tm1637_start_bit_I2C();
          tm1637_send_1byte_I2C_ack( TM1637_CMD2_1st_mem_addr_7seg_1xxx );
-         for ( uint8_t i=0, value; i <9; i++ ) {
+         for ( uint8_t i=0, value; i <15; i++ ) {
            value = SEVEN_SEG_DIGITS[ digits[i] ];
            if ( (i == 1) && colon ) {
               value |= 0x80; // turn on the colon on the display ,x1xx digit ,hundreds digit
@@ -97,35 +119,36 @@ int k3=0;
 
      
       // show time (hour and minute)
-    void showTime(uint16_t ss) {
-         static uint8_t data[9];
+    void showTime(uint16_t ds,uint16_t ls,uint16_t ts,uint16_t fs) {
+         static uint8_t data[15];
 
-         k1=ss%10;
-         k2=ss/10%10;
-         k3=ss/100;   
-         
+         k3=ds%10;
+         k2=ds/10%10;
+         k1=ds/100;
+          
+
         /////////RED   
-        if(ss>=120) {
-         data[2] = k1;   
-         data[5] = k2;    
-         data[8] = k3;
-        }else{
-         data[2] = 10;   
-         data[5] = 10;    
-         data[8] = 10;
-        }
-        /////////Orenge
-        if(ss>=60&&ss<120) {
-         data[0] = k1;  
+        if(ds>=100) {
+         data[0] = k1;   
          data[3] = k2;    
          data[6] = k3;
-         }else{ 
-         data[0] = 10;  
+        }else{
+         data[0] = 10;   
          data[3] = 10;    
          data[6] = 10;
+        }
+        /////////Orenge
+        if(ds>=50&&ds<100) {
+         data[2] = k1;  
+         data[5] = k2;    
+         data[8] = k3;
+         }else{ 
+         data[2] = 10;  
+         data[5] = 10;    
+         data[8] = 10;
          }
         /////////Green 
-        if(ss<60) {
+        if(ds<50) {
          data[1] = k1;
          data[4] = k2; 
          data[7] = k3;
@@ -134,19 +157,44 @@ int k3=0;
          data[4] = 10; 
          data[7] = 10; 
          }
+
+        data[9] = ls;
+        data[10] = ts;
+        data[11] = fs;
+        data[12] = fs;
          
          showDigits( data); 
      }
-unsigned int ts;
+unsigned int tts;
 int ka=0;
     void Display() {                       
-//if (ka==20){delay(1000);}
-         static uint16_t ss=0;   
-          if(ss>999){ss=999;}
-         if ( currenttime - ts > 300 ) {                
-            showTime(ss); 
-              ss=averagedust;                
-             ts = currenttime;
-             ka++;
+
+         static uint16_t ds=0;   
+         static uint16_t ls=0; 
+         static uint16_t ts=0; 
+         static uint16_t fs=0;
+         static boolean colon=0;
+         
+         timer_led=(Settime+19)-stateP;
+         if(Settime>0&&stateP==1){timer_led=timer_led+1;}
+         
+         if(stateA==1){speed_led=17;}else{speed_led=(index+12)-stateP;}
+
+         if(ds>999){ds=999;}
+
+         
+         if ( currenttime - tts > 50 ) { colon = !colon;                
+            showTime(ds,ls,ts,fs); 
+              ds=averagedust;  
+              ls=speed_led;
+              ts=timer_led;
+              fs=alarm;   
+
+                        
+             tts = currenttime;
+//             ka++;
+//             
+//             if(ka==3){averagedust++;ka=0;}
+//             if(averagedust==160){averagedust=0;}
            }
      }

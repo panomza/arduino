@@ -100,17 +100,17 @@ TonePlayer tone1 (TCCR1A, TCCR1B, OCR1AH, OCR1AL, TCNT1H, TCNT1L);
 
 
 void beep(){
-  if (currenttime-bwf>700&&wifi==1&&wfcount==0){
-      bwf=currenttime;
-      bnum++;
-      tone1.tone (1000);
-      wfcount=1;
-      }else if (currenttime-bwf>150&&bnum>0&&wfcount==1){
-                bwf=currenttime;
-                tone1.noTone();
-                wfcount=0;
-                }
-     if (bnum==6){wifi=0;bnum=0;tone1.noTone();wfcount=0;}           
+//  if (currenttime-bwf>700&&wifi==1&&wfcount==0){
+//      bwf=currenttime;
+//      bnum++;
+//      tone (13,1000);
+//      wfcount=1;
+//      }else if (currenttime-bwf>150&&bnum>0&&wfcount==1){
+//                bwf=currenttime;
+//                noTone(13);
+//                wfcount=0;
+//                }
+//     if (bnum==6){wifi=0;bnum=0;noTone(13);wfcount=0;}           
 
   
   if (beepvarB==1 && beepstarted==0){
@@ -134,7 +134,7 @@ void beep(){
   }
 
   
-if (currenttime-soundtime>4&&beeppowervar>0){play++;soundtime=currenttime;}
+if (currenttime-soundtime>3&&beeppowervar>0){play++;soundtime=currenttime;}
 
 if (beeppowervar==1&&play==25&&songindex==0){tone1.tone (1661);beeppowervar=2;}
 if (beeppowervar==2&&play==50&&songindex==0){tone1.tone (1865);beeppowervar=3;}

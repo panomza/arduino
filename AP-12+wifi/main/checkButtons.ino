@@ -5,17 +5,22 @@ void checkbuttons(){
   Bp      =  digitalRead(Bpow);
   Bs      =  digitalRead(Bspeed);
   Bt      =  digitalRead(Btimer); 
+  Bf      =  digitalRead(Bfilter); 
+ 
 }
 
 void statebutton(){
 
-  if (digitalRead(Bpow)==0 || digitalRead(Bspeed)==0 || digitalRead(Btimer)==0) {
-      checkbuttons();
+  if (Bp==0 || Bs==0 || Bt==0 ) {
+
+      timedim=brightdim;  
   }
-if(NodeSerial.available()>0){}else{
-  if(currenttime-tc>100){
+  
+//if(NodeSerial.available()>0){}else
+
+  if(currenttime-tc>80){
       checkbuttons();
       tc=currenttime;
   }
-}
+
 }

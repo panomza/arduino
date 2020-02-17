@@ -77,7 +77,7 @@ int k3=0;
        // send the second command-------------------
          tm1637_start_bit_I2C();
          tm1637_send_1byte_I2C_ack( TM1637_CMD2_1st_mem_addr_7seg_1xxx );
-         for ( uint8_t i=0, value; i <9; i++ ) {
+         for ( uint8_t i=0, value; i <15; i++ ) {
            value = SEVEN_SEG_DIGITS[ digits[i] ];
            if ( (i == 1) && colon ) {
               value |= 0x80; // turn on the colon on the display ,x1xx digit ,hundreds digit
@@ -106,11 +106,11 @@ Serial.begin(9600);
      
       // show time (hour and minute)
     void showTime( uint16_t hh, uint16_t mm, uint16_t ss) {
-         static uint8_t data[9];
+         static uint8_t data[15];
 
-         k1=ss%10;
+         k3=ss%10;
          k2=ss/10%10;
-         k3=ss/100;   
+         k1=ss/100;   
          
         /////////RED   
         if(ss>=120) {
@@ -149,7 +149,7 @@ Serial.begin(9600);
     void testDigitalWatch() {                       
          static boolean colon=0;
          static uint16_t hh=12, mm=0, ss=0;   
-         if ( millis() - ts >= 50 ) {                
+         if ( millis() - ts >= 500 ) {                
             showTime( hh, mm, ss);
         
             colon = !colon;                             
@@ -163,7 +163,7 @@ Serial.begin(9600);
                      }
                 }
              }
-             ts += 50;
+             ts = millis();
            }
      }
 

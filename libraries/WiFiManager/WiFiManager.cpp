@@ -148,6 +148,10 @@ void WiFiManager::setupConfigPortal() {
   server->on(String(F("/0wifi")).c_str(), std::bind(&WiFiManager::handleWifi, this, false));
   server->on(String(F("/wifisave")).c_str(), std::bind(&WiFiManager::handleWifiSave, this));
   server->on(String(F("/i")).c_str(), std::bind(&WiFiManager::handleInfo, this));
+  server->on(String(F("/i/json")).c_str(), std::bind(&WiFiManager::handleInfoJson, this));
+  server->on(String(F("/rootCA")).c_str(), std::bind(&WiFiManager::handleRootCA, this));
+  server->on(String(F("/cert")).c_str(), std::bind(&WiFiManager::handleCert, this));
+  server->on(String(F("/privateKey")).c_str(), std::bind(&WiFiManager::handlePrivateKey, this));
   server->on(String(F("/r")).c_str(), std::bind(&WiFiManager::handleReset, this));
   //server->on("/generate_204", std::bind(&WiFiManager::handle204, this));  //Android/Chrome OS captive portal check.
   server->on(String(F("/fwlink")).c_str(), std::bind(&WiFiManager::handleRoot, this));  //Microsoft captive portal. Maybe not needed. Might be handled by notFound handler.
@@ -369,6 +373,19 @@ void WiFiManager::startWPS() {
 String WiFiManager::getConfigPortalSSID() {
   return _apName;
 }
+
+String WiFiManager::getRootCA(){
+    return _rootCA;
+}
+
+String WiFiManager::getCert(){
+    return _cert;
+}
+
+String WiFiManager::getPrivateKey(){
+    return _privateKey;
+}
+
 
 void WiFiManager::resetSettings() {
   DEBUG_WM(F("settings invalidated"));
@@ -650,6 +667,75 @@ void WiFiManager::handleWifiSave() {
   DEBUG_WM(F("Sent wifi save page"));
 
   connect = true; //signal ready to connect/reset
+}
+
+void WiFiManager::handleInfoJson()
+{
+  DEBUG_WM(F("Info"));
+
+  String page;
+  page += ESP.getChipId();
+  server->sendHeader("Content-Length", String(page.length()));
+  server->send(200, "application/json", page);
+
+  DEBUG_WM(F("Sent info json"));
+}
+
+void WiFiManager::handleRootCA()
+{
+    DEBUG_WM(F("RootCA"));
+    _rootCA = server->arg("ca").c_str();
+    
+    DEBUG_WM(_rootCA);
+    
+    String page;
+    page += "accept rootCA";
+    page += "\n";
+    page += _rootCA;
+    page += "\n";
+    page += "OK";
+    server->sendHeader("Content-Length", String(page.length()));
+    server->send(200, "application/json", page);
+
+    DEBUG_WM(F("Sent rootCA page"));
+}
+
+void WiFiManager::handleCert()
+{
+    DEBUG_WM(F("Cert"));
+    _cert = server->arg("cert").c_str();
+    
+    DEBUG_WM(_cert);
+    
+    String page;
+    page += "accept cert";
+    page += "\n";
+    page += _cert;
+    page += "\n";
+    page += "OK";
+    server->sendHeader("Content-Length", String(page.length()));
+    server->send(200, "application/json", page);
+
+    DEBUG_WM(F("Sent cert page"));
+}
+
+void WiFiManager::handlePrivateKey()
+{
+    DEBUG_WM(F("PrivateKey"));
+    _privateKey = server->arg("key").c_str();
+    
+    DEBUG_WM(_privateKey);
+    
+    String page;
+    page += "accept private key";
+    page += "\n";
+    page += _privateKey;
+    page += "\n";
+    page += "OK";
+    server->sendHeader("Content-Length", String(page.length()));
+    server->send(200, "application/json", page);
+
+    DEBUG_WM(F("Sent private key page"));
 }
 
 /** Handle the info page */

@@ -1,7 +1,7 @@
 //#include <Arduino.h>
 #include <TM1637Display.h>
-
-
+char text;
+ int g=0;
 // Module connection pins (Digital Pins)
 #define CLK 2
 #define DIO 3
@@ -17,8 +17,8 @@ int pwmB = 0; // 10% duty (0-320 = 0-100% duty cycle)
 
 void setup() {
   
-  pinMode(9, OUTPUT);  //pwmA
-  pinMode(10, OUTPUT); //pwmB
+  pinMode(13, OUTPUT);  //pwmA
+  pinMode(12, OUTPUT); //pwmB
   pinMode(v1, INPUT); 
   Serial.begin(9600);
   
@@ -34,13 +34,13 @@ void PWM(){
   TCNT1 = 0;
 
   TCCR1B |= _BV(CS10);   //no prescaler
-  ICR1 = pwmA;            //PWM mode counts up 320 then down 320 counts (25kHz)
+  ICR1 =160;            //PWM mode counts up 320 then down 320 counts (25kHz)
  
 
-  OCR1A = pwmA/2;          //0-320 = 0-100% duty cycle
+  OCR1A = 80;          //0-320 = 0-100% duty cycle
   TCCR1A |= _BV(COM1A1); //output A clear rising/set falling
 
-  OCR1B = 50;          //0-320 = 0-100% duty cycle
+  OCR1B = 150;          //0-320 = 0-100% duty cycle
   TCCR1A |= _BV(COM1B1); //output B clear rising/set falling
 
   TCCR1B |= _BV(WGM13);  //PWM mode with ICR1 Mode 10
@@ -67,12 +67,25 @@ void PWM(){
 void loop() {
 
   PWM();
+
+  if(Serial.available()>0){
+    text=Serial.read();
+   
+    Serial.println(text);
+
+    if(text=='1'){g=500;}
+    if(text=='2'){g=1000;}
+    if(text=='3'){g=2000;}
+    if(text=='4'){g=3000;}
+    
+    
+  }
   
-  in = analogRead(v1);
-  pwmA = (in*781); 
+//  in = analogRead(v1);
+  pwmA =g; 
 
 
-  Serial.println(pwmA);
-  display.setBrightness(0x0f);
-  display.showNumberDec(in, false); // Expect: ___0
+//  Serial.println(pwmA);
+//  display.setBrightness(0x0f);
+//  display.showNumberDec(in, false); // Expect: ___0
   }

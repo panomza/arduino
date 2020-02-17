@@ -11,10 +11,12 @@ void speedset(){
      Serial.println(index);
      applythespeedswitch();
  }
+ 
  else if ((Bs != Ls) && (Bs == 1)&& (currenttime-speedt0 > buttondelay)&&speedcount==1){
       Ls=Bs;
       speedcount=0;
   }
+  
 }
 
 void applythespeedswitch(){
@@ -22,29 +24,26 @@ void applythespeedswitch(){
     switch (index) {
     case 0:
       clearspeed();
+      stateA=0;
       break;
     case 1:
       clearspeed();
       digitalWrite(M1,1);  
-      mcp.digitalWrite(s1,1); 
       stateA=0;
       break;
     case 2:
       clearspeed();
       digitalWrite(M2,1);
-      mcp.digitalWrite(s2,1);
       stateA=0;
       break;
     case 3:
       clearspeed();
       digitalWrite(M3,1);
-      mcp.digitalWrite(s3,1);
       stateA=0;
       break;
     case 4:
       clearspeed();
       digitalWrite(M4,1);
-      mcp.digitalWrite(s4,1);
       stateA=0;
       break;
      case 5:
@@ -62,8 +61,4 @@ void clearspeed(){
       digitalWrite(M3,0);
       digitalWrite(M4,0);
 
-      mcp.digitalWrite(s1,0);
-      mcp.digitalWrite(s2,0);
-      mcp.digitalWrite(s3,0);
-      mcp.digitalWrite(s4,0);    
 }
