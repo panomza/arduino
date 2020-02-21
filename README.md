@@ -15,6 +15,10 @@ To solve this problem we have the find out new MCU with enought memory size is a
 Develop PCBA with Micro controller(ATMEGA328P) that is coome equip with 32kB program memory. However this MCU IO pin is just 23 IO then we need to add TM1640 to LED drive control insted of MCU 
 
 #### Step1 PCBA design
+There are 2 developed PCBAs:
+  - Prototype V17.1 Isolated Power Supply
+  - Prototype V17.2 Non-Isolate Power Supply
+  
 https://drive.google.com/drive/u/0/folders/1jMU6nZqV70yxMnKUBBw2v8H-WO1wf9Ig
 
 #### Step2 Software design
@@ -33,7 +37,6 @@ This developed version can be controlled by all Touchpad control panel, Remote c
 - [x] Control panel(Capsense)
 - [x] Remote control
 - [x] PM2.5 detection
-- [x] Temp/Humidity detection
 - [x] LED Display
 - [x] LED Status
 - [x] Buzzer
