@@ -101,8 +101,8 @@ unsigned int currenttime = 0;
 
 //////////////dust sensor///////////////
 
-const short int measurePin = 31;
-const short int ledPower = 11;
+const short int measurePin = A6;
+const short int ledPower = A3;
 const short int numaverage = 100; ///number of values for taking average
 unsigned int count;
 unsigned int dust[numaverage];
@@ -180,9 +180,11 @@ void setup() {
   beepvarS = 1;
 
   clearspeed();
-  
-//  pinMode(6, INPUT);
-//  pinMode(7, OUTPUT);
+  pinMode(8, INPUT);
+  pinMode(A6, INPUT);
+  pinMode(A3, OUTPUT);
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
 //  Serial.println("Bord Reset");
 }
 
@@ -198,9 +200,7 @@ void loop() {
 
 
 if(currenttime-t10>2000){t10=currenttime;sensor_pana();tt=!11;}
-//Serial.println(tt);
 
-//t10 = millis();
   currenttime = millis();
 
   Dimmer();
