@@ -44,5 +44,16 @@ This developed version can be controlled by all Touchpad control panel, Remote c
 - [x] Plasma module control, **Canceled**
 - [x] Timer( 8,4,2,1 hrs)
 
+## Prototype Verification
+***IEC test results:***
+
+Issue in standard IEC 60335-1 | Details | Prototype V17.1(Isolated) | Prototype V17.2(Non Isolateed
+-- | -- | -- |--
+19.11.4.1 | Electrostatic Discharges | NA | NA
+19.11.4.2 | Fast transient bursts | Pass(Class B: LED flickerd on):(4kV@220V 50Hz) Pass(Class B: LED flickerd on):(4kV@240V 60Hz) | Fail
+19.11.4.3 | Voltage surges | Pass:(4kV@220V 50Hz)Pass:(4kV@240V 60Hz) | NA
+19.11.4.4| Voltage dip and interruption | NA | Pass(Class C: manual reset):(%Test level= 0,40,70,80 of 220V 50Hz) 
+19.11.4.5| Injected Current | Pass:Level 3 (10V, cover frequency 0.15-80 MHz) | NA
+
 ## Project time plan
 ![Timeplan](https://tva1.sinaimg.cn/large/0082zybpgy1gc4418syezj31y60oyql7.jpg)
