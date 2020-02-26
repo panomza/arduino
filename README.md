@@ -56,4 +56,10 @@ Issue in standard IEC 60335-1 | Details | Prototype V17.1(Isolated) | Prototype 
 19.11.4.5| Injected Current | Pass:Level 3 (10V, cover frequency 0.15-80 MHz) | NA
 
 ## Project time plan
-![Timeplan](https://tva1.sinaimg.cn/large/0082zybpgy1gc4418syezj31y60oyql7.jpg)
+***Project timeplan:***
+![Timeplan](https://tva1.sinaimg.cn/large/0082zybpgy1gc9yj89kxtj32fm0fm7e1.jpg)
+
+***Failure analysis plan:***
+![Timeplan](https://tva1.sinaimg.cn/large/0082zybpgy1gc9yl5x6zsj329k0f0qgr.jpg)
+
+
