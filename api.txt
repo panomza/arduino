@@ -1,1 +1,0 @@
-https://tl6ahmah7b.execute-api.ap-southeast-1.amazonaws.com/default/surfReport

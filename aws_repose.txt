@@ -1,5 +1,0 @@
-repos for esp8266 connecting to aws
-https://github.com/debsahu/ESP-MQTT-AWS-IoT-Core
-https://github.com/copercini/esp8266-aws_iot
-https://github.com/dwyl/learn-aws-iot
-https://github.com/aws-samples/aws-iot-examples
