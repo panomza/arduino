@@ -18,8 +18,10 @@ Develop PCBA with Micro controller(ATMEGA328P) that is coome equip with 32kB pro
 There are 2 developed PCBAs:
   - Prototype V17.1 Isolated Power Supply
   - Prototype V17.2 Non-Isolate Power Supply
-  
-https://drive.google.com/drive/u/0/folders/1jMU6nZqV70yxMnKUBBw2v8H-WO1wf9Ig
+
+More design info as [PCBA Design]
+
+[PCBA Design]: https://drive.google.com/drive/u/0/folders/1jMU6nZqV70yxMnKUBBw2v8H-WO1wf9Ig
 
 #### Step2 Software design
 
@@ -54,6 +56,10 @@ Issue in standard IEC 60335-1 | Details | Prototype V17.1(Isolated) | Prototype 
 19.11.4.3 | Voltage surges | Pass:(4kV@220V 50Hz)Pass:(4kV@240V 60Hz) | NA
 19.11.4.4| Voltage dip and interruption | NA | Pass(Class C: manual reset):(%Test level= 0,40,70,80 of 220V 50Hz) 
 19.11.4.5| Injected Current | Pass:Level 3 (10V, cover frequency 0.15-80 MHz) | NA
+
+Find more info as [IEC Test results]
+
+[IEC Test results]:https://drive.google.com/drive/u/0/folders/1pRGlJxpX68WHeiG0OGF6jnQy6Eyk631P
 
 ## Project time plan
 ***Project timeplan:***
