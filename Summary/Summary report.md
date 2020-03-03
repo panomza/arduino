@@ -23,6 +23,12 @@ More design info as [PCBA Design]
 
 [PCBA Design]: https://drive.google.com/drive/u/0/folders/1jMU6nZqV70yxMnKUBBw2v8H-WO1wf9Ig
 
+
+Component list [BOM]
+
+[BOM] : https://docs.google.com/spreadsheets/d/1OoUqc4dZkHaTaQ2dJCIZbOoq1gXtm2C6JJ563SU6HNw/edit#gid=1445442228&range=A1
+
+
 #### Step2 Software design
 
 ***Coding:***
