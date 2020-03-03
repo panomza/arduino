@@ -46,6 +46,23 @@ This developed version can be controlled by all Touchpad control panel, Remote c
 - [x] Plasma module control, **Canceled**
 - [x] Timer( 8,4,2,1 hrs)
 
+## Cost Comparison
+This table shows the estimate cost comparison of the new development PCBA 
+
+Detail | Hatari_Current AP12 | Hatari_Facelift AP12 V17.1 | Hatari_Facelift AP12 V17.2 | SCR_Facelift AP12
+-- | -- | -- |-- | --
+PM 2.5 Sensor | No | 195 | 195 | 195
+Component Cost | NA | 240.06 | 200.17 | 191.40
+PCB Cost | NA | 28.20 | 28.17 | 28.17
+Operation Cost(20%)| NA | 40.00 | 40.0 | 40.0
+Total cost(THB)| 357.49 | 503.26 | 463.37 | 454.60
+Cost compare to the current model(%)| - | 40.78%| 29.62% | 27.16%
+
+Find more info as [Cost comparison]
+
+[Cost comparison]: https://docs.google.com/spreadsheets/d/1OoUqc4dZkHaTaQ2dJCIZbOoq1gXtm2C6JJ563SU6HNw/edit#gid=1445442228&range=F60
+
+
 ## Prototype Verification
 ***IEC test results:***
 
