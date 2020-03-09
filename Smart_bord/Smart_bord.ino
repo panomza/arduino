@@ -53,9 +53,9 @@ SoftwareSerial NanoSerial(D2, D3); // RX | TX
 
 ///////////////// AWS //////////////////////
 #else
-#error Platform not supported
+//#error Platform not supported
 #endif
-#include <WiFiClientSecure.h>
+//#include <WiFiClientSecure.h>
 #include <ArduinoJson.h> //https://github.com/bblanchon/ArduinoJson (use v6.xx)
 #include <time.h>
 #define emptyString String()
