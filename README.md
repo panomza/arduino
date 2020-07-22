@@ -13,6 +13,7 @@ To solve this problem we have the current Facelift air purifier product which wo
 2. PCBA design
 3. Software design
 4. Engineering sample
+5. Engineering sample validation
 
 ## Project descriptions
 Develop PCBA with Micro controller(ATMEGA328P) and Wifi module(ESP8286) to connect online data to mobile application, with sufficient I/O pins to support the large number of peripherals. Remote control and Touchpad Capacitive sensor for user control, Buzzer, 7 segments display and LED status for interfacing with the user. Power supply unit sufficiently large for a system use. Soft switch Triac to control fan motor speed.
